@@ -112,6 +112,7 @@ export type Section = {
   instructor: string | null;
   conflicts_with: string[];
   chosen: boolean;
+  yours?: boolean;
 };
 
 export type CourseProfile = CourseSummary & {
@@ -127,6 +128,9 @@ export type CourseProfile = CourseSummary & {
     grading: string | null;
     late_policy: string | null;
     updated_at: string | null;
+    term?: string | null;
+    source_url?: string | null;
+    source?: "student" | "public" | null;
   };
   your_items: Item[];
 };

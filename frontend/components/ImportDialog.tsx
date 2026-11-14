@@ -35,11 +35,11 @@ export const IMPORT_KINDS: Kind[] = [
   },
 ];
 
-type Result = { course?: string | null; office_hours?: number; items?: number; classes?: number; courses?: string[]; term?: string | null };
+type Result = { course?: string | null; office_hours?: number; items?: number; classes?: number; courses?: string[]; term?: string | null; warning?: string | null };
 
 function message(kind: KindId, r: Result): string {
   if (kind === "schedule") return `Added ${r.classes} class meetings${r.term ? ` for ${r.term}` : ""}: ${r.courses?.join(", ")}.`;
-  if (kind === "syllabus") return `${r.course ?? "Syllabus"} added: ${r.items ?? 0} dates and ${r.office_hours ?? 0} office-hour slots.`;
+  if (kind === "syllabus") return r.warning ?? `${r.course ?? "Syllabus"} added: ${r.items ?? 0} dates and ${r.office_hours ?? 0} office-hour slots.`;
   return r.items ? `Added ${r.items} item${r.items === 1 ? "" : "s"} from your screenshot.` : "That screenshot didn't have anything to add.";
 }
 

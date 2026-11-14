@@ -14,15 +14,24 @@ router = APIRouter()
 
 @router.get("/courses")
 async def search_courses(q: str = "", user: dict = Depends(current_user)):
-    query: dict = {}
+    mine, plan = await my_courses(user["_id"]), user.get("plan", {})
     if q.strip():
         rx = {"$regex": re.escape(q.strip()), "$options": "i"}
-        query = {"$or": [{"_id": rx}, {"search_text": rx}]}
-    docs = await get_db().courses.find(query).to_list(400)
-    mine, plan = await my_courses(user["_id"]), user.get("plan", {})
+        query: dict = {"$or": [{"_id": rx}, {"search_text": rx}]}
+        limit = 60
+    else:  # no search: just the student's own courses and plan (the full catalog is thousands of courses)
+        query, limit = {"_id": {"$in": sorted(mine | set(plan))}}, 100
+    docs = await get_db().courses.find(query).limit(limit).to_list(limit)
     rows = [{**summary(d), "mine": d["_id"] in mine, "planned": d["_id"] in plan} for d in docs]
-    rows.sort(key=lambda r: (not r["mine"], not r["planned"], r["code"]))
+    # exact code matches first ("cs 220" -> COMPSCI 220), then yours, then alphabetical
+    want = re.sub(r"\s+", "", q).upper()
+    rows.sort(key=lambda r: (want not in r["code"].replace(" ", ""), not r["mine"], not r["planned"], r["code"]))
     return rows
+
+
+@router.get("/courses-count")
+async def courses_count(user: dict = Depends(current_user)):
+    return {"courses": await get_db().courses.estimated_document_count()}
 
 
 @router.get("/courses/{code}")
@@ -31,7 +40,11 @@ async def course_profile(code: str, term: str | None = None, user: dict = Depend
     if not course:
         raise HTTPException(404, "No profile for that course yet.")
     terms = course.get("terms", {})
-    term = term if term in terms else latest_term(terms)
+    schedule = user.get("schedule") or {}
+    taking_now = any(c["course"] == code for c in schedule.get("classes", []))
+    if term not in terms:
+        # a course you're taking opens on your schedule's term; anything else on the newest term
+        term = schedule.get("term") if taking_now and schedule.get("term") in terms else latest_term(terms)
     info = terms.get(term, {}) if term else {}
     if term and info.get("source") == "fivecolleges" and not info.get("description"):
         try:  # first view of this course: pull its description from the Five College page
@@ -44,7 +57,6 @@ async def course_profile(code: str, term: str | None = None, user: dict = Depend
 
     # flag sections that clash with what's already in the student's plan
     others = await plan_sections(plan, term, exclude=code) if term else {}
-    schedule = user.get("schedule") or {}
     current = schedule.get("classes", []) if schedule.get("term") == term else []
     sections = []
     for s in info.get("sections", []):
