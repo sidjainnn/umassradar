@@ -1,0 +1,29 @@
+# local tooling
+.claude/
+CLAUDE.md
+
+# secrets
+.env
+.env.*
+!.env.example
+credentials.json
+client_secret*.json
+token*.json
+*.pem
+
+# python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+backend/eval/out/
+
+# node
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+next-env.d.ts
+
+# os
+.DS_Store
