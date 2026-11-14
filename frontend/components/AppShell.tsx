@@ -1,14 +1,14 @@
 "use client";
 
-import { BookOpen, Briefcase, CalendarDays, House, Inbox, ListChecks, LogOut, Plus, RefreshCw, Search, Settings } from "lucide-react";
+import { BookOpen, Briefcase, CalendarDays, House, Inbox, ListChecks, LogOut, Plus, RefreshCw, Search, UserRound } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { displayName } from "@/lib/api";
 import { useStore } from "@/lib/store";
 import { relative } from "@/lib/time";
 import { ImportDialog } from "./ImportDialog";
 import { Logo } from "./Logo";
-import { SettingsDialog } from "./SettingsDialog";
 
 const NAV = [
   { href: "/", label: "Home", icon: House },
@@ -24,12 +24,11 @@ function isActive(path: string, href: string) {
 }
 
 export function AppShell({ children }: { children: React.ReactNode }) {
-  const { me, items, syncing, refresh, notice, setNotice, signOut, reload, reloadMe } = useStore();
+  const { me, items, syncing, refresh, notice, setNotice, signOut, reload } = useStore();
   const path = usePathname();
   const router = useRouter();
   const [q, setQ] = useState("");
   const [importing, setImporting] = useState(false);
-  const [settings, setSettings] = useState(false);
   const search = useRef<HTMLInputElement>(null);
 
   // "/" focuses search from anywhere
@@ -80,12 +79,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           })}
         </nav>
         <div className="mt-auto border-t border-line pt-4">
-          <p className="truncate px-3 text-sm font-semibold text-ink">{me.demo ? "Demo student" : me.name}</p>
+          <p className="truncate px-3 text-sm font-semibold text-ink">{me.demo ? "Demo student" : displayName(me) || me.email.split("@")[0]}</p>
           <p className="truncate px-3 text-xs text-ink-muted">{me.demo ? "Sample UMass inbox" : me.email}</p>
           <div className="mt-3 flex flex-col gap-0.5 text-sm">
-            <button onClick={() => setSettings(true)} className="flex items-center gap-3 rounded-lg px-3 py-1.5 text-ink-soft hover:bg-paper">
-              <Settings className="h-4 w-4" /> Settings and privacy
-            </button>
+            <Link href="/profile" className={`flex items-center gap-3 rounded-lg px-3 py-1.5 hover:bg-paper ${path === "/profile" ? "font-semibold text-maroon-700" : "text-ink-soft"}`}>
+              <UserRound className="h-4 w-4" /> Profile and privacy
+            </Link>
             <button onClick={signOut} className="flex items-center gap-3 rounded-lg px-3 py-1.5 text-ink-soft hover:bg-paper">
               <LogOut className="h-4 w-4" /> {me.demo ? "Leave the demo" : "Sign out"}
             </button>
@@ -132,13 +131,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             >
               <RefreshCw className={`h-4 w-4 ${syncing ? "animate-spin" : ""}`} />
             </button>
-            <button
-              onClick={() => setSettings(true)}
-              aria-label="Settings"
-              className="grid h-9 w-9 place-items-center rounded-full bg-ink text-sm font-semibold text-white lg:hidden"
-            >
-              {(me.name || me.email || "?").charAt(0).toUpperCase()}
-            </button>
+            <Link href="/profile" aria-label="Profile"
+              className="grid h-9 w-9 place-items-center rounded-full bg-ink text-sm font-semibold text-white lg:hidden">
+              {(displayName(me) || me.email || "?").charAt(0).toUpperCase()}
+            </Link>
           </div>
         </header>
 
@@ -174,14 +170,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </nav>
 
       {importing && <ImportDialog onClose={() => setImporting(false)} onImported={(m) => { setNotice(m); reload(); }} />}
-      {settings && (
-        <SettingsDialog
-          me={me}
-          onClose={() => setSettings(false)}
-          onChanged={(m) => { if (m) setNotice(m); reloadMe(); reload(); }}
-          onDeleted={signOut}
-        />
-      )}
     </div>
   );
 }

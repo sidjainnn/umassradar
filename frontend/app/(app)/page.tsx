@@ -6,6 +6,7 @@ import { BriefText } from "@/components/BriefText";
 import { ItemList } from "@/components/ItemRow";
 import { TodayLine, todayEntries } from "@/components/TodayLine";
 import { whenOf } from "@/lib/sections";
+import { displayName } from "@/lib/api";
 import { useStore } from "@/lib/store";
 import { clock, daysBetween, formatWhen, greeting, longDate } from "@/lib/time";
 
@@ -41,7 +42,7 @@ export default function Home() {
     { href: "/updates", n: list.filter((i) => ["course_info", "status_update"].includes(i.category)).length + noise.length, label: "updates, noise filtered out" },
   ];
   const nextOffice = officeHours.filter((o) => o.can_make !== false && new Date(o.starts_at) > now).slice(0, 2);
-  const firstName = me.demo ? "" : me.name.split(" ")[0];
+  const firstName = me.demo ? "" : displayName(me);
 
   return (
     <div className="max-w-3xl pb-16">

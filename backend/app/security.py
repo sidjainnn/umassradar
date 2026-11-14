@@ -9,7 +9,7 @@ from app.config import get_settings
 from app.db import get_db
 
 SESSION_COOKIE = "radar_session"
-SESSION_DAYS = 30
+SESSION_DAYS = 120  # one semester per device
 
 
 def _fernet() -> Fernet:
