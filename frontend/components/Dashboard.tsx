@@ -2,11 +2,13 @@
 
 import { ChevronDown, Inbox, VolumeX } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { api, type Category, type Item, type Me } from "@/lib/api";
+import { api, type Category, type Item, type Me, type OfficeHourSlot } from "@/lib/api";
 import { CATEGORY_LABEL, groupItems, matchesSearch, SECTIONS } from "@/lib/sections";
 import { Brief, type BriefData } from "./Brief";
 import { Header } from "./Header";
+import { ImportDialog } from "./ImportDialog";
 import { ItemCard } from "./ItemCard";
+import { OfficeHours } from "./OfficeHours";
 import { SettingsDialog } from "./SettingsDialog";
 
 type View = "open" | "done" | "dismissed";
@@ -27,6 +29,8 @@ export function Dashboard({ me, onSignedOut, onMeChanged }: Props) {
   const [notice, setNotice] = useState<string | null>(null);
   const [showNoise, setShowNoise] = useState(false);
   const [settings, setSettings] = useState(false);
+  const [importing, setImporting] = useState(false);
+  const [officeHours, setOfficeHours] = useState<OfficeHourSlot[]>([]);
   const [highlight, setHighlight] = useState<string | null>(null);
   const [, setTick] = useState(0);
 
@@ -37,6 +41,7 @@ export function Dashboard({ me, onSignedOut, onMeChanged }: Props) {
     ]);
     setItems(list);
     setNoise(noiseList);
+    api<OfficeHourSlot[]>("/office-hours").then(setOfficeHours).catch(() => setOfficeHours([]));
     api<BriefData>("/brief").then(setBrief).catch(() => setBrief(null));
   }, [view]);
 
@@ -113,6 +118,7 @@ export function Dashboard({ me, onSignedOut, onMeChanged }: Props) {
         syncing={syncing}
         onRefresh={refresh}
         onSettings={() => setSettings(true)}
+        onImport={() => setImporting(true)}
         onSignOut={signOut}
       />
 
@@ -168,6 +174,7 @@ export function Dashboard({ me, onSignedOut, onMeChanged }: Props) {
           />
         ) : (
           <div className="mt-6 grid gap-x-8 gap-y-10 lg:grid-cols-2">
+            <OfficeHours slots={officeHours} calendarConnected={!!me.calendar_connected} />
             {SECTIONS.map((s) =>
               groups[s.id].length === 0 && s.id !== "today" && s.id !== "week" ? null : (
                 <section key={s.id} className={s.id === "next" ? "lg:col-span-2" : ""}>
@@ -215,6 +222,9 @@ export function Dashboard({ me, onSignedOut, onMeChanged }: Props) {
         )}
       </main>
 
+      {importing && (
+        <ImportDialog onClose={() => setImporting(false)} onImported={(m) => { setNotice(m); load(); }} />
+      )}
       {settings && (
         <SettingsDialog
           me={me}

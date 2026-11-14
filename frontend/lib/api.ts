@@ -40,6 +40,7 @@ export type Me = {
   gmail_granted: boolean;
   last_sync_at: string | null;
   canvas_feed_set: boolean;
+  calendar_connected?: boolean;
 };
 
 export class ApiError extends Error {
@@ -55,6 +56,31 @@ export async function api<T>(path: string, init?: RequestInit): Promise<T> {
     headers: { "Content-Type": "application/json", ...(init?.headers ?? {}) },
     cache: "no-store",
   });
+  if (!res.ok) {
+    let detail = res.statusText;
+    try {
+      detail = (await res.json()).detail ?? detail;
+    } catch {}
+    throw new ApiError(res.status, detail);
+  }
+  return res.json() as Promise<T>;
+}
+
+export type OfficeHourSlot = {
+  course: string | null;
+  who: string;
+  location: string | null;
+  evidence: string;
+  starts_at: string;
+  ends_at: string;
+  can_make?: boolean | null;
+};
+
+/** multipart upload to the API (no JSON content-type, so the browser sets the boundary) */
+export async function upload<T>(path: string, file: File): Promise<T> {
+  const body = new FormData();
+  body.append("file", file);
+  const res = await fetch(`/api${path}`, { method: "POST", body, credentials: "include" });
   if (!res.ok) {
     let detail = res.statusText;
     try {

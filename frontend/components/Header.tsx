@@ -1,6 +1,6 @@
 "use client";
 
-import { LogOut, RefreshCw, Search, Settings } from "lucide-react";
+import { LogOut, Plus, RefreshCw, Search, Settings } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import type { Me } from "@/lib/api";
 import { relative } from "@/lib/time";
@@ -13,10 +13,11 @@ type Props = {
   syncing: boolean;
   onRefresh: () => void;
   onSettings: () => void;
+  onImport: () => void;
   onSignOut: () => void;
 };
 
-export function Header({ me, query, onQuery, syncing, onRefresh, onSettings, onSignOut }: Props) {
+export function Header({ me, query, onQuery, syncing, onRefresh, onSettings, onImport, onSignOut }: Props) {
   const [menu, setMenu] = useState(false);
   const input = useRef<HTMLInputElement>(null);
 
@@ -48,6 +49,15 @@ export function Header({ me, query, onQuery, syncing, onRefresh, onSettings, onS
             /
           </kbd>
         </label>
+        <button
+          onClick={onImport}
+          disabled={me.demo}
+          title={me.demo ? "Imports are off in the demo" : "Import a syllabus or screenshot"}
+          className="inline-flex items-center gap-2 rounded-xl border border-stone-200 bg-white px-3 py-2 text-sm font-medium text-stone-700 hover:border-stone-300 disabled:opacity-50"
+        >
+          <Plus className="h-4 w-4" />
+          <span className="hidden sm:inline">Import</span>
+        </button>
         <button
           onClick={onRefresh}
           disabled={syncing}
