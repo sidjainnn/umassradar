@@ -1,6 +1,6 @@
 "use client";
 
-import { BookOpen, Briefcase, CalendarDays, House, Inbox, ListChecks, LogOut, Plus, RefreshCw, Search, UserRound } from "lucide-react";
+import { BookOpen, Briefcase, CalendarDays, ChevronRight, House, Inbox, ListChecks, LogOut, Plus, RefreshCw, Search, Sparkles, UserRound } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -17,6 +17,12 @@ const NAV = [
   { href: "/opportunities", label: "Opportunities", short: "Opps", icon: Briefcase },
   { href: "/updates", label: "Updates", icon: Inbox },
   { href: "/courses", label: "Courses", icon: BookOpen },
+];
+
+const VIEWS = [
+  { href: "/", label: "Today" },
+  { href: "/schedule", label: "Week" },
+  { href: "/courses", label: "Courses" },
 ];
 
 function isActive(path: string, href: string) {
@@ -51,13 +57,27 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     const w = i.due_at ?? i.starts_at;
     return !!w && new Date(w).getTime() >= twoDaysAgo;
   }).length;
+  const opportunityCount = items?.filter((i) => i.category === "opportunity").length ?? 0;
 
   return (
     <div className="app-shell min-h-screen lg:grid lg:grid-cols-[236px_1fr]">
       {/* sidebar (desktop) */}
-      <aside className="app-sidebar sticky top-0 hidden h-screen flex-col border-r border-line bg-surface px-4 py-5 lg:flex">
-        <Link href="/" className="px-2"><Logo /></Link>
-        <nav className="mt-8 flex flex-col gap-0.5" aria-label="Main">
+      <aside className="app-sidebar sticky top-0 hidden h-screen flex-col border-r border-line bg-surface px-3 py-4 lg:flex">
+        <Link href="/" className="px-3 py-1"><Logo /></Link>
+
+        <div className="sidebar-switcher mt-5 grid grid-cols-3 gap-1 rounded-xl border border-line bg-paper p-1" aria-label="Workspace view">
+          {VIEWS.map((view) => {
+            const on = isActive(path, view.href);
+            return (
+              <Link key={view.href} href={view.href} className={`rounded-lg px-1 py-2 text-center text-[11px] font-bold ${on ? "bg-surface text-maroon-700 shadow-sm" : "text-ink-muted hover:text-ink"}`}>
+                {view.label}
+              </Link>
+            );
+          })}
+        </div>
+
+        <p className="mt-6 px-3 text-[10px] font-bold uppercase tracking-[0.16em] text-ink-faint">Your morning</p>
+        <nav className="mt-2 flex flex-col gap-0.5" aria-label="Main">
           {NAV.map(({ href, label, icon: Icon }) => {
             const on = isActive(path, href);
             return (
@@ -72,12 +92,21 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 <Icon className="h-[18px] w-[18px]" strokeWidth={on ? 2.25 : 1.75} />
                 {label}
                 {href === "/todo" && !!todoCount && (
-                  <span className="ml-auto text-xs font-semibold tabular-nums text-ink-muted">{todoCount}</span>
+                  <span className="ml-auto rounded-full bg-surface px-2 py-0.5 text-[11px] font-bold tabular-nums text-ink-muted">{todoCount}</span>
+                )}
+                {href === "/opportunities" && !!opportunityCount && (
+                  <span className="ml-auto rounded-full bg-gold/25 px-2 py-0.5 text-[11px] font-bold tabular-nums text-ink-soft">{opportunityCount}</span>
                 )}
               </Link>
             );
           })}
         </nav>
+
+        <Link href="/search" className="sidebar-discover mt-5 flex items-center gap-3 rounded-xl border border-maroon-100 bg-maroon-50 px-3 py-3 text-sm font-semibold text-maroon-800">
+          <span className="grid h-8 w-8 place-items-center rounded-lg bg-surface text-maroon-600"><Sparkles className="h-4 w-4" /></span>
+          <span><span className="block text-[10px] uppercase tracking-wider text-maroon-500">Discover</span>Search your inbox</span>
+          <ChevronRight className="ml-auto h-4 w-4" />
+        </Link>
         <div className="mt-auto border-t border-line pt-4">
           <p className="truncate px-3 text-sm font-semibold text-ink">{me.demo ? "Demo student" : displayName(me) || me.email.split("@")[0]}</p>
           <p className="truncate px-3 text-xs text-ink-muted">{me.demo ? "Sample UMass inbox" : me.email}</p>
@@ -95,7 +124,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <div className="min-w-0 pb-24 lg:pb-0">
         {/* top bar */}
         <header className="app-topbar sticky top-0 z-20 border-b border-line bg-paper/90 backdrop-blur">
-          <div className="mx-auto flex max-w-5xl items-center gap-2 px-4 py-2.5 sm:px-8">
+          <div className="mx-auto flex max-w-[1180px] items-center gap-2 px-4 py-2.5 sm:px-8">
             <Link href="/" className="lg:hidden"><Logo withText={false} size={30} /></Link>
             <form
               className="relative flex-1"
@@ -114,6 +143,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 className="w-full max-w-md rounded-lg border border-line bg-surface py-2 pl-9 pr-3 text-sm outline-none placeholder:text-ink-faint focus:border-maroon-600"
               />
             </form>
+            <Link href="/todo" className="hidden items-center gap-2 rounded-xl border border-line bg-surface px-3 py-2 text-xs font-semibold text-ink-soft xl:flex">
+              <span className="h-2 w-2 rounded-full bg-maroon-600" />
+              {todoCount ?? 0} need attention
+            </Link>
+            <span className="hidden rounded-xl bg-ink px-3 py-2 text-xs font-semibold text-white xl:inline">
+              {me.demo ? "Demo data" : me.last_sync_at ? `Synced ${relative(me.last_sync_at)}` : "Ready to sync"}
+            </span>
             <button
               onClick={() => setImporting(true)}
               disabled={me.demo}
@@ -138,7 +174,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </div>
         </header>
 
-        <div className="app-content mx-auto max-w-5xl px-4 pt-6 sm:px-8 sm:pt-8">
+        <div className="app-content mx-auto max-w-[1180px] px-4 pt-5 sm:px-8 sm:pt-7">
           {me.needs_reconnect && (
             <a href="/api/auth/login?consent=1" className="mb-5 block rounded-xl border border-maroon-200 bg-maroon-50 px-4 py-3 text-sm text-maroon-800">
               Google paused your Gmail connection (it does this every few days while the app is in testing).{" "}
