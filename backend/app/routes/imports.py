@@ -2,6 +2,7 @@
 
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 
+from app.calendar_client import busy_intervals, can_make
 from app.config import get_settings
 from app.db import get_db
 from app.pipeline import finalize
@@ -52,5 +53,11 @@ async def import_syllabus(file: UploadFile = File(...), user: dict = Depends(cur
 
 @router.get("/office-hours")
 async def office_hours(user: dict = Depends(current_user)):
+    """Office-hour sessions in the next 7 days; with Calendar connected, each says whether you're free."""
     docs = await get_db().office_hours.find({"user_id": user["_id"]}, {"_id": 0}).to_list(500)
-    return upcoming_slots(docs)
+    slots = upcoming_slots(docs)
+    if slots:
+        busy = await busy_intervals(user, slots[0]["starts_at"], max(s["ends_at"] for s in slots))
+        for slot in slots:
+            slot["can_make"] = None if busy is None else can_make(slot["starts_at"], slot["ends_at"], busy)
+    return slots

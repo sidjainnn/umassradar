@@ -13,6 +13,7 @@ from googleapiclient.errors import HttpError
 from app.config import get_settings
 
 GMAIL_SCOPE = "https://www.googleapis.com/auth/gmail.readonly"
+CALENDAR_SCOPE = "https://www.googleapis.com/auth/calendar.readonly"
 SCOPES = ["openid", "https://www.googleapis.com/auth/userinfo.email", GMAIL_SCOPE]
 
 
@@ -20,7 +21,7 @@ class ReconnectRequired(Exception):
     """The stored refresh token no longer works (expired, revoked, or invalid_grant)."""
 
 
-def build_service(refresh_token: str):
+def build_service(refresh_token: str, api: str = "gmail", version: str = "v1", scope: str = GMAIL_SCOPE):
     s = get_settings()
     creds = Credentials(
         None,
@@ -28,11 +29,11 @@ def build_service(refresh_token: str):
         token_uri="https://oauth2.googleapis.com/token",
         client_id=s.google_client_id,
         client_secret=s.google_client_secret,
-        scopes=[GMAIL_SCOPE],
+        scopes=[scope],
     )
     # httplib2 has no timeout by default, so a dropped connection can hang a sync forever
     http = AuthorizedHttp(creds, http=httplib2.Http(timeout=30))
-    return build("gmail", "v1", http=http, cache_discovery=False)
+    return build(api, version, http=http, cache_discovery=False)
 
 
 def _call(request):
