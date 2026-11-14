@@ -1,0 +1,38 @@
+import logging
+from contextlib import asynccontextmanager
+
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
+from app import auth
+from app.config import get_settings
+from app.db import ensure_indexes
+from app.routes import account, items
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s %(levelname)s %(message)s")
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await ensure_indexes()
+    yield
+
+
+app = FastAPI(title="UMass Radar API", lifespan=lifespan)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[get_settings().frontend_url],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.include_router(auth.router)
+app.include_router(items.router)
+app.include_router(account.router)
+
+
+@app.get("/health")
+async def health():
+    s = get_settings()
+    return {"ok": True, "google_configured": s.google_configured, "gemini_configured": bool(s.gemini_api_key)}
