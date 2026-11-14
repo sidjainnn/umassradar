@@ -1,12 +1,12 @@
 "use client";
 
-import { FileText, Upload, X } from "lucide-react";
+import { FileText, Image as ImageIcon, Upload, X } from "lucide-react";
 import { useRef, useState } from "react";
 import { upload } from "@/lib/api";
 
 type Props = { onClose: () => void; onImported: (message: string) => void };
 
-type Kind = { id: "syllabus"; title: string; body: string; accept: string; path: string };
+type Kind = { id: "syllabus" | "screenshot"; title: string; body: string; accept: string; path: string };
 
 const KINDS: Kind[] = [
   {
@@ -15,6 +15,13 @@ const KINDS: Kind[] = [
     body: "Pulls out office hours, exams and due dates. The PDF isn't kept.",
     accept: "application/pdf",
     path: "/import/syllabus",
+  },
+  {
+    id: "screenshot",
+    title: "Screenshot",
+    body: "SPIRE enrollment appointment, housing time slot, a hold, a portal page. The image isn't kept.",
+    accept: "image/png,image/jpeg,image/webp",
+    path: "/import/screenshot",
   },
 ];
 
@@ -29,6 +36,11 @@ export function ImportDialog({ onClose, onImported }: Props) {
     setError(null);
     try {
       const r = await upload<{ course?: string | null; office_hours?: number; items?: number }>(kind.path, file);
+      if (kind.id === "screenshot") {
+        onImported(r.items ? `Added ${r.items} item${r.items === 1 ? "" : "s"} from your screenshot.` : "Nothing actionable found in that screenshot.");
+        onClose();
+        return;
+      }
       const bits: string[] = [];
       if (r.items !== undefined) bits.push(`${r.items} dated item${r.items === 1 ? "" : "s"}`);
       if (r.office_hours !== undefined) bits.push(`${r.office_hours} office-hour slot${r.office_hours === 1 ? "" : "s"}`);
@@ -60,7 +72,7 @@ export function ImportDialog({ onClose, onImported }: Props) {
               className="flex w-full items-start gap-3 rounded-xl border border-stone-200 p-4 text-left hover:border-maroon-500 disabled:opacity-60"
             >
               <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-maroon-50 text-maroon-600">
-                <FileText className="h-5 w-5" />
+                {k.id === "syllabus" ? <FileText className="h-5 w-5" /> : <ImageIcon className="h-5 w-5" />}
               </span>
               <span>
                 <span className="block font-medium">{busy === k.id ? "Reading…" : k.title}</span>

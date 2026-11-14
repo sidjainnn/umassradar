@@ -1,4 +1,6 @@
-"""Imports that don't come from email: syllabus PDFs (and, later, screenshots)."""
+"""Imports that don't come from email: syllabus PDFs and screenshots."""
+
+import hashlib
 
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 
@@ -8,11 +10,13 @@ from app.db import get_db
 from app.pipeline import finalize
 from app.security import current_user
 from app.store import save_items
+from llm.screenshot import extract_screenshot, image_type, to_items
 from llm.syllabus import SyllabusError, extract_syllabus, pdf_text, to_records, upcoming_slots
 
 router = APIRouter()
 
 MAX_PDF_BYTES = 10 * 1024 * 1024
+MAX_IMAGE_BYTES = 5 * 1024 * 1024
 
 
 async def read_upload(file: UploadFile, max_bytes: int) -> bytes:
@@ -61,3 +65,20 @@ async def office_hours(user: dict = Depends(current_user)):
         for slot in slots:
             slot["can_make"] = None if busy is None else can_make(slot["starts_at"], slot["ends_at"], busy)
     return slots
+
+
+@router.post("/import/screenshot")
+async def import_screenshot(file: UploadFile = File(...), user: dict = Depends(current_user)):
+    require_gemini()
+    data = await read_upload(file, MAX_IMAGE_BYTES)
+    mime = image_type(data)
+    if not mime:
+        raise HTTPException(400, "Upload a PNG, JPEG or WebP screenshot.")
+    try:
+        result = await extract_screenshot(data, mime)  # the image itself is never stored
+    except Exception:
+        raise HTTPException(502, "Couldn't read the screenshot right now. Try again in a minute.")
+    ref = "screenshot:" + hashlib.sha256(data).hexdigest()[:12]
+    items = finalize(to_items(result, user["_id"], ref), user["_id"])
+    await save_items(user["_id"], items)
+    return {"items": len(items), "titles": [i.title for i in items]}
