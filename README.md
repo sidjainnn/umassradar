@@ -24,6 +24,9 @@ Built for HackUMass XIV.
 - **Course profiles for every UMass department** (about 6,000 courses, all sections and meeting times) from the public Five College course schedule, with richer CICS descriptions and prerequisites from the CICS catalog.
 - **Syllabus library**: public syllabi from the last 12 months (collected from course sites) plus any PDFs you drop in `backend/seed/syllabi/`. Each course page shows office hours, grading, late policy and exam dates "from the Spring 2026 syllabus", with a link to the original. Students can add the syllabus for any course they take.
 - **Course profiles and search**: every CICS course from the public catalog, with sections, times, rooms, prerequisites and instructors. Student-shared syllabus facts (office hours, grading, late policy, exam dates) are added on top. Your current courses are detected from your inbox. Add courses to a plan, pick sections, and see which ones clash with the rest of your plan.
+- **Jobs**: open student jobs from UMass Dining, RecWell, Res Life, Residential Services, CMASS and HR pages, plus job emails (Handshake, Student Employment), with direct links to the official Student Employment board and Handshake.
+- **Clubs and campus events**: every upcoming event from events.umass.edu. Follow an organization and its events land on your Home and Schedule. Clubs that only post on Instagram can be added by screenshotting a post or flyer: meetings become events and sign-ups become deadlines.
+- **Accounts that remember you**: sign in with your UMass Google account once. You stay signed in for the semester on each device, later sign-ins skip the permission screen, and the Profile page shows everything saved (name, major, class year, schedule, followed clubs, connected accounts) with one-click delete.
 - **Demo mode**: "Load demo inbox" runs 40 realistic fake UMass emails through the same pipeline, with no Google login needed.
 - Installable as a PWA.
 
@@ -167,6 +170,9 @@ The UI follows the UMass Amherst brand (umass.edu/brand): the 2026 digital maroo
 - **Five College course schedule** (fivecolleges.edu): robots.txt allows general crawlers with `search=yes, ai-train=no, use=reference`. We read listing pages at about one request per second, parse them without any model, and link back. Course descriptions are fetched one at a time, only when someone opens that course.
 - **CICS catalog** and **Res Life / CICS pages**: public pages allowed by robots.txt.
 - **Syllabi**: only public syllabi (or ones you provide) from the last 12 months. We keep extracted facts and a link, never the document.
+- **Campus events** (events.umass.edu): the public Localist API, with the 1-second crawl delay its robots.txt asks for.
+- **Student jobs**: department job pages that allow crawlers, read only when they change.
+- **Sources we deliberately don't read**: the central Student Employment board (yes.umass.edu) and Campus Pulse's API both disallow bots in robots.txt, and Instagram's terms don't allow apps to read other accounts. The app links to the job board, and takes screenshots for Instagram posts instead.
 
 ## Privacy design
 
@@ -199,6 +205,8 @@ Then in `backend/.env` set `OAUTH_REDIRECT_URI=https://<your-domain>/api/auth/ca
 
 ## Roadmap
 
+- Club leaders connect their own Instagram business account (Meta Graph API, needs Meta app review) so posts flow in automatically
+- Ask the Student Employment Office for a feed of the job board
 - Course catalogs beyond CICS (UMass has no single public catalog page to read from yet)
 - Use Calendar class times to flag plan conflicts with this semester's schedule
 - Push notifications for deadlines in the next few hours
