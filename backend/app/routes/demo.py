@@ -11,6 +11,7 @@ from app.db import get_db
 from app.models import now_utc
 from app.pipeline import process_emails
 from app.security import create_session
+from app.housing_samples import ensure_samples
 from app.store import delete_user_data, save_items
 from demo.loader import load_demo_emails
 
@@ -36,5 +37,6 @@ async def load_demo(response: Response):
         item.source = "demo"
         item.url = None
     await save_items(user_id, items)
+    await ensure_samples()  # example housing posts, shown only in demo mode
     await create_session(response, user_id)
     return {"ok": True, "items": len(items)}
