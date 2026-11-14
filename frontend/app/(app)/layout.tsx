@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { Landing } from "@/components/Landing";
+import { RadarLoader } from "@/components/RadarLoader";
 import { api, ApiError, type Me } from "@/lib/api";
 import { StoreProvider } from "@/lib/store";
 
@@ -40,7 +41,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     }
   }
 
-  if (me === undefined) return <div className="min-h-screen" aria-busy="true" />;
+  if (me === undefined) return <RadarLoader message="Checking your sign-in and student sources" />;
   if (me === null) return <Landing notice={notice} onDemo={loadDemo} demoLoading={demoLoading} />;
   return (
     <StoreProvider me={me} onSignedOut={() => setMe(null)}>
