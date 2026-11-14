@@ -6,6 +6,7 @@ from pydantic import BaseModel
 
 from app.db import get_db
 from app.models import now_utc
+from app.ranking import urgency
 from app.security import current_user
 from app.store import doc_to_item
 
@@ -26,6 +27,8 @@ async def list_items(
         query["status"] = status
     if category:
         query["category"] = {"$in": category.split(",")}
+    else:
+        query["category"] = {"$ne": "noise"}
     if course:
         query["course"] = course
     if source:
@@ -33,8 +36,22 @@ async def list_items(
     if q:
         rx = {"$regex": re.escape(q), "$options": "i"}
         query["$or"] = [{"title": rx}, {"course": rx}, {"evidence": rx}, {"sender": rx}, {"location": rx}]
-    docs = await get_db().items.find(query).sort("urgency_score", -1).to_list(1000)
-    return [doc_to_item(d).model_dump(mode="json") for d in docs]
+    docs = await get_db().items.find(query).to_list(2000)
+    items = [doc_to_item(d) for d in docs]
+    now = now_utc()
+    for item in items:  # urgency depends on the current time, so compute it on read
+        item.urgency_score = urgency(item, now)
+    items.sort(key=lambda i: i.urgency_score, reverse=True)
+    return [i.model_dump(mode="json") for i in items]
+
+
+@router.get("/items/counts")
+async def item_counts(user: dict = Depends(current_user)):
+    pipeline = [
+        {"$match": {"user_id": user["_id"], "status": "open"}},
+        {"$group": {"_id": "$category", "n": {"$sum": 1}}},
+    ]
+    return {d["_id"]: d["n"] async for d in get_db().items.aggregate(pipeline)}
 
 
 class StatusUpdate(BaseModel):

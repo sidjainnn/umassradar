@@ -63,6 +63,7 @@ class Item(BaseModel):
     status: Status = "open"
     # extra context used for ranking and display
     sender: str = ""
+    sender_email: str = ""
     sender_type: Literal["person", "automated", "newsletter", "unknown"] = "unknown"
     received_at: datetime | None = None
     url: str | None = None

@@ -196,6 +196,7 @@ def make_item(msg: EmailMsg, category: str, title: str, *, evidence: str = "", *
         extracted_by="rule",
         confidence=fields.pop("confidence", 0.9),
         sender=msg.from_name or msg.from_email,
+        sender_email=msg.from_email,
         sender_type=fields.pop("sender_type", sender_type(msg)),
         received_at=msg.date,
         url=gmail_link(msg.id),
