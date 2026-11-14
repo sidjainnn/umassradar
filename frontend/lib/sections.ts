@@ -40,9 +40,13 @@ export function sectionFor(item: Item, now: Date = new Date()): SectionId | null
   if (when && TIMED.includes(item.category)) {
     const hoursAway = (when.getTime() - now.getTime()) / 3_600_000;
     const dayDiff = daysBetween(now, when);
-    if (hoursAway < -48) return item.category === "deadline" ? null : "courses"; // long past
-    if (hoursAway >= -0.5 && hoursAway <= 3) return "next";
-    if (dayDiff <= 0) return "today"; // includes overdue from yesterday
+    if (hoursAway < -0.5) {
+      // in the past: an overdue deadline from the last two days still needs attention, the rest is history
+      if (item.category === "reply_owed") return "waiting";
+      return item.category === "deadline" && hoursAway > -48 ? "today" : null;
+    }
+    if (hoursAway <= 3) return "next";
+    if (dayDiff <= 0) return "today";
     if (dayDiff <= 7) return "week";
     return "later";
   }
