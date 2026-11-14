@@ -176,7 +176,7 @@ async def call_gemini(prompt: str) -> LLMResult:
     return await generate_json(prompt, SYSTEM, LLMResult, temperature=0)
 
 
-async def generate_json(prompt, system: str, schema: type[BaseModel], temperature: float = 0):
+async def generate_json(prompt, system: str, schema: type[BaseModel], temperature: float = 0, model: str | None = None):
     """Structured Gemini call shared by extraction and the brief.
 
     `prompt` is text, or a list of parts (text + image) for vision. Retries busy/rate-limited responses;
@@ -194,7 +194,12 @@ async def generate_json(prompt, system: str, schema: type[BaseModel], temperatur
         temperature=temperature,
     )
     main, fallback = settings.gemini_model, settings.gemini_fallback_model
-    plan = [fallback, fallback] if time.monotonic() < _main_down_until else [main, fallback, fallback]
+    if model:  # caller picked a model (e.g. the brief uses the fast one); fall back if it's overloaded
+        plan = [model, fallback] if model != fallback else [model, model]
+    elif time.monotonic() < _main_down_until:
+        plan = [fallback, fallback]
+    else:
+        plan = [main, fallback, fallback]
     for attempt, model in enumerate(plan):
         try:
             resp = await _client.aio.models.generate_content(model=model, contents=prompt, config=config)

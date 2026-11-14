@@ -109,7 +109,7 @@ async def gemini_brief(items: list[Item], now: datetime) -> Brief:
         f"Current local time: {local:%A %B %d, %I:%M %p} ({part_of_day(now)}).\n"
         f"Items (most urgent first):\n{json.dumps(brief_input(items, now), indent=1)}"
     )
-    brief = await generate_json(prompt, SYSTEM, Brief, temperature=0.3)
+    brief = await generate_json(prompt, SYSTEM, Brief, temperature=0.3, model=get_settings().gemini_brief_model)
     valid = {i.id for i in items}
     for s in brief.sentences:
         s.item_ids = [x for x in s.item_ids if x in valid]
