@@ -163,7 +163,7 @@ async def call_gemini(prompt: str) -> LLMResult:
     settings = get_settings()
     if _client is None:
         _client = genai.Client(api_key=settings.gemini_api_key)
-    for attempt in range(4):
+    for attempt in range(5):
         try:
             resp = await _client.aio.models.generate_content(
                 model=settings.gemini_model,
@@ -177,26 +177,36 @@ async def call_gemini(prompt: str) -> LLMResult:
             )
             return resp.parsed if isinstance(resp.parsed, LLMResult) else LLMResult.model_validate_json(resp.text)
         except Exception as e:  # rate limits come back as 429 ClientError
-            if "429" in str(e) or "RESOURCE_EXHAUSTED" in str(e):
+            text = str(e)
+            if any(code in text for code in ("429", "RESOURCE_EXHAUSTED", "503", "UNAVAILABLE", "500 INTERNAL")):
                 wait = 10 * (attempt + 1)
-                log.info("Gemini rate limit, retrying in %ss", wait)
+                log.info("Gemini busy or rate limited, retrying in %ss", wait)
                 await asyncio.sleep(wait)
                 continue
             raise
-    raise RuntimeError("Gemini rate limit: gave up after retries")
+    raise RuntimeError("Gemini unavailable: gave up after retries")
 
 
 # ---------- public entry point ----------
 
 async def extract_items(
-    msgs: list[EmailMsg], user_id: str, generate: Generate | None = None, use_cache: bool | None = None
+    msgs: list[EmailMsg],
+    user_id: str,
+    generate: Generate | None = None,
+    use_cache: bool | None = None,
+    failed: list[EmailMsg] | None = None,
 ) -> list[Item]:
-    """Items for emails no rule handled. Each email is sent to Gemini at most once (cached by message id)."""
+    """Items for emails no rule handled. Each email is sent to Gemini at most once (cached by message id).
+
+    Emails whose request failed are appended to `failed` (if given) so the caller can retry them later.
+    """
     if not msgs:
         return []
     if generate is None:
         if not get_settings().gemini_api_key:
             log.warning("GEMINI_API_KEY not set: skipping %d emails that need the LLM", len(msgs))
+            if failed is not None:
+                failed.extend(msgs)
             return []
         generate = call_gemini
 
@@ -221,7 +231,9 @@ async def extract_items(
             try:
                 result = await generate(build_prompt(batch))
             except Exception as e:
-                log.warning("LLM batch of %d failed: %s", len(batch), e)
+                log.warning("LLM batch of %d failed: %s", len(batch), str(e)[:200])
+                if failed is not None:
+                    failed.extend(batch)
                 return []
         out: list[Item] = []
         per_msg: dict[str, list[dict]] = {m.id: [] for m in batch}

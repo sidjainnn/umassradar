@@ -66,3 +66,14 @@ async def test_bad_email_ids_ignored_and_failures_dont_crash():
         raise RuntimeError("network down")
 
     assert await extract_items(msgs, "u1", generate=boom) == []
+
+
+async def test_failed_batches_are_reported_for_retry():
+    msgs = [load("professor"), load("newsletter")]
+
+    async def boom(prompt: str) -> LLMResult:
+        raise RuntimeError("503 UNAVAILABLE")
+
+    failed = []
+    assert await extract_items(msgs, "u1", generate=boom, failed=failed) == []
+    assert [m.id for m in failed] == [m.id for m in msgs]

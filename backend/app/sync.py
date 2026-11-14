@@ -53,15 +53,22 @@ async def sync_user(user_id: str, full: bool = False) -> dict:
         service, ids, new_history, was_full = await asyncio.to_thread(
             _list, refresh_token, history_id, settings.initial_sync_days, settings.max_initial_messages
         )
-        seen = await already_processed(user_id, ids) if ids else set()
-        todo = [i for i in ids if i not in seen]
+        # emails whose LLM step failed last time get another try
+        candidates = list(dict.fromkeys([*ids, *user.get("pending_llm", [])]))
+        seen = await already_processed(user_id, candidates) if candidates else set()
+        todo = [i for i in candidates if i not in seen]
+        pending: list[str] = []
 
         for start in range(0, len(todo), CHUNK):
             raw = await asyncio.to_thread(gc.get_messages, service, todo[start: start + CHUNK])
             msgs = [parse_gmail_message(m) for m in raw]
-            items = await process_emails(msgs, user_id)
+            failed: list = []
+            items = await process_emails(msgs, user_id, failed=failed)
             await save_items(user_id, items)
-            await mark_processed(user_id, [m.id for m in msgs])
+            failed_ids = {m.id for m in failed}
+            await mark_processed(user_id, [m.id for m in msgs if m.id not in failed_ids])
+            pending.extend(failed_ids)
+            await db.users.update_one({"_id": user_id}, {"$set": {"pending_llm": pending}})
             done += len(msgs)
             items_saved += len(items)
     except gc.ReconnectRequired:
@@ -77,6 +84,7 @@ async def sync_user(user_id: str, full: bool = False) -> dict:
             msg = f"Gmail returned an error ({e.resp.status}). Synced {done} emails so far."
         return {"status": "partial", "message": msg, "new_messages": done, "items": items_saved}
 
+    await db.users.update_one({"_id": user_id}, {"$set": {"pending_llm": pending}})
     canvas = await sync_canvas(user_id)
 
     # Only move the history pointer after a complete pass, so nothing is skipped.
@@ -85,7 +93,7 @@ async def sync_user(user_id: str, full: bool = False) -> dict:
         {"$set": {"history_id": new_history, "last_sync_at": now_utc(), "needs_reconnect": False}},
     )
     return {"status": "ok", "new_messages": done, "items": items_saved, "full_sync": was_full,
-            "canvas_items": canvas.get("items", 0)}
+            "canvas_items": canvas.get("items", 0), "pending_llm": len(pending)}
 
 
 async def sync_canvas(user_id: str) -> dict:
