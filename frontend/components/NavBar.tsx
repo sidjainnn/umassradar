@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CampusTophat } from "./CampusTophat";
 import { Logo } from "./Logo";
 
 export function NavBar({ active }: { active: "dashboard" | "courses" }) {
@@ -11,14 +12,19 @@ export function NavBar({ active }: { active: "dashboard" | "courses" }) {
     </Link>
   );
   return (
-    <header className="sticky top-0 z-20 border-b border-stone-200/80 bg-[#f7f6f4]/85 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3 sm:px-6">
-        <Link href="/"><Logo /></Link>
-        <nav className="ml-auto flex gap-1">
-          {link("/", "Dashboard", active === "dashboard")}
-          {link("/courses", "Courses", active === "courses")}
-        </nav>
-      </div>
-    </header>
+    <div className="cics-site-nav">
+      <CampusTophat />
+      <header className="border-b border-stone-200 bg-white">
+        <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-5 sm:px-6">
+          <Link href="/">
+            <Logo />
+          </Link>
+          <nav className="ml-auto flex gap-1">
+            {link("/", "Dashboard", active === "dashboard")}
+            {link("/courses", "Courses", active === "courses")}
+          </nav>
+        </div>
+      </header>
+    </div>
   );
 }

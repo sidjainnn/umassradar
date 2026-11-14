@@ -1,16 +1,11 @@
 import type { Metadata, Viewport } from "next";
-import { Lora, Open_Sans } from "next/font/google";
+import { Open_Sans } from "next/font/google";
 import { RegisterSW } from "@/components/RegisterSW";
 import "./globals.css";
 
 const bodyFont = Open_Sans({
   subsets: ["latin"],
   variable: "--font-body",
-});
-const displayFont = Lora({
-  subsets: ["latin"],
-  variable: "--font-display",
-  weight: ["600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -29,7 +24,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${bodyFont.variable} ${displayFont.variable} antialiased`}
+        className={`${bodyFont.variable} antialiased`}
       >
         {children}
         <RegisterSW />

@@ -35,6 +35,7 @@ import {
 } from "@/lib/sections";
 import { daysBetween, greeting, longDate } from "@/lib/time";
 import { Brief, type BriefData } from "./Brief";
+import { CampusTophat } from "./CampusTophat";
 import { Header } from "./Header";
 import { ImportDialog } from "./ImportDialog";
 import { ItemCard } from "./ItemCard";
@@ -377,9 +378,9 @@ export function Dashboard({
           <Logo />
         </Link>
         <div className="workspace-label">
-          <span className="campus-mark">U</span>
+          <span className="campus-mark">C</span>
           <span>
-            UMass Amherst<small>Your campus, connected</small>
+            Manning CICS<small>Your student radar</small>
           </span>
         </div>
         <p className="nav-heading">YOUR SPACE</p>
@@ -444,6 +445,7 @@ export function Dashboard({
         </div>
       </aside>
       <div className="app-body">
+        <CampusTophat />
         <Header
           me={me}
           query={query}

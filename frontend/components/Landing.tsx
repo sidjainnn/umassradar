@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { Logo } from "./Logo";
 import { CampusPals } from "./CampusPals";
+import { CampusTophat } from "./CampusTophat";
 
 type Props = {
   notice: string | null;
@@ -19,6 +20,7 @@ type Props = {
 export function Landing({ notice, onDemo, demoLoading }: Props) {
   return (
     <main className="landing-page">
+      <CampusTophat />
       <header className="landing-header">
         <Logo />
         <span>BUILT FOR LIFE AT UMASS AMHERST</span>
