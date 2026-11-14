@@ -1,0 +1,12 @@
+{
+  "from_name": "Campuswire Team",
+  "from_email": "team@campuswiremail.com",
+  "subject": "Email digest for Programming Methodology",
+  "date": "2026-11-13T07:00:00",
+  "list_unsubscribe": "<https://campuswire.com/unsub>",
+  "label_ids": [
+    "INBOX",
+    "CATEGORY_UPDATES"
+  ],
+  "body": "Here's what you missed in Programming Methodology (COMPSCI 220).\n\n12 new posts\n\n[Pinned] Project 4 is due Monday, November 23 at 11:30 PM. Autograder is live.\n\nQuestion: Does the heap need to be generic?"
+}

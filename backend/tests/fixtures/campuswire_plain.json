@@ -1,0 +1,11 @@
+{
+  "from_name": "Campuswire Team",
+  "from_email": "team@campuswiremail.com",
+  "subject": "Email digest for Intro to Algorithms",
+  "date": "2026-11-13T07:00:00",
+  "list_unsubscribe": "<https://campuswire.com/unsub>",
+  "label_ids": [
+    "INBOX"
+  ],
+  "body": "Here's what you missed in Intro to Algorithms.\n\n4 new posts\n\nQuestion: is the recurrence on slide 12 right?"
+}
