@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from pydantic import BaseModel, Field
 
 from app.calendar_client import busy_intervals, can_make
-from app.courses import add_syllabus_facts
+from app.courses import add_syllabus_facts, shared_office_hours
 from app.config import get_settings
 from app.db import get_db
 from app.pipeline import finalize
@@ -75,6 +75,7 @@ async def office_hours(user: dict = Depends(current_user)):
     """Office-hour sessions in the next 7 days. Each says whether you're free, checked against your class
     schedule (if uploaded) and Google Calendar (if connected)."""
     docs = await get_db().office_hours.find({"user_id": user["_id"]}, {"_id": 0}).to_list(500)
+    docs += await shared_office_hours(user)  # classmates' and public syllabi for courses you take
     slots = upcoming_slots(docs)
     if slots:
         start, end = slots[0]["starts_at"], max(s["ends_at"] for s in slots)

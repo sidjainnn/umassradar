@@ -17,7 +17,7 @@ from app.config import get_settings
 from app.db import get_db
 from app.gmail_client import gmail_link
 from app.models import EASTERN, EmailMsg, Item, now_utc
-from parsers.common import find_course, sender_type
+from parsers.common import DEPT_ALIASES, find_course, sender_type
 
 log = logging.getLogger("radar.llm")
 
@@ -133,9 +133,10 @@ def normalize_course(course: str | None) -> str | None:
         return code
     if re.fullmatch(r"[A-Za-z&-]{2,10}", course.strip()):
         return None  # "COMPSCI" alone isn't a course
-    m = re.fullmatch(r"\s*([A-Za-z&-]{2,10})\s*(\d{3}[A-Za-z]{0,3})\s*", course)
+    m = re.fullmatch(r"\s*([A-Za-z&-]{2,12})\s*(\d{3}[A-Za-z]{0,3})\s*", course)
     if m:  # unknown department, but clearly a code: same uppercase format as the catalog ("English 112" -> "ENGLISH 112")
-        return f"{m.group(1).upper()} {m.group(2).upper()}"
+        dept = m.group(1).upper()
+        return f"{DEPT_ALIASES.get(dept, dept)} {m.group(2).upper()}"
     return course.strip()[:60]
 
 

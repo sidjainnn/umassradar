@@ -39,7 +39,7 @@ COURSE_RE = re.compile(
 )
 
 
-DEPT_ALIASES = {"CS": "COMPSCI", "STATISTC": "STAT", "E&C-ENG": "ECE", "BIO": "BIOLOGY"}
+DEPT_ALIASES = {"CS": "COMPSCI", "STATISTC": "STAT", "E&C-ENG": "ECE", "BIO": "BIOLOGY", "LINGUISTICS": "LINGUIST"}
 
 
 def parse_time(text: str | None) -> time | None:

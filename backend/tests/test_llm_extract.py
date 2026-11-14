@@ -86,3 +86,9 @@ def test_llm_course_names_are_normalized():
     assert normalize_course("COMPSCI") is None
     assert normalize_course("Programming Methodology") == "Programming Methodology"
     assert normalize_course("") is None
+
+
+def test_department_aliases_match_the_catalog():
+    from llm.extract import normalize_course
+    assert normalize_course("Linguistics 683") == "LINGUIST 683"
+    assert normalize_course("English 112") == "ENGLISH 112"

@@ -19,3 +19,12 @@ def test_chosen_sections_defaults_to_first_lecture():
     course = {"terms": {"Spring 2027": {"sections": [{**LEC, "section": "U1 LAB01", "class_number": "9"}, LEC]}}}
     assert chosen_sections(course, "Spring 2027", []) == [LEC]
     assert chosen_sections(course, "Spring 2027", ["9"])[0]["class_number"] == "9"
+
+
+def test_current_term():
+    from datetime import date
+
+    from app.courses import current_term
+    assert current_term(date(2026, 11, 14)) == "Fall 2026"
+    assert current_term(date(2027, 2, 1)) == "Spring 2027"
+    assert current_term(date(2026, 7, 4)) == "Summer 2026"

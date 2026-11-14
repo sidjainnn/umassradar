@@ -33,3 +33,26 @@ def test_to_items_filters_past_and_checks_evidence():
     assert ra.source == "web" and ra.url == PAGE["url"] and ra.action_required
     assert local(ra.due_at) == (2026, 12, 4, 17, 0)
     assert items["Invented event"].confidence <= 0.4
+
+
+def test_job_titles_are_the_role_and_repeats_get_a_venue():
+    page = {"id": "jobs-dining", "name": "UMass Dining", "url": "https://www.umassdining.com/student-jobs"}
+    result = PageResult(items=[
+        PageItem(category="opportunity", title="UMass Dining Student Job - Franklin Dining Common, Morrill, Post & Bean",
+                 due_at=None, starts_at=None, location=None, evidence=""),
+        PageItem(category="opportunity", title="Dining student worker", due_at=None, starts_at=None,
+                 location="Worcester Dining Common, ISB Café", evidence=""),
+        PageItem(category="opportunity", title="Dining student worker", due_at=None, starts_at=None,
+                 location="Worcester Dining Common, ISB Café", evidence=""),  # duplicate: dropped
+    ])
+    titles = [i.title for i in to_items(result, page, "", NOW)]
+    assert titles == ["UMass Dining Student Job", "Dining student worker"]  # long venue list moved out of the title
+
+    same_role = PageResult(items=[
+        PageItem(category="opportunity", title="Dining student worker", due_at=None, starts_at=None,
+                 location="Franklin Dining Common, Morrill", evidence=""),
+        PageItem(category="opportunity", title="Dining student worker", due_at=None, starts_at=None,
+                 location="Hampshire Dining Common (Southwest), Roots Café", evidence=""),
+    ])
+    assert [i.title for i in to_items(same_role, page, "", NOW)] == [
+        "Dining student worker, Franklin Dining Common", "Dining student worker, Hampshire Dining Common"]
