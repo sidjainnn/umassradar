@@ -1,0 +1,10 @@
+{
+  "from_name": "UMass Amherst Navigate",
+  "from_email": "noreply@umass.campus.eab.com",
+  "subject": "Appointment Confirmation",
+  "date": "2026-11-10T13:00:00",
+  "label_ids": [
+    "INBOX"
+  ],
+  "body": "Hi Sid,\n\nThis is a confirmation of your appointment with Jane Smith on Tuesday, November 17, 2026 at 2:00 PM.\nLocation: Goodell 613\nService: Academic Advising"
+}

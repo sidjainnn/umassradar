@@ -1,0 +1,10 @@
+{
+  "from_name": "UMass Amherst Navigate",
+  "from_email": "noreply@umass.campus.eab.com",
+  "subject": "Appointment Cancelled",
+  "date": "2026-11-11T13:00:00",
+  "label_ids": [
+    "INBOX"
+  ],
+  "body": "Your appointment with Jane Smith on Thursday, November 19, 2026 at 11:00 AM has been cancelled."
+}
