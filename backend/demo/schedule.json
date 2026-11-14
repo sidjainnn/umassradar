@@ -1,0 +1,12 @@
+{
+  "term": "Fall 2026",
+  "classes": [
+    {"course": "COMPSCI 220", "title": "Programming Methodology", "section": "01", "component": "LEC", "days": [1, 3], "start": "16:00", "end": "17:15", "location": "CMPLABE110", "instructor": "Perretta"},
+    {"course": "COMPSCI 220", "title": "Programming Methodology", "section": "01LL", "component": "LAB", "days": [2], "start": "13:25", "end": "14:15", "location": "EnginLb305", "instructor": null},
+    {"course": "COMPSCI 311", "title": "Introduction to Algorithms", "section": "01", "component": "LEC", "days": [0, 2], "start": "16:00", "end": "17:15", "location": "CSW 150", "instructor": "Parvini"},
+    {"course": "COMPSCI 311", "title": "Introduction to Algorithms", "section": "01AA", "component": "DIS", "days": [4], "start": "10:10", "end": "11:00", "location": "Hldswth203", "instructor": null},
+    {"course": "STAT 315", "title": "Statistics I", "section": "01", "component": "LEC", "days": [0, 2, 4], "start": "11:15", "end": "12:05", "location": "Hasbrouck 20", "instructor": "Lavine"},
+    {"course": "ECE 122", "title": "Introduction to Programming for ECE", "section": "01", "component": "LEC", "days": [1, 3], "start": "10:00", "end": "11:15", "location": "Marcus 131", "instructor": null},
+    {"course": "ENGLWRIT 112", "title": "College Writing", "section": "04", "component": "LEC", "days": [1, 3], "start": "13:00", "end": "14:15", "location": "Bartlett 206", "instructor": null}
+  ]
+}

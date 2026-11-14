@@ -3,8 +3,7 @@
 import { AlertTriangle, ArrowLeft, Check, Clock, ExternalLink, FileText, MapPin, Plus, Users } from "lucide-react";
 import Link from "next/link";
 import { use, useCallback, useEffect, useState } from "react";
-import { ItemCard } from "@/components/ItemCard";
-import { NavBar } from "@/components/NavBar";
+import { ItemList } from "@/components/ItemRow";
 import { api, ApiError, type CourseProfile, type Item, type Section } from "@/lib/api";
 import { formatWhen } from "@/lib/time";
 
@@ -62,26 +61,23 @@ export default function CoursePage({ params }: { params: Promise<{ code: string 
 
   if (error) {
     return (
-      <div className="min-h-screen">
-        <NavBar active="courses" />
-        <p className="mx-auto mt-10 max-w-6xl px-6 text-sm text-stone-500">{error}</p>
+      <div>
+        <p className="text-sm text-ink-muted">{error}</p>
       </div>
     );
   }
   if (!course) {
     return (
-      <div className="min-h-screen">
-        <NavBar active="courses" />
-        <p className="mx-auto mt-10 max-w-6xl px-6 text-sm text-stone-400">Loading…</p>
+      <div>
+        <p className="text-sm text-ink-muted">Loading…</p>
       </div>
     );
   }
 
   const shared = course.shared;
   return (
-    <div className="min-h-screen">
-      <NavBar active="courses" />
-      <main className="mx-auto max-w-6xl px-4 pb-24 pt-6 sm:px-6">
+    <div>
+      <main className="pb-16">
         <Link href="/courses" className="inline-flex items-center gap-1 text-sm text-stone-500 hover:text-stone-900">
           <ArrowLeft className="h-4 w-4" /> All courses
         </Link>
@@ -176,9 +172,7 @@ export default function CoursePage({ params }: { params: Promise<{ code: string 
             {course.your_items.length > 0 && (
               <>
                 <h2 className="mb-3 mt-8 text-sm font-semibold uppercase tracking-wider text-stone-500">Your open items for this course</h2>
-                <div className="grid gap-3">
-                  {course.your_items.map((i) => <ItemCard key={i.id} item={i} onStatus={setItemStatus} />)}
-                </div>
+                <ItemList items={course.your_items} onStatus={setItemStatus} />
               </>
             )}
           </section>

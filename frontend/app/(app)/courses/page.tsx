@@ -3,7 +3,6 @@
 import { BookOpen, FileCheck2, Search } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { NavBar } from "@/components/NavBar";
 import { api, ApiError, type CourseSummary } from "@/lib/api";
 
 export default function CoursesPage() {
@@ -30,9 +29,8 @@ export default function CoursesPage() {
   }, [all, q]);
 
   return (
-    <div className="min-h-screen">
-      <NavBar active="courses" />
-      <main className="mx-auto max-w-6xl px-4 pb-24 pt-8 sm:px-6">
+    <div>
+      <main className="pb-16">
         <h1 className="text-2xl font-semibold tracking-tight">Courses</h1>
         <p className="mt-1 text-sm text-stone-500">
           Every CICS course with its sections, plus office hours, exam dates and grading shared from students&apos; syllabi.

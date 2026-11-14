@@ -1,0 +1,187 @@
+"use client";
+
+import { BookOpen, Briefcase, CalendarDays, House, Inbox, ListChecks, LogOut, Plus, RefreshCw, Search, Settings } from "lucide-react";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import { useStore } from "@/lib/store";
+import { relative } from "@/lib/time";
+import { ImportDialog } from "./ImportDialog";
+import { Logo } from "./Logo";
+import { SettingsDialog } from "./SettingsDialog";
+
+const NAV = [
+  { href: "/", label: "Home", icon: House },
+  { href: "/todo", label: "To do", icon: ListChecks },
+  { href: "/schedule", label: "Schedule", icon: CalendarDays },
+  { href: "/opportunities", label: "Opportunities", short: "Opps", icon: Briefcase },
+  { href: "/updates", label: "Updates", icon: Inbox },
+  { href: "/courses", label: "Courses", icon: BookOpen },
+];
+
+function isActive(path: string, href: string) {
+  return href === "/" ? path === "/" : path === href || path.startsWith(`${href}/`);
+}
+
+export function AppShell({ children }: { children: React.ReactNode }) {
+  const { me, items, syncing, refresh, notice, setNotice, signOut, reload, reloadMe } = useStore();
+  const path = usePathname();
+  const router = useRouter();
+  const [q, setQ] = useState("");
+  const [importing, setImporting] = useState(false);
+  const [settings, setSettings] = useState(false);
+  const search = useRef<HTMLInputElement>(null);
+
+  // "/" focuses search from anywhere
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "/" && !["INPUT", "TEXTAREA"].includes(document.activeElement?.tagName ?? "")) {
+        e.preventDefault();
+        search.current?.focus();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  // same set as the To do tabs: replies, plus things due from two days ago onward
+  const twoDaysAgo = Date.now() - 2 * 86_400_000;
+  const todoCount = items?.filter((i) => {
+    if (i.category === "reply_owed") return true;
+    if (!["deadline", "appointment"].includes(i.category)) return false;
+    const w = i.due_at ?? i.starts_at;
+    return !!w && new Date(w).getTime() >= twoDaysAgo;
+  }).length;
+
+  return (
+    <div className="min-h-screen lg:grid lg:grid-cols-[236px_1fr]">
+      {/* sidebar (desktop) */}
+      <aside className="sticky top-0 hidden h-screen flex-col border-r border-line bg-surface px-4 py-5 lg:flex">
+        <Link href="/" className="px-2"><Logo /></Link>
+        <nav className="mt-8 flex flex-col gap-0.5" aria-label="Main">
+          {NAV.map(({ href, label, icon: Icon }) => {
+            const on = isActive(path, href);
+            return (
+              <Link
+                key={href}
+                href={href}
+                aria-current={on ? "page" : undefined}
+                className={`relative flex items-center gap-3 rounded-lg px-3 py-2 text-[15px] ${
+                  on ? "bg-maroon-50 font-semibold text-maroon-700" : "text-ink-soft hover:bg-paper"
+                }`}
+              >
+                <Icon className="h-[18px] w-[18px]" strokeWidth={on ? 2.25 : 1.75} />
+                {label}
+                {href === "/todo" && !!todoCount && (
+                  <span className="ml-auto text-xs font-semibold tabular-nums text-ink-muted">{todoCount}</span>
+                )}
+              </Link>
+            );
+          })}
+        </nav>
+        <div className="mt-auto border-t border-line pt-4">
+          <p className="truncate px-3 text-sm font-semibold text-ink">{me.demo ? "Demo student" : me.name}</p>
+          <p className="truncate px-3 text-xs text-ink-muted">{me.demo ? "Sample UMass inbox" : me.email}</p>
+          <div className="mt-3 flex flex-col gap-0.5 text-sm">
+            <button onClick={() => setSettings(true)} className="flex items-center gap-3 rounded-lg px-3 py-1.5 text-ink-soft hover:bg-paper">
+              <Settings className="h-4 w-4" /> Settings and privacy
+            </button>
+            <button onClick={signOut} className="flex items-center gap-3 rounded-lg px-3 py-1.5 text-ink-soft hover:bg-paper">
+              <LogOut className="h-4 w-4" /> {me.demo ? "Leave the demo" : "Sign out"}
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      <div className="min-w-0 pb-24 lg:pb-0">
+        {/* top bar */}
+        <header className="sticky top-0 z-20 border-b border-line bg-paper/90 backdrop-blur">
+          <div className="mx-auto flex max-w-5xl items-center gap-2 px-4 py-2.5 sm:px-8">
+            <Link href="/" className="lg:hidden"><Logo withText={false} size={30} /></Link>
+            <form
+              className="relative flex-1"
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (q.trim()) router.push(`/search?q=${encodeURIComponent(q.trim())}`);
+              }}
+            >
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-faint" />
+              <input
+                ref={search}
+                value={q}
+                onChange={(e) => setQ(e.target.value)}
+                placeholder="Search deadlines, courses, people"
+                aria-label="Search"
+                className="w-full max-w-md rounded-lg border border-line bg-surface py-2 pl-9 pr-3 text-sm outline-none placeholder:text-ink-faint focus:border-maroon-600"
+              />
+            </form>
+            <button
+              onClick={() => setImporting(true)}
+              disabled={me.demo}
+              title={me.demo ? "Imports are off in the demo" : "Add a syllabus, schedule or screenshot"}
+              className="inline-flex items-center gap-1.5 rounded-lg bg-maroon-600 px-3 py-2 text-sm font-semibold text-white hover:bg-maroon-700 disabled:opacity-40"
+            >
+              <Plus className="h-4 w-4" strokeWidth={2.5} /> <span className="hidden sm:inline">Add</span>
+            </button>
+            <button
+              onClick={refresh}
+              disabled={syncing || me.demo}
+              title={me.last_sync_at ? `Checked email ${relative(me.last_sync_at)}` : "Check email now"}
+              aria-label="Check email now"
+              className="grid h-9 w-9 place-items-center rounded-lg border border-line bg-surface text-ink-soft hover:border-ink-faint disabled:opacity-50"
+            >
+              <RefreshCw className={`h-4 w-4 ${syncing ? "animate-spin" : ""}`} />
+            </button>
+            <button
+              onClick={() => setSettings(true)}
+              aria-label="Settings"
+              className="grid h-9 w-9 place-items-center rounded-full bg-ink text-sm font-semibold text-white lg:hidden"
+            >
+              {(me.name || me.email || "?").charAt(0).toUpperCase()}
+            </button>
+          </div>
+        </header>
+
+        <div className="mx-auto max-w-5xl px-4 pt-6 sm:px-8 sm:pt-8">
+          {me.needs_reconnect && (
+            <a href="/api/auth/login" className="mb-5 block rounded-xl border border-maroon-200 bg-maroon-50 px-4 py-3 text-sm text-maroon-800">
+              Google paused your Gmail connection (it does this every few days while the app is in testing).{" "}
+              <span className="font-semibold underline">Reconnect Gmail</span>
+            </a>
+          )}
+          {notice && (
+            <div role="status" className="mb-5 flex items-start justify-between gap-3 rounded-xl border border-line bg-surface px-4 py-3 text-sm text-ink-soft">
+              <span>{notice}</span>
+              <button onClick={() => setNotice(null)} className="font-semibold text-ink-muted hover:text-ink">Dismiss</button>
+            </div>
+          )}
+          <main>{children}</main>
+        </div>
+      </div>
+
+      {/* bottom tabs (phones) */}
+      <nav aria-label="Main" className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-6 border-t border-line bg-surface pb-[env(safe-area-inset-bottom)] lg:hidden">
+        {NAV.map(({ href, label, short, icon: Icon }) => {
+          const on = isActive(path, href);
+          return (
+            <Link key={href} href={href} aria-current={on ? "page" : undefined}
+              className={`flex flex-col items-center gap-0.5 py-2 text-[10.5px] ${on ? "font-semibold text-maroon-600" : "text-ink-muted"}`}>
+              <Icon className="h-5 w-5" strokeWidth={on ? 2.25 : 1.75} />
+              {short ?? label}
+            </Link>
+          );
+        })}
+      </nav>
+
+      {importing && <ImportDialog onClose={() => setImporting(false)} onImported={(m) => { setNotice(m); reload(); }} />}
+      {settings && (
+        <SettingsDialog
+          me={me}
+          onClose={() => setSettings(false)}
+          onChanged={(m) => { if (m) setNotice(m); reloadMe(); reload(); }}
+          onDeleted={signOut}
+        />
+      )}
+    </div>
+  );
+}
