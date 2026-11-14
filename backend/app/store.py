@@ -1,6 +1,8 @@
 from pymongo import UpdateOne
+from pymongo.errors import BulkWriteError
 
 from app.db import get_db
+from app.merge import find_duplicate
 from app.models import Item, now_utc
 
 
@@ -18,12 +20,30 @@ def doc_to_item(doc: dict) -> Item:
     return Item.model_validate(doc)
 
 
+async def open_items(user_id: str) -> list[Item]:
+    docs = await get_db().items.find({"user_id": user_id, "status": "open", "category": {"$ne": "noise"}}).to_list(2000)
+    return [doc_to_item(d) for d in docs]
+
+
 async def save_items(user_id: str, items: list[Item]) -> int:
-    """Upsert items, keeping the user's status (done/dismissed) on items we've seen before."""
+    """Upsert items, keeping the user's status (done/dismissed) on items we've seen before.
+
+    An item that duplicates an existing open item from another email/source is merged:
+    the higher-confidence version wins and keeps the existing item's id and status.
+    """
     if not items:
         return 0
+    existing = await open_items(user_id)
     ops = []
     for item in items:
+        dup = find_duplicate(item, existing)
+        if dup is not None:
+            if item.confidence > dup.confidence:
+                fields = item_to_doc(item)
+                for key in ("_id", "status", "created_at", "user_id"):
+                    fields.pop(key, None)
+                ops.append(UpdateOne({"_id": dup.id, "user_id": user_id}, {"$set": {**fields, "updated_at": now_utc()}}))
+            continue
         item.user_id = user_id
         doc = item_to_doc(item)
         status = doc.pop("status")
@@ -39,7 +59,13 @@ async def save_items(user_id: str, items: list[Item]) -> int:
                 upsert=True,
             )
         )
-    result = await get_db().items.bulk_write(ops, ordered=False)
+    if not ops:
+        return 0
+    try:
+        result = await get_db().items.bulk_write(ops, ordered=False)
+    except BulkWriteError as e:  # a merge collided with an existing key; the rest still applied
+        details = e.details
+        return details.get("nUpserted", 0) + details.get("nModified", 0)
     return result.upserted_count + result.modified_count
 
 
