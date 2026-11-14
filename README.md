@@ -164,6 +164,17 @@ Rules alone have precision 1.00 in every category except noise, but they only co
 - **Page watchers are polite.** They only read public pages allowed by robots.txt, twice a day, and only send a page to Gemini when it changed.
 - **One-click delete.** Settings → *Delete all my data* removes the user, tokens, sessions, items, processed ids and cached model output.
 
+## Sharing a live demo with ngrok
+
+The quickest way to put a running laptop copy online for judges:
+
+```bash
+cd frontend && npm run build && npm start      # production server on :3000 (dev mode doesn't work well behind a tunnel)
+ngrok http 3000                                # uses your account's free static *.ngrok-free.dev domain
+```
+
+Then in `backend/.env` set `OAUTH_REDIRECT_URI=https://<your-domain>/api/auth/callback`, `FRONTEND_URL=https://<your-domain>` and `COOKIE_SECURE=true`, restart the backend, and add that redirect URI to the Web OAuth client in Google Cloud. Everything goes through the frontend's `/api` proxy, so only port 3000 is exposed. Visitors see ngrok's one-time warning page first, and only test users can sign in with Google. Anyone can use **Load demo inbox**.
+
 ## Deploying
 
 **Backend on a VM (e.g. Vultr):** `docker build -t umass-radar-backend backend` and run it with your `.env`, or use `docker compose -f docker-compose.prod.yml up -d --build` to run backend and frontend together. Put Caddy or nginx with HTTPS in front, use MongoDB Atlas for `MONGODB_URI`, and set `COOKIE_SECURE=true`.
