@@ -75,9 +75,34 @@ async def sync_user(user_id: str, full: bool = False) -> dict:
             msg = f"Gmail returned an error ({e.resp.status}). Synced {done} emails so far."
         return {"status": "partial", "message": msg, "new_messages": done, "items": items_saved}
 
+    canvas = await sync_canvas(user_id)
+
     # Only move the history pointer after a complete pass, so nothing is skipped.
     await db.users.update_one(
         {"_id": user_id},
         {"$set": {"history_id": new_history, "last_sync_at": now_utc(), "needs_reconnect": False}},
     )
-    return {"status": "ok", "new_messages": done, "items": items_saved, "full_sync": was_full}
+    return {"status": "ok", "new_messages": done, "items": items_saved, "full_sync": was_full,
+            "canvas_items": canvas.get("items", 0)}
+
+
+async def sync_canvas(user_id: str) -> dict:
+    """Pull the user's Canvas calendar feed, if they've set one."""
+    from app.ical_import import FeedError, fetch_feed, parse_feed
+    from app.pipeline import finalize
+
+    user = await get_db().users.find_one({"_id": user_id})
+    blob = (user or {}).get("canvas_feed_enc")
+    url = decrypt_token(blob) if blob else None
+    if not url:
+        return {"status": "skipped", "items": 0}
+    try:
+        items = parse_feed(await fetch_feed(url))
+    except FeedError as e:
+        return {"status": "error", "message": str(e)}
+    except Exception as e:  # network errors, malformed ics
+        log.warning("canvas feed failed for %s: %s", user_id, e)
+        return {"status": "error", "message": "Couldn't read that Canvas feed."}
+    items = finalize(items, user_id)
+    await save_items(user_id, items)
+    return {"status": "ok", "items": len(items)}

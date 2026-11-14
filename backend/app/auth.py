@@ -140,7 +140,7 @@ async def me(user: dict = Depends(current_user)):
         "needs_reconnect": user.get("needs_reconnect", False),
         "gmail_granted": user.get("gmail_granted", False),
         "last_sync_at": user.get("last_sync_at"),
-        "canvas_feed_set": bool(user.get("canvas_feed_url")),
+        "canvas_feed_set": bool(user.get("canvas_feed_enc")),
     }
 
 
