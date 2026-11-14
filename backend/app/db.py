@@ -23,3 +23,6 @@ async def ensure_indexes() -> None:
     await db.processed_messages.create_index([("user_id", 1), ("message_id", 1)], unique=True)
     await db.llm_cache.create_index([("user_id", 1), ("message_id", 1)], unique=True)
     await db.office_hours.create_index([("user_id", 1), ("course", 1)])
+    await db.housing_posts.create_index([("status", 1), ("kind", 1), ("expires_at", 1)])
+    await db.housing_requests.create_index([("to_user", 1)])
+    await db.housing_requests.create_index([("from_user", 1)])
