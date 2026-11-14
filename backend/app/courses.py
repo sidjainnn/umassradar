@@ -64,7 +64,7 @@ def summary(course: dict) -> dict:
     }
 
 
-TERM_START = {"Spring": (1, 20), "Summer": (6, 1), "Fall": (9, 2)}
+TERM_START = {"Winter": (1, 2), "Spring": (1, 20), "Summer": (6, 1), "Fall": (9, 2)}
 
 
 def term_start(term: str | None):
@@ -72,11 +72,12 @@ def term_start(term: str | None):
     import re
     from datetime import date
 
-    m = re.search(r"(Spring|Summer|Fall)\s+(20\d\d)", term or "", re.I)
+    m = re.search(r"(Winter|Spring|Summer|Fall)\s+'?((?:20)?\d\d)\b", term or "", re.I)  # "Fall 2026", "Winter 26"
     if not m:
         return None
     month, day = TERM_START[m.group(1).title()]
-    return date(int(m.group(2)), month, day)
+    year = int(m.group(2))
+    return date(year + 2000 if year < 100 else year, month, day)
 
 
 async def add_syllabus_facts(code: str, office_hours: list[dict], items: list[Item], grading: str | None,

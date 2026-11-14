@@ -3,6 +3,7 @@
 import hashlib
 
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
+from pydantic import BaseModel, Field
 
 from app.calendar_client import busy_intervals, can_make
 from app.courses import add_syllabus_facts
@@ -13,6 +14,8 @@ from app.security import current_user
 from app.store import save_items
 from app.calendar_client import class_intervals
 from app.models import now_utc
+from llm.jobboard import JobPageError, check_source, read_job_page
+from llm.jobboard import to_items as job_items
 from llm.schedule import schedule_from_ics, schedule_from_image, snap_to_catalog
 from llm.screenshot import extract_screenshot, image_type, to_items
 from llm.syllabus import SyllabusError, extract_syllabus, pdf_text, to_records, upcoming_slots
@@ -141,3 +144,26 @@ async def import_screenshot(file: UploadFile = File(...), kind: str = "portal", 
     items = finalize(to_items(result, user["_id"], ref), user["_id"])
     await save_items(user["_id"], items)
     return {"items": len(items), "titles": [i.title for i in items]}
+
+
+class JobPagePayload(BaseModel):
+    url: str = Field(..., max_length=2000)
+    title: str = Field("", max_length=300)
+    text: str = Field(..., max_length=200_000)
+
+
+@router.post("/import/jobs-page")
+async def import_jobs_page(body: JobPagePayload, user: dict = Depends(current_user)):
+    """Job postings from the job board page the student sent with the "Send to UMass Radar" button."""
+    try:
+        text = check_source(body.url, body.text)
+    except JobPageError as e:
+        raise HTTPException(400, str(e))
+    require_gemini()
+    try:
+        result = await read_job_page(text, body.url)
+    except Exception:
+        raise HTTPException(502, "Couldn't read that page right now. Try again in a minute.")
+    items = finalize(job_items(result, user["_id"], body.url), user["_id"])
+    await save_items(user["_id"], items)
+    return {"items": len(items), "titles": [i.title for i in items][:50]}

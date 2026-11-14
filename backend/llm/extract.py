@@ -133,6 +133,9 @@ def normalize_course(course: str | None) -> str | None:
         return code
     if re.fullmatch(r"[A-Za-z&-]{2,10}", course.strip()):
         return None  # "COMPSCI" alone isn't a course
+    m = re.fullmatch(r"\s*([A-Za-z&-]{2,10})\s*(\d{3}[A-Za-z]{0,3})\s*", course)
+    if m:  # unknown department, but clearly a code: same uppercase format as the catalog ("English 112" -> "ENGLISH 112")
+        return f"{m.group(1).upper()} {m.group(2).upper()}"
     return course.strip()[:60]
 
 
