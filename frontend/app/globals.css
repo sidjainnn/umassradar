@@ -1,17 +1,48 @@
 @import "tailwindcss";
 
+/* UMass Amherst brand (umass.edu/brand, 2026): maroon #840028 and black #212721 lead;
+   neutrals from the brand grays; gold is a secondary accent used only for "due today". */
 @theme {
-  --color-maroon-50: #fbf3f3;
-  --color-maroon-100: #f5e1e1;
-  --color-maroon-200: #e9bdbd;
-  --color-maroon-500: #a83a3a;
-  --color-maroon-600: #881c1c;
-  --color-maroon-700: #6f1616;
-  --color-maroon-800: #561111;
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --color-maroon-50: #fbf1f4;
+  --color-maroon-100: #f6dde4;
+  --color-maroon-200: #ebb5c4;
+  --color-maroon-400: #b8476b;
+  --color-maroon-500: #9c1a43;
+  --color-maroon-600: #840028;
+  --color-maroon-700: #6a0020;
+  --color-maroon-800: #520019;
+
+  --color-ink: #212721;
+  --color-ink-soft: #373a36;
+  --color-ink-muted: #505759;
+  --color-ink-faint: #8a9295;
+  --color-line: #dfe2e3;
+  --color-line-soft: #eceeee;
+  --color-paper: #f4f5f5;
+  --color-surface: #ffffff;
+  --color-gold: #ffc72c;
+  --color-navy: #002554;
+  --color-teal: #00aec7;
+  --color-forest: #44693d;
+  --color-orange: #cb6015;
+
+  --font-sans: var(--font-open-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-lora), ui-serif, Georgia, serif;
 }
 
 body {
-  background: #f7f6f4;
-  color: #1c1917;
+  background: var(--color-paper);
+  color: var(--color-ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-maroon-600);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
