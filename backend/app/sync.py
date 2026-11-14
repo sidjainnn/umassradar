@@ -60,6 +60,9 @@ async def sync_user(user_id: str, full: bool = False) -> dict:
         pending: list[str] = []
 
         for start in range(0, len(todo), CHUNK):
+            if start:
+                # The LLM step can take a while; Gmail drops idle keep-alive connections, so reconnect per chunk.
+                service = await asyncio.to_thread(gc.build_service, refresh_token)
             raw = await asyncio.to_thread(gc.get_messages, service, todo[start: start + CHUNK])
             msgs = [parse_gmail_message(m) for m in raw]
             failed: list = []
@@ -75,6 +78,11 @@ async def sync_user(user_id: str, full: bool = False) -> dict:
         log.info("refresh token rejected for %s", user_id)
         await db.users.update_one({"_id": user_id}, {"$set": {"needs_reconnect": True}})
         return {"status": "reconnect", "message": "Your Gmail connection expired. Reconnect Gmail to keep syncing."}
+    except (OSError, TimeoutError) as e:  # broken pipe, connection reset, DNS hiccup
+        log.warning("network error for %s after %d messages: %s", user_id, done, e)
+        await db.users.update_one({"_id": user_id}, {"$set": {"last_sync_at": now_utc()}})
+        return {"status": "partial", "message": f"Lost the connection to Gmail. Synced {done} emails so far; Refresh to continue.",
+                "new_messages": done, "items": items_saved}
     except HttpError as e:
         log.warning("gmail error for %s after %d messages: %s", user_id, done, e)
         await db.users.update_one({"_id": user_id}, {"$set": {"last_sync_at": now_utc()}})
