@@ -13,6 +13,7 @@ from pydantic import BaseModel
 
 from app.config import get_settings
 from app.models import EASTERN, Item
+from llm.extract import generate_json
 
 log = logging.getLogger("radar.brief")
 
@@ -103,24 +104,12 @@ def cache_key(items: list[Item], now: datetime) -> str:
 
 
 async def gemini_brief(items: list[Item], now: datetime) -> Brief:
-    from google import genai
-    from google.genai import types
-
-    settings = get_settings()
-    client = genai.Client(api_key=settings.gemini_api_key)
     local = now.astimezone(EASTERN)
     prompt = (
         f"Current local time: {local:%A %B %d, %I:%M %p} ({part_of_day(now)}).\n"
         f"Items (most urgent first):\n{json.dumps(brief_input(items, now), indent=1)}"
     )
-    resp = await client.aio.models.generate_content(
-        model=settings.gemini_model,
-        contents=prompt,
-        config=types.GenerateContentConfig(
-            system_instruction=SYSTEM, response_mime_type="application/json", response_schema=Brief, temperature=0.3
-        ),
-    )
-    brief = resp.parsed if isinstance(resp.parsed, Brief) else Brief.model_validate_json(resp.text)
+    brief = await generate_json(prompt, SYSTEM, Brief, temperature=0.3)
     valid = {i.id for i in items}
     for s in brief.sentences:
         s.item_ids = [x for x in s.item_ids if x in valid]

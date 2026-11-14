@@ -17,7 +17,7 @@ from app.config import get_settings
 from app.db import get_db
 from app.gmail_client import gmail_link
 from app.models import EASTERN, EmailMsg, Item, now_utc
-from parsers.common import sender_type
+from parsers.common import find_course, sender_type
 
 log = logging.getLogger("radar.llm")
 
@@ -124,6 +124,18 @@ def _parse_local(value: str | None) -> datetime | None:
     return dt.replace(tzinfo=EASTERN) if dt.tzinfo is None else dt
 
 
+def normalize_course(course: str | None) -> str | None:
+    """Same course format as the rule parsers ("STATISTC315" -> "STAT 315"); drop bare department names."""
+    if not course or not course.strip():
+        return None
+    code = find_course(course)
+    if code:
+        return code
+    if re.fullmatch(r"[A-Za-z&-]{2,10}", course.strip()):
+        return None  # "COMPSCI" alone isn't a course
+    return course.strip()[:60]
+
+
 def to_item(raw: LLMItem, msg: EmailMsg) -> Item:
     source_text = _norm(f"{msg.subject} {msg.body}")
     evidence = raw.evidence.strip()[:300]
@@ -133,7 +145,7 @@ def to_item(raw: LLMItem, msg: EmailMsg) -> Item:
     return Item(
         category=raw.category,
         title=raw.title.strip()[:200] or clean_subject(msg.subject),
-        course=raw.course,
+        course=normalize_course(raw.course),
         due_at=_parse_local(raw.due_at),
         starts_at=_parse_local(raw.starts_at),
         location=raw.location,
@@ -160,7 +172,15 @@ last_model_used = ""
 
 
 async def call_gemini(prompt: str) -> LLMResult:
-    """One structured extraction call. Retries busy/rate-limited responses, then falls back to a lighter model."""
+    """One structured extraction call."""
+    return await generate_json(prompt, SYSTEM, LLMResult, temperature=0)
+
+
+async def generate_json(prompt: str, system: str, schema: type[BaseModel], temperature: float = 0):
+    """Structured Gemini call shared by extraction and the brief.
+
+    Retries busy/rate-limited responses; if the main model is overloaded, uses the fallback model for a while.
+    """
     global _client, _main_down_until, last_model_used
     from google import genai
     from google.genai import types
@@ -169,7 +189,8 @@ async def call_gemini(prompt: str) -> LLMResult:
     if _client is None:
         _client = genai.Client(api_key=settings.gemini_api_key)
     config = types.GenerateContentConfig(
-        system_instruction=SYSTEM, response_mime_type="application/json", response_schema=LLMResult, temperature=0
+        system_instruction=system, response_mime_type="application/json", response_schema=schema,
+        temperature=temperature,
     )
     main, fallback = settings.gemini_model, settings.gemini_fallback_model
     plan = [fallback, fallback] if time.monotonic() < _main_down_until else [main, fallback, fallback]
@@ -177,7 +198,7 @@ async def call_gemini(prompt: str) -> LLMResult:
         try:
             resp = await _client.aio.models.generate_content(model=model, contents=prompt, config=config)
             last_model_used = model
-            return resp.parsed if isinstance(resp.parsed, LLMResult) else LLMResult.model_validate_json(resp.text)
+            return resp.parsed if isinstance(resp.parsed, schema) else schema.model_validate_json(resp.text)
         except Exception as e:
             text = str(e)
             overloaded = any(code in text for code in ("503", "UNAVAILABLE", "500 INTERNAL"))

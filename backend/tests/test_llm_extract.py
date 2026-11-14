@@ -77,3 +77,12 @@ async def test_failed_batches_are_reported_for_retry():
     failed = []
     assert await extract_items(msgs, "u1", generate=boom, failed=failed) == []
     assert [m.id for m in failed] == [m.id for m in msgs]
+
+
+def test_llm_course_names_are_normalized():
+    from llm.extract import normalize_course
+    assert normalize_course("STATISTC 315") == "STAT 315"
+    assert normalize_course("CS220") == "COMPSCI 220"
+    assert normalize_course("COMPSCI") is None
+    assert normalize_course("Programming Methodology") == "Programming Methodology"
+    assert normalize_course("") is None
