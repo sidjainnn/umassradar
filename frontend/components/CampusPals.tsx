@@ -6,37 +6,37 @@ export function CampusPals() {
           <path
             className="pal-tail"
             d="M115 87c31-5 33-32 17-40-8-4-16 0-17 8 12-5 19 8 10 16-5 5-12 5-20 4"
-            fill="#AFA7E8"
-            stroke="#29255B"
+            fill="#FFADB9"
+            stroke="#542A34"
             strokeWidth="4"
             strokeLinecap="round"
           />
           <path
             d="M38 48 28 25l28 10M102 48l10-23-28 10"
-            fill="#AFA7E8"
-            stroke="#29255B"
+            fill="#FFADB9"
+            stroke="#542A34"
             strokeWidth="4"
             strokeLinejoin="round"
           />
           <path
             d="M34 58c0-22 16-36 36-36s36 14 36 36v21c0 21-17 34-36 34S34 100 34 79Z"
-            fill="#C9C2F3"
-            stroke="#29255B"
+            fill="#FFD6DD"
+            stroke="#542A34"
             strokeWidth="4"
           />
           <path
             d="M39 57c11-12 50-12 62 0-4 20-15 27-31 27S43 77 39 57Z"
-            fill="#6E64A8"
+            fill="#8D4050"
           />
           <ellipse cx="52" cy="61" rx="7" ry="9" fill="#fff" />
           <ellipse cx="88" cy="61" rx="7" ry="9" fill="#fff" />
-          <circle cx="54" cy="63" r="3.5" fill="#29255B" />
-          <circle cx="86" cy="63" r="3.5" fill="#29255B" />
-          <path d="M64 75h12l-6 7Z" fill="#29255B" />
+          <circle cx="54" cy="63" r="3.5" fill="#542A34" />
+          <circle cx="86" cy="63" r="3.5" fill="#542A34" />
+          <path d="M64 75h12l-6 7Z" fill="#542A34" />
           <path
             d="M62 88c5 5 11 5 16 0"
             fill="none"
-            stroke="#29255B"
+            stroke="#542A34"
             strokeWidth="3"
             strokeLinecap="round"
           />
@@ -44,7 +44,7 @@ export function CampusPals() {
           <circle cx="95" cy="79" r="5" fill="#F4A6B9" opacity=".7" />
           <path
             d="M48 105v10M92 105v10"
-            stroke="#29255B"
+            stroke="#542A34"
             strokeWidth="4"
             strokeLinecap="round"
           />

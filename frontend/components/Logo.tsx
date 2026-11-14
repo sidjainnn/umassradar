@@ -22,8 +22,8 @@ export function Logo({
             x2="38"
             y2="38"
           >
-            <stop stopColor="#7668F4" />
-            <stop offset="1" stopColor="#4F43C7" />
+            <stop stopColor="#FF6579" />
+            <stop offset="1" stopColor="#D92D4A" />
           </linearGradient>
         </defs>
         <rect width="40" height="40" rx="12" fill="url(#radar-logo-gradient)" />
@@ -36,7 +36,7 @@ export function Logo({
           strokeLinecap="round"
         />
         <circle cx="20" cy="20" r="2.5" fill="white" />
-        <circle cx="26" cy="26" r="2" fill="#8FE3C2" />
+        <circle cx="26" cy="26" r="2" fill="#FFDDE4" />
       </svg>
       {withText && (
         <span>
