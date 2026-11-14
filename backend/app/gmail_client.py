@@ -3,7 +3,9 @@
 import time
 from datetime import datetime, timezone
 
+import httplib2
 from google.auth.exceptions import RefreshError
+from google_auth_httplib2 import AuthorizedHttp
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
@@ -28,7 +30,9 @@ def build_service(refresh_token: str):
         client_secret=s.google_client_secret,
         scopes=[GMAIL_SCOPE],
     )
-    return build("gmail", "v1", credentials=creds, cache_discovery=False)
+    # httplib2 has no timeout by default, so a dropped connection can hang a sync forever
+    http = AuthorizedHttp(creds, http=httplib2.Http(timeout=30))
+    return build("gmail", "v1", http=http, cache_discovery=False)
 
 
 def _call(request):
