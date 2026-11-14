@@ -8,6 +8,7 @@ from app.db import get_db
 from app.models import now_utc
 from app.ranking import urgency
 from app.security import current_user
+from app.routes.brief import schedule_refresh
 from app.store import doc_to_item
 
 router = APIRouter()
@@ -65,4 +66,5 @@ async def update_item(item_id: str, body: StatusUpdate, user: dict = Depends(cur
     )
     if not result.matched_count:
         raise HTTPException(404, "item not found")
+    schedule_refresh(user["_id"])  # the brief shouldn't mention things you just finished
     return {"ok": True}

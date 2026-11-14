@@ -20,6 +20,7 @@ class Settings(BaseSettings):
     gemini_api_key: str = ""
     gemini_model: str = "gemini-3.8-flash"
     gemini_fallback_model: str = "gemini-3.5-flash-lite"
+    gemini_brief_model: str = "gemini-3.5-flash-lite"  # the brief is a short summary: speed matters more
 
     initial_sync_days: int = 14
     max_initial_messages: int = 300

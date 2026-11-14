@@ -41,7 +41,15 @@ export type Me = {
   last_sync_at: string | null;
   canvas_feed_set: boolean;
   calendar_connected?: boolean;
+  profile: { preferred_name: string; major: string; class_year: number | null };
+  followed_groups: string[];
+  has_schedule: boolean;
+  member_since: string | null;
 };
+
+export function displayName(me: Me): string {
+  return me.profile?.preferred_name || me.name.split(" ")[0] || "";
+}
 
 export class ApiError extends Error {
   constructor(public status: number, message: string) {
@@ -112,6 +120,7 @@ export type Section = {
   instructor: string | null;
   conflicts_with: string[];
   chosen: boolean;
+  yours?: boolean;
 };
 
 export type CourseProfile = CourseSummary & {
@@ -127,6 +136,9 @@ export type CourseProfile = CourseSummary & {
     grading: string | null;
     late_policy: string | null;
     updated_at: string | null;
+    term?: string | null;
+    source_url?: string | null;
+    source?: "student" | "public" | null;
   };
   your_items: Item[];
 };

@@ -6,6 +6,8 @@ from urllib.parse import urlencode
 
 from fastapi import APIRouter, Cookie, Depends, HTTPException, Request, Response
 from fastapi.responses import RedirectResponse
+from pydantic import BaseModel, Field
+from pymongo import ReturnDocument
 from google.auth.transport import requests as google_requests
 from google.oauth2 import id_token
 from google_auth_oauthlib.flow import Flow
@@ -27,6 +29,7 @@ log = logging.getLogger("radar.auth")
 router = APIRouter()
 
 STATE_COOKIE = "radar_oauth_state"
+KNOWN_COOKIE = "radar_known"  # set after a successful sign-in, so later sign-ins skip the consent screen
 
 # Google may add scopes the user granted earlier; don't fail on that.
 os.environ.setdefault("OAUTHLIB_RELAX_TOKEN_SCOPE", "1")
@@ -60,8 +63,9 @@ def _frontend(path: str = "/", **params) -> str:
 
 
 @router.get("/auth/login")
-async def login(calendar: bool = False):
-    """Gmail sign-in. With ?calendar=1 it also asks for read-only Calendar (added on top of existing access)."""
+async def login(calendar: bool = False, consent: bool = False, radar_known: str | None = Cookie(default=None)):
+    """Google sign-in. Returning users just pick their account; Google only shows the consent screen the first
+    time, when access needs renewing (?consent=1), or when adding Calendar (?calendar=1)."""
     if not get_settings().google_configured:
         raise HTTPException(503, "Google sign-in isn't configured: set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET.")
     if os.environ.get("OAUTHLIB_INSECURE_TRANSPORT") is None and get_settings().oauth_redirect_uri.startswith("http://"):
@@ -69,7 +73,8 @@ async def login(calendar: bool = False):
     state = secrets.token_urlsafe(24)
     scopes = SCOPES + [CALENDAR_SCOPE] if calendar else SCOPES
     flow = _flow(state=state, scopes=scopes)
-    url, _ = flow.authorization_url(access_type="offline", prompt="consent", include_granted_scopes="true")
+    prompt = "consent" if (consent or calendar or not radar_known) else "select_account"
+    url, _ = flow.authorization_url(access_type="offline", prompt=prompt, include_granted_scopes="true")
     await get_db().oauth_states.insert_one(
         {"_id": state, "code_verifier": flow.code_verifier, "scopes": scopes, "created_at": now_utc()}
     )
@@ -111,18 +116,24 @@ async def callback(request: Request, radar_oauth_state: str | None = Cookie(defa
         "email": info.get("email", ""),
         "name": info.get("name", ""),
         "gmail_granted": "https://www.googleapis.com/auth/gmail.readonly" in granted,
-        "calendar_granted": CALENDAR_SCOPE in granted,
-        "needs_reconnect": False,
         "updated_at": now_utc(),
     }
+    if CALENDAR_SCOPE in granted:  # never switch Calendar off just because this sign-in didn't ask for it
+        update["calendar_granted"] = True
     if creds.refresh_token:
         update["refresh_token_enc"] = encrypt_token(creds.refresh_token)
-    await get_db().users.update_one(
-        {"_id": user_id}, {"$set": update, "$setOnInsert": {"created_at": now_utc(), "demo": False}}, upsert=True
+        update["needs_reconnect"] = False
+    user = await get_db().users.find_one_and_update(
+        {"_id": user_id}, {"$set": update, "$setOnInsert": {"created_at": now_utc(), "demo": False}},
+        upsert=True, return_document=ReturnDocument.AFTER,
     )
+    if not user.get("refresh_token_enc") or (user.get("needs_reconnect") and not creds.refresh_token):
+        # no usable Gmail token (first time, or the old one expired): only the consent screen issues a new one
+        return RedirectResponse(_frontend("/api/auth/login", consent="1"))
 
     response = RedirectResponse(_frontend("/", connected="1"))
     response.delete_cookie(STATE_COOKIE, path="/")
+    set_cookie(response, KNOWN_COOKIE, "1", 365 * 86400)
     await create_session(response, user_id)
     return response
 
@@ -145,7 +156,28 @@ async def me(user: dict = Depends(current_user)):
         "calendar_connected": user.get("calendar_granted", False),
         "last_sync_at": user.get("last_sync_at"),
         "canvas_feed_set": bool(user.get("canvas_feed_enc")),
+        "profile": {
+            "preferred_name": (user.get("profile") or {}).get("preferred_name", ""),
+            "major": (user.get("profile") or {}).get("major", ""),
+            "class_year": (user.get("profile") or {}).get("class_year"),
+        },
+        "followed_groups": user.get("followed_groups", []),
+        "has_schedule": bool(user.get("schedule")),
+        "member_since": user.get("created_at"),
     }
+
+
+class ProfileUpdate(BaseModel):
+    preferred_name: str = Field("", max_length=40)
+    major: str = Field("", max_length=80)
+    class_year: int | None = Field(None, ge=2020, le=2035)
+
+
+@router.patch("/me/profile")
+async def update_profile(body: ProfileUpdate, user: dict = Depends(current_user)):
+    profile = {"preferred_name": body.preferred_name.strip(), "major": body.major.strip(), "class_year": body.class_year}
+    await get_db().users.update_one({"_id": user["_id"]}, {"$set": {"profile": profile}})
+    return {"ok": True, "profile": profile}
 
 
 __all__ = ["router", "SESSION_COOKIE"]

@@ -176,7 +176,7 @@ async def call_gemini(prompt: str) -> LLMResult:
     return await generate_json(prompt, SYSTEM, LLMResult, temperature=0)
 
 
-async def generate_json(prompt, system: str, schema: type[BaseModel], temperature: float = 0):
+async def generate_json(prompt, system: str, schema: type[BaseModel], temperature: float = 0, model: str | None = None):
     """Structured Gemini call shared by extraction and the brief.
 
     `prompt` is text, or a list of parts (text + image) for vision. Retries busy/rate-limited responses;
@@ -188,13 +188,19 @@ async def generate_json(prompt, system: str, schema: type[BaseModel], temperatur
 
     settings = get_settings()
     if _client is None:
-        _client = genai.Client(api_key=settings.gemini_api_key)
+        # without a timeout one stuck request can hang a sync or an upload forever
+        _client = genai.Client(api_key=settings.gemini_api_key, http_options=types.HttpOptions(timeout=45_000))
     config = types.GenerateContentConfig(
         system_instruction=system, response_mime_type="application/json", response_schema=schema,
         temperature=temperature,
     )
     main, fallback = settings.gemini_model, settings.gemini_fallback_model
-    plan = [fallback, fallback] if time.monotonic() < _main_down_until else [main, fallback, fallback]
+    if model:  # caller picked a model (e.g. the brief uses the fast one); fall back if it's overloaded
+        plan = [model, fallback] if model != fallback else [model, model]
+    elif time.monotonic() < _main_down_until:
+        plan = [fallback, fallback]
+    else:
+        plan = [main, fallback, fallback]
     for attempt, model in enumerate(plan):
         try:
             resp = await _client.aio.models.generate_content(model=model, contents=prompt, config=config)
@@ -202,7 +208,7 @@ async def generate_json(prompt, system: str, schema: type[BaseModel], temperatur
             return resp.parsed if isinstance(resp.parsed, schema) else schema.model_validate_json(resp.text)
         except Exception as e:
             text = str(e)
-            overloaded = any(code in text for code in ("503", "UNAVAILABLE", "500 INTERNAL"))
+            overloaded = any(code in text for code in ("503", "UNAVAILABLE", "500 INTERNAL")) or "timeout" in type(e).__name__.lower() or "timed out" in text.lower()
             rate_limited = any(code in text for code in ("429", "RESOURCE_EXHAUSTED"))
             if not (overloaded or rate_limited) or attempt == len(plan) - 1:
                 raise

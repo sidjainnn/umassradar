@@ -8,6 +8,7 @@ from apscheduler.triggers.cron import CronTrigger
 from app.db import get_db
 from app.models import EASTERN
 from app.sync import sync_user
+from app.campus_events import refresh_and_share
 from app.watchers import run_watchers
 
 log = logging.getLogger("radar.scheduler")
@@ -30,6 +31,8 @@ def start_scheduler() -> AsyncIOScheduler:
     scheduler.add_job(sync_everyone, CronTrigger(hour="7-23", minute="0,30", timezone=EASTERN), id="daytime",
                       max_instances=1, coalesce=True)
     scheduler.add_job(run_watchers, CronTrigger(hour="7,15", minute=5, timezone=EASTERN), id="watchers",
+                      max_instances=1, coalesce=True)
+    scheduler.add_job(refresh_and_share, CronTrigger(hour="6,12,18", minute=15, timezone=EASTERN), id="campus_events",
                       max_instances=1, coalesce=True)
     scheduler.start()
     return scheduler

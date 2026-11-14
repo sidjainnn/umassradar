@@ -1,6 +1,8 @@
 """Demo mode: a realistic fake UMass inbox run through the real pipeline, no Google login."""
 
+import json
 import secrets
+from pathlib import Path
 from datetime import timedelta
 
 from fastapi import APIRouter, Response
@@ -23,9 +25,11 @@ async def load_demo(response: Response):
         await delete_user_data(old["_id"])
 
     user_id = f"demo-{secrets.token_hex(6)}"
+    schedule = json.loads((Path(__file__).parents[2] / "demo" / "schedule.json").read_text())
     await db.users.insert_one(
         {"_id": user_id, "demo": True, "name": "Demo Student", "email": "demo@umass.edu",
-         "created_at": now_utc(), "last_sync_at": now_utc()}
+         "created_at": now_utc(), "last_sync_at": now_utc(),
+         "schedule": {**schedule, "uploaded_at": now_utc()}}
     )
     items = await process_emails(load_demo_emails(), user_id, cache_user="demo-shared")
     for item in items:

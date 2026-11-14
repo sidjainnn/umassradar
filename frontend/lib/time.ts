@@ -58,3 +58,28 @@ export function greeting(now: Date = new Date()): string {
 export function longDate(now: Date = new Date()): string {
   return new Intl.DateTimeFormat("en-US", { timeZone: TZ, weekday: "long", month: "long", day: "numeric" }).format(now);
 }
+
+/** Minutes Eastern time is behind UTC at that instant (300 in winter, 240 in summer). */
+function easternOffsetMinutes(at: Date): number {
+  const name = new Intl.DateTimeFormat("en-US", { timeZone: TZ, timeZoneName: "shortOffset" })
+    .formatToParts(at)
+    .find((p) => p.type === "timeZoneName")?.value ?? "GMT-5";
+  const m = name.match(/GMT([+-])(\d{1,2})(?::(\d{2}))?/);
+  if (!m) return 300;
+  const mins = Number(m[2]) * 60 + Number(m[3] ?? 0);
+  return m[1] === "-" ? mins : -mins;
+}
+
+/** The instant for "HH:MM" Eastern on the Eastern calendar day `day` ("YYYY-MM-DD"). */
+export function easternTime(day: string, hhmm: string): Date {
+  const [y, mo, d] = day.split("-").map(Number);
+  const [h, mi] = hhmm.split(":").map(Number);
+  const guess = new Date(Date.UTC(y, mo - 1, d, h, mi));
+  return new Date(guess.getTime() + easternOffsetMinutes(guess) * 60_000);
+}
+
+/** 0 = Monday … 6 = Sunday, in Eastern time. */
+export function easternWeekday(at: Date = new Date()): number {
+  const day = new Intl.DateTimeFormat("en-US", { timeZone: TZ, weekday: "short" }).format(at);
+  return ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].indexOf(day);
+}

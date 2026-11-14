@@ -1,49 +1,17 @@
-export function Logo({
-  size = 36,
-  withText = true,
-}: {
-  size?: number;
-  withText?: boolean;
-}) {
+export function Logo({ size = 32, withText = true }: { size?: number; withText?: boolean }) {
   return (
-    <div className="radar-logo">
-      <svg
-        width={size}
-        height={size}
-        viewBox="0 0 40 40"
-        fill="none"
-        aria-hidden="true"
-      >
-        <defs>
-          <linearGradient
-            id="radar-logo-gradient"
-            x1="4"
-            y1="3"
-            x2="38"
-            y2="38"
-          >
-            <stop stopColor="#840028" />
-            <stop offset="1" stopColor="#5E001C" />
-          </linearGradient>
-        </defs>
-        <rect width="40" height="40" rx="12" fill="url(#radar-logo-gradient)" />
-        <circle cx="20" cy="20" r="12" stroke="white" strokeOpacity=".35" />
-        <circle cx="20" cy="20" r="7" stroke="white" strokeOpacity=".55" />
-        <path
-          d="M20 20 29 11"
-          stroke="white"
-          strokeWidth="2"
-          strokeLinecap="round"
-        />
-        <circle cx="20" cy="20" r="2.5" fill="white" />
-        <circle cx="26" cy="26" r="2" fill="#FFC72C" />
+    <div className="flex items-center gap-2">
+      <svg className="drop-shadow-[0_5px_12px_rgba(132,0,40,0.18)]" width={size} height={size} viewBox="0 0 64 64" aria-hidden>
+        <rect width="64" height="64" rx="18" fill="#840028" />
+        <circle cx="32" cy="32" r="18" fill="none" stroke="#fff" strokeOpacity=".35" strokeWidth="3" />
+        <circle cx="32" cy="32" r="9" fill="none" stroke="#fff" strokeOpacity=".6" strokeWidth="3" />
+        <path d="M32 32 L46 18" stroke="#fff" strokeWidth="4" strokeLinecap="round" />
+        <circle cx="32" cy="32" r="4" fill="#fff" />
+        <circle cx="43" cy="40" r="3" fill="#fff" />
       </svg>
       {withText && (
-        <span>
-          <strong>
-            UMass Radar<span className="brand-dot">.</span>
-          </strong>
-          <small>A little clarity for your day</small>
+        <span className="hidden text-[17px] font-semibold tracking-tight text-ink sm:inline">
+          UMass <span className="text-maroon-600">Radar</span>
         </span>
       )}
     </div>

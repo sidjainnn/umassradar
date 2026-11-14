@@ -1,12 +1,11 @@
 import type { Metadata, Viewport } from "next";
-import { Open_Sans } from "next/font/google";
+import { Lora, Open_Sans } from "next/font/google";
 import { RegisterSW } from "@/components/RegisterSW";
 import "./globals.css";
 
-const bodyFont = Open_Sans({
-  subsets: ["latin"],
-  variable: "--font-body",
-});
+// UMass Amherst's approved digital fonts
+const openSans = Open_Sans({ subsets: ["latin"], variable: "--font-open-sans" });
+const lora = Lora({ subsets: ["latin"], variable: "--font-lora" });
 
 export const metadata: Metadata = {
   title: "UMass Radar",
@@ -21,14 +20,10 @@ export const viewport: Viewport = {
   themeColor: "#840028",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body
-        className={`${bodyFont.variable} antialiased`}
-      >
+      <body className={`${openSans.variable} ${lora.variable} font-sans antialiased`}>
         {children}
         <RegisterSW />
       </body>
