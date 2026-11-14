@@ -156,6 +156,7 @@ _client = None
 
 
 async def call_gemini(prompt: str) -> LLMResult:
+    """One structured extraction call. Retries busy/rate-limited responses, then falls back to a lighter model."""
     global _client
     from google import genai
     from google.genai import types
@@ -163,27 +164,24 @@ async def call_gemini(prompt: str) -> LLMResult:
     settings = get_settings()
     if _client is None:
         _client = genai.Client(api_key=settings.gemini_api_key)
-    for attempt in range(5):
+    config = types.GenerateContentConfig(
+        system_instruction=SYSTEM, response_mime_type="application/json", response_schema=LLMResult, temperature=0
+    )
+    # two tries on the main model, then the fallback; overloads (503) switch fast, rate limits (429) wait longer
+    plan = [settings.gemini_model, settings.gemini_model, settings.gemini_fallback_model, settings.gemini_fallback_model]
+    for attempt, model in enumerate(plan):
         try:
-            resp = await _client.aio.models.generate_content(
-                model=settings.gemini_model,
-                contents=prompt,
-                config=types.GenerateContentConfig(
-                    system_instruction=SYSTEM,
-                    response_mime_type="application/json",
-                    response_schema=LLMResult,
-                    temperature=0,
-                ),
-            )
+            resp = await _client.aio.models.generate_content(model=model, contents=prompt, config=config)
             return resp.parsed if isinstance(resp.parsed, LLMResult) else LLMResult.model_validate_json(resp.text)
-        except Exception as e:  # rate limits come back as 429 ClientError
+        except Exception as e:
             text = str(e)
-            if any(code in text for code in ("429", "RESOURCE_EXHAUSTED", "503", "UNAVAILABLE", "500 INTERNAL")):
-                wait = 10 * (attempt + 1)
-                log.info("Gemini busy or rate limited, retrying in %ss", wait)
-                await asyncio.sleep(wait)
-                continue
-            raise
+            overloaded = any(code in text for code in ("503", "UNAVAILABLE", "500 INTERNAL"))
+            rate_limited = any(code in text for code in ("429", "RESOURCE_EXHAUSTED"))
+            if not (overloaded or rate_limited) or attempt == len(plan) - 1:
+                raise
+            wait = 3 if overloaded else 15 * (attempt + 1)
+            log.info("Gemini %s on %s, retrying in %ss", "busy" if overloaded else "rate limited", model, wait)
+            await asyncio.sleep(wait)
     raise RuntimeError("Gemini unavailable: gave up after retries")
 
 
