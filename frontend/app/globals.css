@@ -25,7 +25,10 @@
   --color-teal: #00aec7;
   --color-forest: #44693d;
   --color-orange: #cb6015;
+}
 
+/* inline: the next/font variables live on <body>, so reference them where they're used, not at :root */
+@theme inline {
   --font-sans: var(--font-open-sans), ui-sans-serif, system-ui, sans-serif;
   --font-serif: var(--font-lora), ui-serif, Georgia, serif;
 }

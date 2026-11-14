@@ -10,7 +10,7 @@ export function Logo({ size = 32, withText = true }: { size?: number; withText?:
         <circle cx="43" cy="40" r="3" fill="#fff" />
       </svg>
       {withText && (
-        <span className="hidden text-[17px] font-semibold tracking-tight text-stone-900 sm:inline">
+        <span className="hidden text-[17px] font-semibold tracking-tight text-ink sm:inline">
           UMass <span className="text-maroon-600">Radar</span>
         </span>
       )}
