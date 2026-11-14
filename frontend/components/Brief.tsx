@@ -1,7 +1,6 @@
 "use client";
 
-import { Sparkles } from "lucide-react";
-import { greeting, longDate } from "@/lib/time";
+import { ArrowUpRight, Radio } from "lucide-react";
 
 export type BriefData = {
   sentences: { text: string; item_ids: string[] }[];
@@ -9,54 +8,72 @@ export type BriefData = {
   generated_at: string;
 };
 
-type Props = {
-  name: string;
+export function Brief({
+  brief,
+  loading,
+  onJump,
+}: {
   brief: BriefData | null;
+  loading: boolean;
   onJump: (id: string) => void;
-};
-
-export function Brief({ name, brief, onJump }: Props) {
-  const first = name.split(" ")[0];
+}) {
   return (
-    <section className="relative overflow-hidden rounded-2xl bg-maroon-600 p-6 text-white shadow-lg sm:p-7">
-      <div className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full border-[28px] border-white/5" />
-      <div className="pointer-events-none absolute -right-4 -top-4 h-28 w-28 rounded-full border-[14px] border-white/5" />
-      <p className="text-sm font-medium text-maroon-100">{longDate()}</p>
-      <h1 className="mt-1 text-2xl font-semibold tracking-tight sm:text-3xl">
-        {greeting()}
-        {first ? `, ${first}` : ""}.
-      </h1>
-      {brief ? (
-        <ul className="mt-4 space-y-2 text-[15px] leading-relaxed text-maroon-50">
-          {brief.sentences.map((s, i) => (
-            <li key={i} className="flex gap-2">
-              <span className="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-white/60" />
-              <span>
-                {s.text}
-                {s.item_ids.map((id, n) => (
+    <section
+      className="daily-brief"
+      aria-labelledby="brief-title"
+      aria-busy={loading}
+    >
+      <div className="brief-copy">
+        <div className="eyebrow">
+          <Radio size={14} aria-hidden="true" />
+          <h2 id="brief-title">Your daily brief</h2>
+          <span className="brief-tag">THE BIG PICTURE</span>
+        </div>
+        {loading ? (
+          <div className="brief-skeleton" role="status">
+            <span className="sr-only">Preparing your daily brief</span>
+            <i />
+            <i />
+            <i />
+          </div>
+        ) : brief ? (
+          <ul className="brief-lines">
+            {brief.sentences.map((sentence, index) => (
+              <li key={index}>
+                <span>{sentence.text}</span>
+                {sentence.item_ids.map((id, n) => (
                   <button
                     key={id}
                     onClick={() => onJump(id)}
-                    className="ml-1.5 rounded-md bg-white/15 px-1.5 py-0.5 align-middle text-xs font-medium hover:bg-white/25"
+                    aria-label={`View item ${n + 1} for: ${sentence.text}`}
+                    title="View item"
                   >
-                    view{s.item_ids.length > 1 ? ` ${n + 1}` : ""}
+                    <ArrowUpRight size={14} />
+                    <span className="sr-only">View item</span>
                   </button>
                 ))}
-              </span>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <div className="mt-4 space-y-2">
-          <div className="h-4 w-4/5 animate-pulse rounded bg-white/15" />
-          <div className="h-4 w-3/5 animate-pulse rounded bg-white/15" />
-        </div>
-      )}
-      {brief?.generated_by === "llm" && (
-        <p className="mt-4 inline-flex items-center gap-1 text-xs text-maroon-100/80">
-          <Sparkles className="h-3 w-3" /> Written from your items only, never from raw email.
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="brief-unavailable">
+            Your brief couldn’t load. Your items are still listed below.
+          </p>
+        )}
+        <p className="brief-footnote">
+          A little less inbox. A little more headspace.
         </p>
-      )}
+      </div>
+      <div className="radar-art" aria-hidden="true">
+        <div className="radar-ring ring-one" />
+        <div className="radar-ring ring-two" />
+        <div className="radar-ring ring-three" />
+        <div className="radar-sweep" />
+        <span className="radar-point point-one" />
+        <span className="radar-point point-two" />
+        <span className="radar-center" />
+        <span className="radar-caption">ON YOUR RADAR</span>
+      </div>
     </section>
   );
 }

@@ -1,15 +1,34 @@
 import type { Category, Item } from "./api";
 import { daysBetween } from "./time";
 
-export type SectionId = "next" | "today" | "week" | "opportunities" | "waiting" | "courses" | "later";
+export type SectionId =
+  | "next"
+  | "today"
+  | "week"
+  | "opportunities"
+  | "waiting"
+  | "courses"
+  | "later";
 
 export const SECTIONS: { id: SectionId; title: string; hint: string }[] = [
   { id: "next", title: "Coming up next", hint: "Next 3 hours" },
   { id: "today", title: "Today", hint: "Due or happening today" },
   { id: "week", title: "This week", hint: "Next 7 days" },
-  { id: "opportunities", title: "Opportunities", hint: "Jobs, research, RA/PM, clubs" },
-  { id: "waiting", title: "Waiting on", hint: "Replies you owe and applications in limbo" },
-  { id: "courses", title: "Course updates", hint: "Announcements, grades, submissions" },
+  {
+    id: "opportunities",
+    title: "Opportunities",
+    hint: "Jobs, research, RA/PM, clubs",
+  },
+  {
+    id: "waiting",
+    title: "Waiting on",
+    hint: "Replies you owe and applications in limbo",
+  },
+  {
+    id: "courses",
+    title: "Course updates",
+    hint: "Announcements, grades, submissions",
+  },
   { id: "later", title: "Later", hint: "More than a week out" },
 ];
 
@@ -26,12 +45,20 @@ export function isOverdue(item: Item, now: Date = new Date()): boolean {
 }
 
 function isStaleApplication(item: Item, now: Date): boolean {
-  if (item.category !== "status_update" || !/appl/i.test(item.title) || !item.received_at) return false;
+  if (
+    item.category !== "status_update" ||
+    !/appl/i.test(item.title) ||
+    !item.received_at
+  )
+    return false;
   return daysBetween(new Date(item.received_at), now) >= 14;
 }
 
 /** Each item lands in exactly one section. */
-export function sectionFor(item: Item, now: Date = new Date()): SectionId | null {
+export function sectionFor(
+  item: Item,
+  now: Date = new Date(),
+): SectionId | null {
   if (item.category === "noise") return null;
   const when = whenOf(item);
   if (item.category === "reply_owed" && !when) return "waiting";
@@ -41,9 +68,8 @@ export function sectionFor(item: Item, now: Date = new Date()): SectionId | null
     const hoursAway = (when.getTime() - now.getTime()) / 3_600_000;
     const dayDiff = daysBetween(now, when);
     if (hoursAway < -0.5) {
-      // in the past: an overdue deadline from the last two days still needs attention, the rest is history
       if (item.category === "reply_owed") return "waiting";
-      return item.category === "deadline" && hoursAway > -48 ? "today" : null;
+      return item.category === "deadline" ? "today" : null;
     }
     if (hoursAway <= 3) return "next";
     if (dayDiff <= 0) return "today";
@@ -54,16 +80,25 @@ export function sectionFor(item: Item, now: Date = new Date()): SectionId | null
   return "courses";
 }
 
-export function groupItems(items: Item[], now: Date = new Date()): Record<SectionId, Item[]> {
-  const groups = Object.fromEntries(SECTIONS.map((s) => [s.id, [] as Item[]])) as Record<SectionId, Item[]>;
+export function groupItems(
+  items: Item[],
+  now: Date = new Date(),
+): Record<SectionId, Item[]> {
+  const groups = Object.fromEntries(
+    SECTIONS.map((s) => [s.id, [] as Item[]]),
+  ) as Record<SectionId, Item[]>;
   for (const item of items) {
     const id = sectionFor(item, now);
     if (id) groups[id].push(item);
   }
-  const byWhen = (a: Item, b: Item) => (whenOf(a)?.getTime() ?? Infinity) - (whenOf(b)?.getTime() ?? Infinity);
-  for (const id of ["next", "today", "week", "later"] as SectionId[]) groups[id].sort(byWhen);
+  const byWhen = (a: Item, b: Item) =>
+    (whenOf(a)?.getTime() ?? Infinity) - (whenOf(b)?.getTime() ?? Infinity);
+  for (const id of ["next", "today", "week", "later"] as SectionId[])
+    groups[id].sort(byWhen);
   groups.opportunities.sort((a, b) => b.urgency_score - a.urgency_score);
-  groups.courses.sort((a, b) => (b.received_at ?? "").localeCompare(a.received_at ?? ""));
+  groups.courses.sort((a, b) =>
+    (b.received_at ?? "").localeCompare(a.received_at ?? ""),
+  );
   return groups;
 }
 
@@ -91,7 +126,15 @@ export const CATEGORY_STYLE: Record<Category, string> = {
 
 export function matchesSearch(item: Item, q: string): boolean {
   if (!q) return true;
-  const hay = [item.title, item.course, item.evidence, item.sender, item.location].join(" ").toLowerCase();
+  const hay = [
+    item.title,
+    item.course,
+    item.evidence,
+    item.sender,
+    item.location,
+  ]
+    .join(" ")
+    .toLowerCase();
   return q
     .toLowerCase()
     .split(/\s+/)

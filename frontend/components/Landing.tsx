@@ -1,66 +1,159 @@
 "use client";
 
-import { CalendarClock, Filter, MailCheck, ShieldCheck } from "lucide-react";
+import {
+  ArrowRight,
+  CalendarDays,
+  Clock3,
+  MessageCircle,
+  ShieldCheck,
+} from "lucide-react";
 import { Logo } from "./Logo";
 
-type Props = { notice: string | null; onDemo?: () => void; demoLoading?: boolean };
+type Props = {
+  notice: string | null;
+  onDemo?: () => void;
+  demoLoading?: boolean;
+};
 
 export function Landing({ notice, onDemo, demoLoading }: Props) {
   return (
-    <main className="mx-auto flex min-h-screen max-w-5xl flex-col px-6 py-8">
-      <Logo />
-      <div className="grid flex-1 items-center gap-12 py-12 lg:grid-cols-[1.1fr_1fr]">
-        <div>
-          <p className="text-sm font-semibold uppercase tracking-wider text-maroon-600">For UMass Amherst students</p>
-          <h1 className="mt-3 text-4xl font-semibold leading-tight tracking-tight text-stone-900 sm:text-5xl">
-            Everything UMass needs from you, <span className="text-maroon-600">in one place.</span>
-          </h1>
-          <p className="mt-5 max-w-xl text-lg text-stone-600">
-            UMass Radar reads your UMass inbox and Canvas, pulls out the deadlines, appointments, replies you owe and
-            opportunities, and hides the noise. Open it any time and know exactly what&apos;s next.
+    <main className="landing-page">
+      <header className="landing-header">
+        <Logo />
+        <span>BUILT FOR LIFE AT UMASS AMHERST</span>
+      </header>
+      <section className="landing-hero">
+        <div className="landing-copy">
+          <p className="landing-eyebrow">
+            <span className="connection-dot" />
+            Your day. A little clearer.
           </p>
-          {notice && <p className="mt-6 rounded-xl bg-amber-50 p-3 text-sm text-amber-900">{notice}</p>}
-          <div className="mt-8 flex flex-wrap gap-3">
-            <a
-              href="/api/auth/login"
-              className="inline-flex items-center gap-2 rounded-xl bg-maroon-600 px-5 py-3 font-medium text-white shadow-sm hover:bg-maroon-700"
-            >
-              <MailCheck className="h-5 w-5" /> Sign in with UMass Google
+          <h1>
+            A full college life.
+            <br />
+            <em>A quieter inbox.</em>
+          </h1>
+          <p className="landing-description">
+            Deadlines, appointments, replies you owe. UMass Radar brings the
+            important things out of your inbox and into one calm view of today
+            and this week.
+          </p>
+          {notice && (
+            <p className="notice" role="alert">
+              {notice}
+            </p>
+          )}
+          <div className="landing-actions">
+            <a href="/api/auth/login" className="primary-button">
+              Connect UMass Gmail
+              <ArrowRight size={16} />
             </a>
             {onDemo && (
               <button
+                className="secondary-button"
                 onClick={onDemo}
                 disabled={demoLoading}
-                className="rounded-xl border border-stone-300 bg-white px-5 py-3 font-medium text-stone-800 hover:border-stone-400 disabled:opacity-60"
               >
-                {demoLoading ? "Loading demo inbox…" : "Load demo inbox"}
+                {demoLoading ? "Preparing your demo…" : "Explore the demo"}
               </button>
             )}
           </div>
-          <p className="mt-3 text-xs text-stone-500">Read-only Gmail access. Email bodies are never stored.</p>
+          <p className="landing-privacy">
+            <ShieldCheck size={13} />
+            Read-only access. Your email stays your email.
+          </p>
         </div>
-        <ul className="space-y-3">
-          {[
-            [CalendarClock, "Deadlines from Canvas, Gradescope, Piazza and Campuswire", "One list, sorted by what's due first, with the exact sentence each came from."],
-            [MailCheck, "Replies you owe", "When a professor or advisor is waiting on you, it doesn't get buried."],
-            [Filter, "Noise filtered", "Promotions and newsletters are counted, then hidden."],
-            [ShieldCheck, "Private by design", "Tokens are encrypted, AI only sees short trimmed excerpts, and you can delete everything in one click."],
-          ].map(([Icon, title, body]) => {
-            const I = Icon as typeof CalendarClock;
-            return (
-              <li key={title as string} className="flex gap-4 rounded-2xl border border-stone-200 bg-white p-5">
-                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-maroon-50 text-maroon-600">
-                  <I className="h-5 w-5" />
-                </span>
-                <div>
-                  <p className="font-semibold text-stone-900">{title as string}</p>
-                  <p className="mt-0.5 text-sm text-stone-600">{body as string}</p>
+        <div
+          className="landing-preview"
+          aria-label="Illustrative preview of a student’s daily overview"
+        >
+          <div className="preview-top">
+            <span>
+              <i className="preview-dot" />
+              <i className="preview-dot" />
+              <i className="preview-dot" />
+            </span>
+            <span>YOUR MORNING, SIMPLIFIED</span>
+          </div>
+          <div className="preview-card">
+            <small>A little clarity for today</small>
+            <h2>Good morning, Minuteman.</h2>
+            <div className="preview-brief">
+              <strong>On your radar</strong>A lab to finish, a conversation to
+              keep moving, and time to think about what’s next.
+            </div>
+            <p className="preview-list-label">TODAY</p>
+            {[
+              {
+                icon: Clock3,
+                category: "deadline",
+                title: "Finish your lab assignment",
+                detail: "ECE 122 · Due at 5 PM",
+              },
+              {
+                icon: CalendarDays,
+                category: "appointment",
+                title: "Meet with your academic advisor",
+                detail: "Goodell · 2 PM",
+              },
+              {
+                icon: MessageCircle,
+                category: "reply_owed",
+                title: "Send your research availability",
+                detail: "A professor is waiting on you",
+              },
+            ].map(({ icon: Icon, category, title, detail }) => (
+              <div key={title} className="preview-task">
+                <div className={`item-symbol symbol-${category}`}>
+                  <Icon size={16} />
                 </div>
-              </li>
-            );
-          })}
-        </ul>
-      </div>
+                <div>
+                  <strong>{title}</strong>
+                  <small>{detail}</small>
+                </div>
+                <span className="preview-check" />
+              </div>
+            ))}
+            <p className="preview-bottom">
+              <ShieldCheck size={12} />
+              The useful things stay. The noise fades away.
+            </p>
+          </div>
+          <p className="preview-caption">
+            An example day. Your radar is built from your inbox.
+          </p>
+        </div>
+      </section>
+      <section className="landing-benefits" aria-label="How Radar helps">
+        <article>
+          <span>01</span>
+          <h2>Know what needs you.</h2>
+          <p>
+            Coursework, advising, campus life. See today’s priorities and the
+            week ahead in one place.
+          </p>
+        </article>
+        <article>
+          <span>02</span>
+          <h2>Keep the context.</h2>
+          <p>
+            Every item carries its source. See why it matters and jump back to
+            the original email.
+          </p>
+        </article>
+        <article>
+          <span>03</span>
+          <h2>Make room for more.</h2>
+          <p>
+            Find opportunities without the newsletter pile-up. Mark things done
+            and get on with your day.
+          </p>
+        </article>
+      </section>
+      <footer className="dashboard-footer">
+        <span>Less noise. More college.</span>
+        <span>Made for UMass Amherst students</span>
+      </footer>
     </main>
   );
 }

@@ -1,17 +1,37 @@
-export function Logo({ size = 32, withText = true }: { size?: number; withText?: boolean }) {
+export function Logo({
+  size = 36,
+  withText = true,
+}: {
+  size?: number;
+  withText?: boolean;
+}) {
   return (
-    <div className="flex items-center gap-2">
-      <svg width={size} height={size} viewBox="0 0 64 64" aria-hidden>
-        <rect width="64" height="64" rx="16" fill="#881C1C" />
-        <circle cx="32" cy="32" r="18" fill="none" stroke="#fff" strokeOpacity=".35" strokeWidth="3" />
-        <circle cx="32" cy="32" r="9" fill="none" stroke="#fff" strokeOpacity=".6" strokeWidth="3" />
-        <path d="M32 32 L46 18" stroke="#fff" strokeWidth="4" strokeLinecap="round" />
-        <circle cx="32" cy="32" r="4" fill="#fff" />
-        <circle cx="43" cy="40" r="3" fill="#fff" />
+    <div className="radar-logo">
+      <svg
+        width={size}
+        height={size}
+        viewBox="0 0 40 40"
+        fill="none"
+        aria-hidden="true"
+      >
+        <rect width="40" height="40" rx="12" fill="#881C1C" />
+        <circle cx="20" cy="20" r="12" stroke="white" strokeOpacity=".35" />
+        <circle cx="20" cy="20" r="7" stroke="white" strokeOpacity=".55" />
+        <path
+          d="M20 20 29 11"
+          stroke="white"
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
+        <circle cx="20" cy="20" r="2.5" fill="white" />
+        <circle cx="26" cy="26" r="2" fill="#efb5a6" />
       </svg>
       {withText && (
-        <span className="hidden text-[17px] font-semibold tracking-tight text-stone-900 sm:inline">
-          UMass <span className="text-maroon-600">Radar</span>
+        <span>
+          <strong>
+            UMass Radar<span className="brand-dot">.</span>
+          </strong>
+          <small>A little clarity for your day</small>
         </span>
       )}
     </div>

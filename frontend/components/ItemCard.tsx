@@ -1,123 +1,166 @@
 "use client";
 
-import { Check, ExternalLink, MapPin, RotateCcw, Sparkles, X } from "lucide-react";
+import {
+  ArrowUpRight,
+  Bell,
+  CalendarDays,
+  Check,
+  ChevronDown,
+  Clock3,
+  GraduationCap,
+  MapPin,
+  MessageCircle,
+  RotateCcw,
+  Sprout,
+  X,
+} from "lucide-react";
+import { useState } from "react";
 import type { Item } from "@/lib/api";
-import { CATEGORY_LABEL, CATEGORY_STYLE, isOverdue } from "@/lib/sections";
+import { CATEGORY_LABEL, isOverdue } from "@/lib/sections";
 import { formatWhen, relative } from "@/lib/time";
 
+const icons = {
+  deadline: Clock3,
+  appointment: CalendarDays,
+  reply_owed: MessageCircle,
+  status_update: Bell,
+  opportunity: Sprout,
+  event: CalendarDays,
+  course_info: GraduationCap,
+  noise: Bell,
+};
 type Props = {
   item: Item;
   highlighted?: boolean;
+  pending?: boolean;
+  compact?: boolean;
   onStatus: (id: string, status: Item["status"]) => void;
 };
 
-function sourceLabel(item: Item): string {
-  if (item.source === "canvas") return "Open in Canvas";
-  if (item.source === "demo") return "Demo email";
-  return "Open in Gmail";
-}
-
-export function ItemCard({ item, highlighted, onStatus }: Props) {
+export function ItemCard({
+  item,
+  highlighted,
+  pending,
+  compact,
+  onStatus,
+}: Props) {
+  const [expanded, setExpanded] = useState(false);
   const when = item.due_at ?? item.starts_at;
-  const overdue = isOverdue(item);
+  const overdue = item.status === "open" && isOverdue(item);
   const done = item.status !== "open";
-
+  const Icon = icons[item.category];
+  const source =
+    item.source === "canvas"
+      ? "Canvas"
+      : item.source === "demo"
+        ? "Demo email"
+        : "Gmail";
+  const safeUrl = item.url && /^https?:\/\//i.test(item.url) ? item.url : null;
   return (
     <article
       id={`item-${item.id}`}
-      className={`group rounded-xl border bg-white p-4 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition hover:shadow-md ${
-        highlighted ? "border-maroon-500 ring-2 ring-maroon-200" : "border-stone-200"
-      } ${done ? "opacity-60" : ""}`}
+      tabIndex={-1}
+      className={`radar-item ${compact ? "compact-item" : ""} ${highlighted ? "highlighted" : ""} ${done ? "completed-item" : ""}`}
+      aria-busy={pending}
     >
-      <div className="flex items-start gap-3">
-        <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-center gap-1.5 text-xs">
-            <span className={`rounded-full px-2 py-0.5 font-medium ring-1 ring-inset ${CATEGORY_STYLE[item.category]}`}>
-              {CATEGORY_LABEL[item.category]}
-            </span>
-            {item.course && (
-              <span className="rounded-full bg-stone-900 px-2 py-0.5 font-medium text-white">{item.course}</span>
-            )}
-            {item.action_required && !done && (
-              <span className="font-medium text-maroon-600">Action needed</span>
-            )}
-            {item.extracted_by === "llm" && (
-              <span title={`Read by AI · ${Math.round(item.confidence * 100)}% confident`} className="text-stone-400">
-                <Sparkles className="inline h-3 w-3" />
-              </span>
-            )}
-          </div>
-
-          <h3 className={`mt-1.5 font-semibold leading-snug text-stone-900 ${done ? "line-through" : ""}`}>
-            {item.title}
-          </h3>
-
-          <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-stone-600">
-            {when && (
-              <span className={overdue ? "font-medium text-maroon-600" : ""}>
-                {overdue ? "Overdue · " : ""}
-                {formatWhen(when)}
-                <span className="text-stone-400"> · {relative(when)}</span>
-              </span>
-            )}
-            {item.location && (
-              <span className="inline-flex items-center gap-1">
-                <MapPin className="h-3.5 w-3.5" />
-                {item.location}
-              </span>
-            )}
-            {item.sender && <span className="truncate text-stone-400">from {item.sender}</span>}
-          </div>
-
-          {item.evidence && item.evidence !== item.title && (
-            <blockquote className="mt-2.5 border-l-2 border-stone-200 pl-3 text-sm italic text-stone-500">
-              “{item.evidence}”
-            </blockquote>
-          )}
-        </div>
-
-        <div className="flex shrink-0 flex-col gap-1 opacity-100 sm:opacity-0 sm:transition sm:group-hover:opacity-100">
-          {done ? (
-            <IconButton label="Move back to open" onClick={() => onStatus(item.id, "open")}>
-              <RotateCcw className="h-4 w-4" />
-            </IconButton>
-          ) : (
+      <div className={`item-symbol symbol-${item.category}`}>
+        <Icon size={18} aria-hidden="true" />
+      </div>
+      <div className="item-content">
+        <div className="item-kicker">
+          <span>{item.course || CATEGORY_LABEL[item.category]}</span>
+          {item.course && (
             <>
-              <IconButton label="Mark done" onClick={() => onStatus(item.id, "done")}>
-                <Check className="h-4 w-4" />
-              </IconButton>
-              <IconButton label="Dismiss" onClick={() => onStatus(item.id, "dismissed")}>
-                <X className="h-4 w-4" />
-              </IconButton>
+              <span className="kicker-dot">·</span>
+              <span>{CATEGORY_LABEL[item.category]}</span>
             </>
           )}
+          {overdue && <span className="overdue-badge">Overdue</span>}
         </div>
+        <h3>{item.title}</h3>
+        <div className="item-meta">
+          {when && (
+            <span
+              className={overdue ? "overdue-text" : ""}
+              title={formatWhen(when)}
+            >
+              <Clock3 size={12} aria-hidden="true" />
+              {formatWhen(when)}
+              <span className="relative-time"> · {relative(when)}</span>
+            </span>
+          )}
+          {item.location && (
+            <span>
+              <MapPin size={12} aria-hidden="true" />
+              {item.location}
+            </span>
+          )}
+          {!when && item.sender && <span>{item.sender}</span>}
+        </div>
+        <div className="item-links">
+          {safeUrl ? (
+            <a href={safeUrl} target="_blank" rel="noreferrer">
+              Open in {source}
+              <ArrowUpRight size={13} aria-hidden="true" />
+            </a>
+          ) : item.source === "demo" ? (
+            <span className="demo-source">Sample inbox</span>
+          ) : null}
+          {item.evidence && (
+            <button
+              onClick={() => setExpanded(!expanded)}
+              aria-expanded={expanded}
+              aria-controls={`evidence-${item.id}`}
+            >
+              {expanded ? "Hide context" : "Why it’s here"}
+              <ChevronDown size={12} className={expanded ? "rotate-180" : ""} />
+            </button>
+          )}
+        </div>
+        {expanded && (
+          <div className="item-evidence" id={`evidence-${item.id}`}>
+            <blockquote>“{item.evidence}”</blockquote>
+            <p>
+              {item.sender && `From ${item.sender} · `}
+              {Math.round(item.confidence * 100)}% extraction confidence
+            </p>
+          </div>
+        )}
       </div>
-
-      {item.url && (
-        <a
-          href={item.url}
-          target="_blank"
-          rel="noreferrer"
-          className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-maroon-600 hover:underline"
-        >
-          {sourceLabel(item)} <ExternalLink className="h-3 w-3" />
-        </a>
-      )}
+      <div className="item-actions">
+        {done ? (
+          <button
+            className="icon-button"
+            disabled={pending}
+            aria-label={`Reopen ${item.title}`}
+            title="Move back to open"
+            onClick={() => onStatus(item.id, "open")}
+          >
+            <RotateCcw size={16} />
+          </button>
+        ) : (
+          <>
+            <button
+              className="complete-button"
+              disabled={pending}
+              aria-label={`Mark ${item.title} done`}
+              title="Mark done"
+              onClick={() => onStatus(item.id, "done")}
+            >
+              <Check size={15} />
+            </button>
+            <button
+              className="dismiss-button"
+              disabled={pending}
+              aria-label={`Dismiss ${item.title}`}
+              title="Dismiss"
+              onClick={() => onStatus(item.id, "dismissed")}
+            >
+              <X size={14} />
+            </button>
+          </>
+        )}
+      </div>
     </article>
-  );
-}
-
-function IconButton({ label, onClick, children }: { label: string; onClick: () => void; children: React.ReactNode }) {
-  return (
-    <button
-      type="button"
-      title={label}
-      aria-label={label}
-      onClick={onClick}
-      className="rounded-lg p-1.5 text-stone-400 hover:bg-stone-100 hover:text-stone-900"
-    >
-      {children}
-    </button>
   );
 }

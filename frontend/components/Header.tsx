@@ -1,7 +1,7 @@
 "use client";
 
-import { LogOut, RefreshCw, Search, Settings } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { RefreshCw, Search, X } from "lucide-react";
+import { useEffect, useRef } from "react";
 import type { Me } from "@/lib/api";
 import { relative } from "@/lib/time";
 import { Logo } from "./Logo";
@@ -13,76 +13,92 @@ type Props = {
   syncing: boolean;
   onRefresh: () => void;
   onSettings: () => void;
-  onSignOut: () => void;
 };
 
-export function Header({ me, query, onQuery, syncing, onRefresh, onSettings, onSignOut }: Props) {
-  const [menu, setMenu] = useState(false);
+export function Header({
+  me,
+  query,
+  onQuery,
+  syncing,
+  onRefresh,
+  onSettings,
+}: Props) {
   const input = useRef<HTMLInputElement>(null);
-
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "/" && document.activeElement?.tagName !== "INPUT") {
-        e.preventDefault();
+    const onKey = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement;
+      if (
+        event.key === "/" &&
+        !event.metaKey &&
+        !event.ctrlKey &&
+        !target.isContentEditable &&
+        !["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName)
+      ) {
+        event.preventDefault();
         input.current?.focus();
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, []);
-
   return (
-    <header className="sticky top-0 z-20 border-b border-stone-200/80 bg-[#f7f6f4]/85 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3 sm:px-6">
-        <Logo />
-        <label className="relative ml-auto flex-1 sm:max-w-md">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-stone-400" />
-          <input
-            ref={input}
-            value={query}
-            onChange={(e) => onQuery(e.target.value)}
-            placeholder="Search deadlines, courses, people…"
-            className="w-full rounded-xl border border-stone-200 bg-white py-2 pl-9 pr-10 text-sm outline-none placeholder:text-stone-400 focus:border-maroon-500 focus:ring-2 focus:ring-maroon-100"
-          />
-          <kbd className="absolute right-3 top-1/2 hidden -translate-y-1/2 rounded border border-stone-200 px-1.5 text-[10px] text-stone-400 sm:block">
-            /
-          </kbd>
-        </label>
+    <header className="topbar">
+      <div className="mobile-brand">
+        <Logo size={32} withText={false} />
+      </div>
+      <div className="search-field">
+        <Search size={17} aria-hidden="true" />
+        <input
+          ref={input}
+          value={query}
+          onChange={(e) => onQuery(e.target.value)}
+          placeholder="Search your radar…"
+          aria-label="Search your radar"
+        />
+        {query ? (
+          <button
+            type="button"
+            aria-label="Clear search"
+            onClick={() => {
+              onQuery("");
+              input.current?.focus();
+            }}
+          >
+            <X size={15} />
+          </button>
+        ) : (
+          <kbd>/</kbd>
+        )}
+      </div>
+      <div className="topbar-actions">
+        <span className="sync-label" aria-live="polite">
+          <span className={`connection-dot ${syncing ? "syncing" : ""}`} />
+          {me.demo
+            ? "Demo inbox"
+            : syncing
+              ? "Syncing inbox"
+              : me.needs_reconnect
+                ? "Reconnect needed"
+                : me.last_sync_at
+                  ? `Synced ${relative(me.last_sync_at)}`
+                  : "Ready to sync"}
+        </span>
         <button
+          className="icon-button"
           onClick={onRefresh}
           disabled={syncing}
-          title={me.last_sync_at ? `Last synced ${relative(me.last_sync_at)}` : "Not synced yet"}
-          className="inline-flex items-center gap-2 rounded-xl border border-stone-200 bg-white px-3 py-2 text-sm font-medium text-stone-700 hover:border-stone-300 disabled:opacity-60"
+          aria-label="Refresh inbox"
+          title="Refresh inbox"
         >
-          <RefreshCw className={`h-4 w-4 ${syncing ? "animate-spin" : ""}`} />
-          <span className="hidden sm:inline">{syncing ? "Syncing" : "Refresh"}</span>
+          <RefreshCw size={17} className={syncing ? "animate-spin" : ""} />
         </button>
-        <div className="relative">
-          <button
-            onClick={() => setMenu((m) => !m)}
-            className="grid h-9 w-9 place-items-center rounded-full bg-maroon-600 text-sm font-semibold text-white"
-            aria-label="Account menu"
-          >
-            {(me.name || me.email || "?").charAt(0).toUpperCase()}
-          </button>
-          {menu && (
-            <div
-              className="absolute right-0 mt-2 w-60 overflow-hidden rounded-xl border border-stone-200 bg-white text-sm shadow-xl"
-              onMouseLeave={() => setMenu(false)}
-            >
-              <div className="border-b border-stone-100 px-4 py-3">
-                <p className="font-medium text-stone-900">{me.demo ? "Demo student" : me.name}</p>
-                <p className="truncate text-xs text-stone-500">{me.demo ? "Sample UMass inbox" : me.email}</p>
-              </div>
-              <button onClick={() => { setMenu(false); onSettings(); }} className="flex w-full items-center gap-2 px-4 py-2.5 hover:bg-stone-50">
-                <Settings className="h-4 w-4 text-stone-400" /> Settings & privacy
-              </button>
-              <button onClick={onSignOut} className="flex w-full items-center gap-2 px-4 py-2.5 hover:bg-stone-50">
-                <LogOut className="h-4 w-4 text-stone-400" /> {me.demo ? "Leave demo" : "Sign out"}
-              </button>
-            </div>
-          )}
-        </div>
+        <button
+          className="avatar"
+          onClick={onSettings}
+          aria-label="Open account settings"
+        >
+          {(me.name || me.email || "S").charAt(0).toUpperCase()}
+        </button>
       </div>
     </header>
   );
