@@ -74,3 +74,19 @@ def test_library_keeps_only_recent_syllabi():
     assert is_recent("Spring 2027", today)
     assert not is_recent("Fall 2025", today)  # started Sep 2025, more than 12 months ago
     assert not is_recent(None, today)
+
+
+def test_since_option_and_download_links():
+    from datetime import date
+
+    from app.courses import term_start
+    from app.syllabus_library import download_url, is_recent
+
+    today = date(2026, 11, 14)
+    assert not is_recent("Fall 2025", today)
+    assert is_recent("Fall 2025", today, since=term_start("Fall 2025"))
+    assert not is_recent("Spring 2025", today, since=term_start("Fall 2025"))
+    assert download_url("https://docs.google.com/document/d/AbC_1-x/edit?usp=sharing").endswith("/AbC_1-x/export?format=txt")
+    assert download_url("https://drive.google.com/file/d/XyZ/view").endswith("id=XyZ")
+    assert download_url("https://umass-my.sharepoint.com/:b:/g/p/x?e=1").endswith("&download=1")
+    assert download_url("https://people.cs.umass.edu/~x/syllabus.pdf") == "https://people.cs.umass.edu/~x/syllabus.pdf"

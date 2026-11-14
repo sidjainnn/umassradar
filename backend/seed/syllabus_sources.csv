@@ -1,9 +1,107 @@
-course,url
-COMPSCI 220,https://people.cs.umass.edu/~marius/class/cs220-sp26
-COMPSCI 250,https://people.cs.umass.edu/~barring/cs250
-COMPSCI 360,https://people.cs.umass.edu/~eugene/assets/files/syllabus360.pdf
-COMPSCI 389,https://people.cs.umass.edu/~pthomas/courses/COMPSCI_389_Spring2026.html
-COMPSCI 445,https://trek-palmer.github.io/teaching/umass-cs-445-sp-2026/syllabus.html
-COMPSCI 513,https://people.cs.umass.edu/~marius/class/cs513-sp26
-COMPSCI 514,https://people.cs.umass.edu/~cmusco/CS514S26/index.html
-COMPSCI 589,https://people.cs.umass.edu/~bsilva/courses/CMPSCI_589/Spring2026/S26_589_Syllabus_v4.0.pdf
+course,url,term
+COMPSCI 220,https://people.cs.umass.edu/~marius/class/cs220-sp26,
+COMPSCI 250,https://people.cs.umass.edu/~barring/cs250,
+COMPSCI 360,https://people.cs.umass.edu/~eugene/assets/files/syllabus360.pdf,
+COMPSCI 389,https://people.cs.umass.edu/~pthomas/courses/COMPSCI_389_Spring2026.html,
+COMPSCI 445,https://trek-palmer.github.io/teaching/umass-cs-445-sp-2026/syllabus.html,
+COMPSCI 513,https://people.cs.umass.edu/~marius/class/cs513-sp26,
+COMPSCI 514,https://people.cs.umass.edu/~cmusco/CS514S26/index.html,
+COMPSCI 589,https://people.cs.umass.edu/~bsilva/courses/CMPSCI_589/Spring2026/S26_589_Syllabus_v4.0.pdf,
+CICS 110,https://sites.google.com/umass.edu/cics110,Fall 2025
+CICS 256,https://sites.google.com/view/cics256/home,Spring 2026
+CICS 256,https://people.cs.umass.edu/~phuc/courses/fall26/,Fall 2026
+INFO 150,https://people.cs.umass.edu/~barring/info150/fullsyllabus.html,Fall 2025
+INFO 490PI,https://people.cs.umass.edu/~rkarkar/teaching/INFO_490PI_Syllabus.pdf,Fall 2025
+COMPSCI 250,https://people.cs.umass.edu/~barring/cs250f25/fullsyllabus.html,Fall 2025
+COMPSCI 250,https://people.cs.umass.edu/~barrington/cs250/fullsyllabus.html,Spring 2026
+COMPSCI 311,https://people.cs.umass.edu/~sheldon/teaching/cs311/index.html,Fall 2026
+COMPSCI 389,https://people.cs.umass.edu/~pthomas/courses/COMPSCI_389_Fall2025.html,Fall 2025
+COMPSCI 445,https://trek-palmer.github.io/teaching/umass-cs-445-sp-2026/index.html,Spring 2026
+COMPSCI 485,https://people.cs.umass.edu/~brenocon/cs485_f26/CS485_F26_syllabus.pdf,Fall 2026
+COMPSCI 491P,https://people.cs.umass.edu/~weems/homepage/courses/cmpsci-491p.html,Fall 2026
+COMPSCI 501,https://people.cs.umass.edu/~barring/cs501/syllabus.html,Spring 2026
+COMPSCI 513,https://people.cs.umass.edu/~marius/class/cs513-sp26/,Spring 2026
+COMPSCI 514,https://people.cs.umass.edu/~cmusco/CS514F26/index.html,Fall 2026
+COMPSCI 528,https://people.cs.umass.edu/~phuc/courses/spring26/,Spring 2026
+COMPSCI 560,https://infosec.cs.umass.edu/content/compsci-560-introduction-computer-network-security-0,Fall 2025
+COMPSCI 589,https://people.cs.umass.edu/~bsilva/courses/CMPSCI_589/Fall2026/F26_589_Syllabus_v2.0.pdf,Fall 2026
+COMPSCI 603,https://hcr.cs.umass.edu/courses/compsci603/documents/Compsci_603_Syllabus_2026Spring.pdf,Spring 2026
+COMPSCI 611,https://hunglvosu.github.io/posts/2025/10/Syllabus-Algs/,Spring 2026
+COMPSCI 660,https://people.cs.umass.edu/~amir/courses/CS660-FALL25/,Fall 2025
+COMPSCI 660,https://people.cs.umass.edu/~amir/courses/CS660-FALL26/,Fall 2026
+COMPSCI 670,https://cvl-umass.github.io/cv-fall-2026/,Fall 2026
+COMPSCI 677,https://sites.google.com/umass.edu/compsci-677-s26-klemperer/home,Spring 2026
+COMPSCI 682,https://cvl-umass.github.io/compsci682-spring-2026/,Spring 2026
+COMPSCI 687,https://people.cs.umass.edu/~pthomas/courses/CMPSCI_687_Fall2026.html,Fall 2026
+COMPSCI 690K,https://sites.google.com/view/adv-robot-dyn-ctrl?pli=1,Fall 2026
+CE-ENGIN 244,https://github.com/egemenokte/Programming_for_Engineers,Fall 2026
+CEE 260,https://fa25.probstats.narslab.org,Fall 2025
+CEE 260,https://fa26.probstats.narslab.org,Fall 2026
+CE-ENGIN 616,https://pml.narslab.org/syllabus/,Fall 2025
+FORMERLY 697LS,http://www.ecs.umass.edu/ece697ls/syllabus/,Fall 2025
+M&I-ENG 446,https://github.com/Ehsan-Roohi/Aerospace-Structures/blob/main/README.md,Fall 2026
+BIOLOGY 383H,https://bpb-us-e2.wpmucdn.com/websites.umass.edu/dist/1/48143/files/2026/09/Syllabus_Bio383_Fall2026_v1.pdf,Fall 2026
+BIOLOGY 388,https://bpb-us-e2.wpmucdn.com/websites.umass.edu/dist/1/48143/files/2026/09/Bio388.NAPLab-Syllabus-2026.pdf,Fall 2026
+GEOG 426,https://websites.umass.edu/qyu/geog-426-626/,Fall 2026
+GEOG 468,https://websites.umass.edu/qyu/geog-468-668/,Spring 2026
+MATH 132,https://people.umass.edu/correia/math132FA25.html,Fall 2025
+MATH 132,https://people.umass.edu/correia/math132SP26.html,Spring 2026
+MATH 132,https://people.umass.edu/correia/math132FA26.html,Fall 2026
+STAT 610,https://bpb-us-e2.wpmucdn.com/websites.umass.edu/dist/0/30745/files/2026/01/Stat610OutlineS26.pdf,Spring 2026
+PHIL 110,https://people.umass.edu/klement/110/,Fall 2026
+PHIL 513,https://people.umass.edu/klement/513/,Fall 2025
+ENGL 494EI,https://people.umass.edu/dfleming/english494EI.html,Fall 2026
+ENGL 891EW,https://people.umass.edu/dfleming/english891ew.html,Fall 2025
+ENGL 891WL,https://websites.umass.edu/rlorimer/global-english-and-language-diversity/,Spring 2026
+LINGUIST 683,https://people.umass.edu/scable/LING683-FA25/,Fall 2025
+LINGUIST 720,https://websites.umass.edu/kerk/linguist-720-proseminar-in-semantics-computational-semantics-fall-2026/,Fall 2026
+EDUC 457,http://teamstutoringinschools.pbworks.com/w/page/126355136/Education%20457%20Syllabus,Fall 2026
+COMM 627,https://ethanzuckerman.com/wp-content/2026/05/627syllabus2026.pdf,Spring 2026
+DACSS 611,https://omerfyalcin.com/syllabi/2025Fall_IntroPythonSyllabus.pdf,Fall 2025
+COMM 208,https://ethanzuckerman.com/wp-content/2026/05/208syllabus2025.pdf,Fall 2025
+DACSS 756,https://omerfyalcin.com/syllabi/2025Fall_MachineLearningSyllabus.pdf,Fall 2025
+JOURNAL 435,https://wdfj.umasscreate.net/,Fall 2026
+Proseminar,https://www.dropbox.com/scl/fi/wsn206vhjmbm5y6fhz0zm/Proseminar-in-Law-and-Courts-Course-Syllabus.pdf?rlkey=kih5fgv97vgzns6dwaexts3bt&e=1&dl=0,Fall 2025
+RES-ECON 102,https://www.umass.edu/resource-economics/resources/res-econ-102-introduction-resource-economics,Fall 2025
+RES-ECON 212,https://www.umass.edu/resource-economics/resources/res-econ-212-introductory-statistics-social-sciences,Fall 2026
+RES-ECON 213,https://www.umass.edu/resource-economics/resources/res-econ-213-intermediate-statistics-business-and-economics,Spring 2026
+RES-ECON 315,https://www.umass.edu/resource-economics/resources/res-econ-315-economics-contemporary-information-technology,Spring 2026
+RES-ECON 323,https://www.umass.edu/resource-economics/resources/res-econ-323-financial-analysis-consumers-and-firms,Spring 2026
+RES-ECON 419,https://www.umass.edu/resource-economics/resources/res-econ-419-thinking-age-generative-ai,Spring 2026
+RES-ECON 428,https://www.umass.edu/resource-economics/resources/res-econ-428-managerial-economics,Spring 2026
+RES-ECON 471,https://www.umass.edu/resource-economics/resources/res-econ-471471hh-cost-benefit-analysis,Spring 2026
+RES-ECON 472,https://www.umass.edu/resource-economics/resources/res-econ-472-advanced-topics-environmental-and-resource-economics,Fall 2025
+RES-ECON 590ME,https://www.umass.edu/resource-economics/resources/res-econ-590me-mathematics-economics-and-business,Fall 2026
+RES-ECON 702,https://www.umass.edu/resource-economics/resources/res-econ-702-econometric-methods,Spring 2026
+ACCOUNTG 221,https://docs.google.com/document/d/1tWLYbEQl-FkOQIXXJmKySMu8Pf8-l4pbZ_qpsFLDbSY/edit?usp=sharing,Summer 2026
+ACCOUNTG 221,https://docs.google.com/document/d/1XG536KnqZzZUzZrME_5tFHEx_a29GYjWXMNsNQzQiE0/edit?usp=sharing,Fall 2026
+SCH-MGMT 518,https://umass-my.sharepoint.com/personal/bhentz_umass_edu/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fbhentz%5Fumass%5Fedu%2FDocuments%2FDesktop%2FARCHIVES%2FBCP%20CURRICULUM%20PLANNING%20MATERIALS%2FIntersession%20518%20Preview%20Syllabus%2FSCH%2DMGMT%20518%20Syllabus%20OneDrive%20Preview%20%28Hentz%29%2Epdf&parent=%2Fpersonal%2Fbhentz%5Fumass%5Fedu%2FDocuments%2FDesktop%2FARCHIVES%2FBCP%20CURRICULUM%20PLANNING%20MATERIALS%2FIntersession%20518%20Preview%20Syllabus&ga=1&share=cQoUL%5Fmo8S0nRJda328s86fmEgUCB%2D%2DHBs8Ff9b4YsZL9TYM0A,Summer 2026
+SCH-MGMT 518,https://umass-my.sharepoint.com/:w:/g/personal/bhentz_umass_edu/IQAVE50lwRmgSIBZ0ltl6QV0AelAltKstqdZxuGSOsOYF4E?e=XSPzES,Fall 2026
+SCH-MGMT 601,https://umass-my.sharepoint.com/:w:/g/personal/smilne_umass_edu/IQCZUlJtKAAoQrvtNfJQor4mAQEhaDXjOic6Hf4PgN3J1Vk?e=pTb5lI,Fall 2026
+SCH-MGMT 602,https://umass-my.sharepoint.com/:w:/g/personal/olopez5_umass_edu/IQCq_11NsxkvRJ2WurBGenTRARmF1TsD2cuZG3tU-4O_pL0?e=Ua5yzP,Summer 2026
+SCH-MGMT 602,https://drive.google.com/file/d/16N3HbMMu6oSWbZyhOODTvCB-UuIifiWr/view?usp=sharing,Fall 2026
+SCH-MGMT 604A,https://umass-my.sharepoint.com/:w:/g/personal/pst_umass_edu/IQCGMJPtscFrR6gcXQTshgpTAUVHo_F46KoWiaRbXjmjBZw?e=Qcs9Ir,Summer 2026
+SCH-MGMT 604B,https://umass-my.sharepoint.com/personal/wtmitchell_umass_edu/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fwtmitchell%5Fumass%5Fedu%2FDocuments%2FDocuments%2FSCH%20MGMT%20604B%2FSyllabus%20604B%20Summer%202026%2Epdf&parent=%2Fpersonal%2Fwtmitchell%5Fumass%5Fedu%2FDocuments%2FDocuments%2FSCH%20MGMT%20604B&ga=1&share=cQp%5FP%5FGgQzqQQ4C06cD3TdxFEgUCMbd4sq7H5T9%5FbpfwoJTCJw,Summer 2026
+SCH-MGMT 606,https://umass-my.sharepoint.com/personal/wtmitchell_umass_edu/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fwtmitchell%5Fumass%5Fedu%2FDocuments%2FDocuments%2FSCH%20MGMT%20606&ga=1&share=cQrtP7v4HgYfR6Q4s9M4hmjMEgUCIKYumHe%5FHPUGjqAKFhcK4g,Summer 2026
+SCH-MGMT 609,https://docs.google.com/document/d/1m-SIMw2vYCZn5aNPvZIJnQjnrpq0jXOrK_1Km85SN3Q/edit?usp=sharing,Summer 2026
+SCH-MGMT 611,https://umass-my.sharepoint.com/:w:/g/personal/pst_umass_edu/IQBH-CrWPKPnSYxwop-2IiPyAY4lxmpnHVqRtWYW5YvEoaY?e=7lJlTN,Summer 2026
+SCH-MGMT 611,https://umass-my.sharepoint.com/:w:/g/personal/pst_umass_edu/IQBF3-1xf4-FQJ-cpJULVXoyAahv-lpFFcDQgnRz3FgpaXs?e=E3arkG,Fall 2026
+SCH-MGMT 612,https://docs.google.com/document/d/1vqeaG1Mv_1FtnrjdnVZO7gReCbccLtqWon62F-bixNU/edit?usp=sharing,Fall 2026
+SCH-MGMT 623R,https://umass-my.sharepoint.com/:w:/g/personal/rawilliams_umass_edu/IQDkbthMj7IJTJHuqk7UnrjkAY0BDXc-qPiUluN_5gPi9Jw?e=HJnMx6,Fall 2026
+SCH-MGMT 632,https://umass-my.sharepoint.com/personal/sshmerli_umass_edu/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fsshmerli%5Fumass%5Fedu%2FDocuments%2FMBA%2FContent632%2FGeneral%2FFor%2DSpire%2FSM26%2FSyllabus%5FSummer%5F26%5FDRAFT%5Ffor%5FSpire%2Epdf&parent=%2Fpersonal%2Fsshmerli%5Fumass%5Fedu%2FDocuments%2FMBA%2FContent632%2FGeneral%2FFor%2DSpire%2FSM26&ga=1&share=cQpW7BTAh5MeSKs58qCAtf8nEgUCXG9mQePK92O7M3TE6WN10w,Summer 2026
+SCH-MGMT 633,https://umass-my.sharepoint.com/:w:/g/personal/aprilwilliam_umass_edu/IQDsyDX0P5CtRovvruRZ3P4gATOYSrZB3Udvu_2l_XECUq4?e=qW5lml,Summer 2026
+SCH-MGMT 633,https://umass-my.sharepoint.com/:w:/g/personal/aprilwilliam_umass_edu/IQAMl08xIDGOTIm4TSnYd_fAAW5kmlGWNGn7loqxJ6MypSU?e=ZjdTuK,Summer 2026
+SCH-MGMT 636,https://umass-my.sharepoint.com/:w:/g/personal/jfmiller_umass_edu/IQCRtIXdw5drSKZDhAIhN73hAY2Z40SUBVER7L1ctQVB9JY?e=swF0ok,Fall 2026
+SCH-MGMT 639,https://umass-my.sharepoint.com/:w:/g/personal/assaf_umass_edu/IQDw3cl4vqjJT54cFPMCpfEEASB_1_dEugEOsY55wZNVwVk?e=OCJT4T,Summer 2026
+SCH-MGMT 640,https://umass-my.sharepoint.com/:w:/g/personal/sheel_umass_edu/IQBVnoKJPk_nRKx1ZMWH8jOeAfz6TNqk7ThCe22FAizsCes?e=PhxaCb,Summer 2026
+SCH-MGMT 640,https://umass-my.sharepoint.com/:w:/g/personal/ssmiarowski_umass_edu/IQD1H6dirxl_RaERsz7PpXoJAdrOBw4O2s5cEqZHY4eCUd4?e=Ikejbe,Summer 2026
+SCH-MGMT 641,https://umass-my.sharepoint.com/:w:/g/personal/ssmiarowski_umass_edu/IQB-21iz9BsbSK1GiMqNXrtEAQGH0zQGcuT7tynMxQtMQnY?e=IA97Uq,Summer 2026
+SCH-MGMT 644,https://umass-my.sharepoint.com/:w:/g/personal/assaf_umass_edu/IQCzet9_LfunSJNNc97_geD_AUGSLqsjfmU5TJdOPgPr4AE?e=LdRs71,Summer 2026
+SCH-MGMT 650,https://umass-my.sharepoint.com/:w:/g/personal/assaf_umass_edu/IQARwWqcPxFTT5A1WVA86LOpAQ3RiDsUjlHvQ3VBPxmnV_Q?e=EoNgjz,Summer 2026
+SCH-MGMT 655,https://umass-my.sharepoint.com/personal/krwalsh_umass_edu/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fkrwalsh%5Fumass%5Fedu%2FDocuments%2FDocuments%2F01%5Fteacher%2Fsch%5Fmgmt%5F655%5F2026%5Fsummer%2FSum26%20SCH%2DMGMT%20655%20Machine%20Learning%20for%20Analytics%20Walsh%20Syllabus%2Epdf&parent=%2Fpersonal%2Fkrwalsh%5Fumass%5Fedu%2FDocuments%2FDocuments%2F01%5Fteacher%2Fsch%5Fmgmt%5F655%5F2026%5Fsummer&ga=1&share=cQolWTyN%5FQlOS5zVbFUBxQ12EgUCPqPdHbuLVjc8fMjt4pYsWw,Summer 2026
+SCH-MGMT 656,https://umass-my.sharepoint.com/personal/jeffreyclark_umass_edu/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fjeffreyclark%5Fumass%5Fedu%2FDocuments%2FFall%202026%2FPJM%20Syllabus%20Fall%202026%2Epdf&parent=%2Fpersonal%2Fjeffreyclark%5Fumass%5Fedu%2FDocuments%2FFall%202026&ga=1&share=cQrC52dSRq07TbV8JXjI3fWiEgUCCh5nqOy0wmOo50TUqcStOw,Fall 2026
+SCH-MGMT 656,https://umass-my.sharepoint.com/personal/jeffreyclark_umass_edu/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fjeffreyclark%5Fumass%5Fedu%2FDocuments%2FFall%202026%2FPJM%20Online%20Syllabus%20Fall%202026%2Epdf&parent=%2Fpersonal%2Fjeffreyclark%5Fumass%5Fedu%2FDocuments%2FFall%202026&ga=1&share=cQr5ivRdyNZqRpNqitbykDq5EgUCXT7K21pHOxdylOZBa060Rw,Fall 2026
+SCH-MGMT 680,https://docs.google.com/document/d/18-_hl8gb7NwpmXOYr-ELuXpcfRnLKB1s1iFzgZtgAFA/edit?usp=sharing,Fall 2026
+SCH-MGMT 706,https://docs.google.com/document/d/1C_y1T6x_FqR4-kVg3_7JqB62UMZP68B3D6PGhZtPsdo/edit?usp=sharing,Summer 2026
+COMPSCI H250,https://people.cs.umass.edu/~barring/csh250/,Fall 2025
+COMPSCI H589,https://people.cs.umass.edu/~bsilva/courses/CMPSCI_H589/Spring2026/S26_H589_Syllabus_v1.0.pdf,Spring 2026
