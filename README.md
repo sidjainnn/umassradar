@@ -125,7 +125,14 @@ cd backend
 
 The eval prints per-category precision, recall and F1, overall accuracy, date accuracy (same calendar day) and each miss. Labels live in `backend/demo/labels.csv` (`message_id,true_category,true_due`, where `true_due` is an ISO date or `+N` days from today, since the demo inbox is dated relative to today). Point `--labels` at your own CSV to evaluate a different set.
 
-Rules only, the parsers are very precise but only cover the senders they know: about 57% of the demo set, with the rest left to Gemini. That split is the point. The cheap, predictable path handles the bulk of automated mail, and the model handles the human-written rest.
+Results on the 40 demo emails:
+
+| | accuracy | date accuracy (same day) | emails left unhandled |
+| --- | --- | --- | --- |
+| rules only | 57% | 50% | 16 |
+| rules + Gemini | 90% | 88% | 0 |
+
+Rules alone have precision 1.00 in every category except noise, but they only cover senders they know. Gemini picks up the human-written rest. The remaining misses are judgement calls (is a CICS newsletter noise or course info? is "fill out this form before our meeting" a deadline or a reply?), and the noise rule hides a recruiting email that's actually an opportunity.
 
 ## Privacy design
 
