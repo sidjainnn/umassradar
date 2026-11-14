@@ -1,0 +1,12 @@
+{
+  "from_name": "Notion",
+  "from_email": "team@mail.notion.so",
+  "subject": "What's new in Notion this month",
+  "date": "2026-11-12T12:00:00",
+  "list_unsubscribe": "<https://notion.so/unsub>",
+  "label_ids": [
+    "INBOX",
+    "CATEGORY_UPDATES"
+  ],
+  "body": "New features for your workspace."
+}
