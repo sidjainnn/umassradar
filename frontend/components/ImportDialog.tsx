@@ -1,10 +1,10 @@
 "use client";
 
-import { CalendarRange, FileText, Image as ImageIcon, X } from "lucide-react";
+import { CalendarRange, FileText, Image as ImageIcon, Megaphone, X } from "lucide-react";
 import { useRef, useState } from "react";
 import { upload } from "@/lib/api";
 
-type KindId = "schedule" | "syllabus" | "screenshot";
+type KindId = "schedule" | "syllabus" | "flyer" | "screenshot";
 
 type Kind = { id: KindId; title: string; body: string; accept: string; path: string; icon: typeof FileText };
 
@@ -26,6 +26,14 @@ export const IMPORT_KINDS: Kind[] = [
     icon: FileText,
   },
   {
+    id: "flyer",
+    title: "Club flyer or Instagram post",
+    body: "A screenshot of a club's post or flyer. Meetings become events, sign-ups become deadlines.",
+    accept: "image/png,image/jpeg,image/webp",
+    path: "/import/screenshot?kind=flyer",
+    icon: Megaphone,
+  },
+  {
     id: "screenshot",
     title: "Portal screenshot",
     body: "An enrollment appointment, housing time slot or hold from SPIRE or another portal.",
@@ -40,6 +48,7 @@ type Result = { course?: string | null; office_hours?: number; items?: number; c
 function message(kind: KindId, r: Result): string {
   if (kind === "schedule") return `Added ${r.classes} class meetings${r.term ? ` for ${r.term}` : ""}: ${r.courses?.join(", ")}.`;
   if (kind === "syllabus") return r.warning ?? `${r.course ?? "Syllabus"} added: ${r.items ?? 0} dates and ${r.office_hours ?? 0} office-hour slots.`;
+  if (kind === "flyer") return r.items ? `Added ${r.items} item${r.items === 1 ? "" : "s"} from the flyer.` : "No dates found on that flyer.";
   return r.items ? `Added ${r.items} item${r.items === 1 ? "" : "s"} from your screenshot.` : "That screenshot didn't have anything to add.";
 }
 

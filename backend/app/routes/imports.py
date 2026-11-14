@@ -126,14 +126,15 @@ async def delete_schedule(user: dict = Depends(current_user)):
 
 
 @router.post("/import/screenshot")
-async def import_screenshot(file: UploadFile = File(...), user: dict = Depends(current_user)):
+async def import_screenshot(file: UploadFile = File(...), kind: str = "portal", user: dict = Depends(current_user)):
+    """A portal screenshot, or (kind=flyer) a club flyer or Instagram post. The image isn't kept."""
     require_gemini()
     data = await read_upload(file, MAX_IMAGE_BYTES)
     mime = image_type(data)
     if not mime:
         raise HTTPException(400, "Upload a PNG, JPEG or WebP screenshot.")
     try:
-        result = await extract_screenshot(data, mime)  # the image itself is never stored
+        result = await extract_screenshot(data, mime, flyer=kind == "flyer")  # the image itself is never stored
     except Exception:
         raise HTTPException(502, "Couldn't read the screenshot right now. Try again in a minute.")
     ref = "screenshot:" + hashlib.sha256(data).hexdigest()[:12]

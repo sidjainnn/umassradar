@@ -26,8 +26,13 @@ Rules:
 ALLOWED = {b"\x89PNG": "image/png", b"\xff\xd8\xff": "image/jpeg", b"RIFF": "image/webp"}
 
 
+FLYER_NOTE = """This image is a student club's flyer or Instagram post. List the events it announces (meetings,
+socials, info sessions, workshops: category event with starts_at and location) and any application or sign-up
+deadlines (category opportunity with due_at). Put the club's name in organizer. Ignore hashtags, likes and comments."""
+
+
 class ShotItem(BaseModel):
-    category: Literal["appointment", "deadline", "event", "status_update"]
+    category: Literal["appointment", "deadline", "event", "status_update", "opportunity"]
     title: str
     course: str | None
     due_at: str | None
@@ -36,6 +41,7 @@ class ShotItem(BaseModel):
     action_required: bool
     evidence: str
     confidence: float
+    organizer: str | None = None
 
 
 class ShotResult(BaseModel):
@@ -59,12 +65,12 @@ def to_items(result: ShotResult, user_id: str, ref: str) -> list[Item]:
             course=normalize_course(raw.course), due_at=_parse_local(raw.due_at), starts_at=_parse_local(raw.starts_at),
             location=raw.location, action_required=raw.action_required, source="screenshot", source_ref=ref,
             evidence=raw.evidence.strip()[:300], confidence=max(0.0, min(1.0, raw.confidence)) * 0.9,
-            extracted_by="llm", sender="Screenshot", sender_type="automated",
+            extracted_by="llm", sender=(raw.organizer or "Screenshot").strip()[:80], sender_type="automated",
         ))
     return items
 
 
-async def extract_screenshot(data: bytes, mime: str, now: datetime | None = None) -> ShotResult:
+async def extract_screenshot(data: bytes, mime: str, now: datetime | None = None, flyer: bool = False) -> ShotResult:
     from google.genai import types
 
     now = now or now_utc()
@@ -72,4 +78,5 @@ async def extract_screenshot(data: bytes, mime: str, now: datetime | None = None
         types.Part.from_text(text=f"Current date: {now.astimezone(EASTERN):%A %B %d, %Y %I:%M %p}."),
         types.Part.from_bytes(data=data, mime_type=mime),
     ]
-    return await generate_json(parts, SYSTEM, ShotResult, temperature=0)
+    system = f"{SYSTEM}\n\n{FLYER_NOTE}" if flyer else SYSTEM
+    return await generate_json(parts, system, ShotResult, temperature=0)
