@@ -92,7 +92,7 @@ async def already_processed(user_id: str, message_ids: list[str]) -> set[str]:
 
 async def delete_user_data(user_id: str) -> None:
     db = get_db()
-    for coll in ("items", "processed_messages", "llm_cache", "sessions"):
+    for coll in ("items", "processed_messages", "llm_cache", "sessions", "office_hours"):
         await db[coll].delete_many({"user_id": user_id})
     await db.briefs.delete_one({"_id": user_id})
     await db.users.delete_one({"_id": user_id})
