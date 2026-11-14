@@ -96,6 +96,8 @@ async def sync_user(user_id: str, full: bool = False) -> dict:
     canvas = await sync_canvas(user_id)
     from app.watchers import share_web_items  # RA/PM postings and campus events from watched pages
     await share_web_items(user_id)
+    from app.campus_events import share_followed_events  # events from clubs you follow
+    await share_followed_events(user_id)
 
     from app.routes.brief import schedule_refresh
     schedule_refresh(user_id)

@@ -17,7 +17,7 @@ Category = Literal[
     "course_info",
     "noise",
 ]
-Source = Literal["gmail", "canvas", "calendar", "syllabus", "screenshot", "web", "demo"]
+Source = Literal["gmail", "canvas", "calendar", "syllabus", "screenshot", "web", "demo", "campus"]
 Status = Literal["open", "done", "dismissed"]
 
 
