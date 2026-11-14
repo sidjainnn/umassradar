@@ -1,6 +1,7 @@
 "use client";
 
-import { RefreshCw, Search, X } from "lucide-react";
+import { BookOpen, Plus, RefreshCw, Search, X } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useRef } from "react";
 import type { Me } from "@/lib/api";
 import { relative } from "@/lib/time";
@@ -13,6 +14,7 @@ type Props = {
   syncing: boolean;
   onRefresh: () => void;
   onSettings: () => void;
+  onImport: () => void;
 };
 
 export function Header({
@@ -22,6 +24,7 @@ export function Header({
   syncing,
   onRefresh,
   onSettings,
+  onImport,
 }: Props) {
   const input = useRef<HTMLInputElement>(null);
   useEffect(() => {
@@ -83,6 +86,24 @@ export function Header({
                   ? `Synced ${relative(me.last_sync_at)}`
                   : "Ready to sync"}
         </span>
+        <Link
+          href="/courses"
+          className="topbar-link"
+          aria-label="Browse courses"
+        >
+          <BookOpen size={16} />
+          <span>Courses</span>
+        </Link>
+        <button
+          className="topbar-link"
+          onClick={onImport}
+          disabled={me.demo}
+          aria-label="Import a syllabus or screenshot"
+          title={me.demo ? "Imports are unavailable in the demo" : "Import"}
+        >
+          <Plus size={16} />
+          <span>Import</span>
+        </button>
         <button
           className="icon-button"
           onClick={onRefresh}

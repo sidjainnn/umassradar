@@ -20,7 +20,13 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { api, type Category, type Item, type Me } from "@/lib/api";
+import {
+  api,
+  type Category,
+  type Item,
+  type Me,
+  type OfficeHourSlot,
+} from "@/lib/api";
 import {
   CATEGORY_LABEL,
   groupItems,
@@ -30,8 +36,10 @@ import {
 import { daysBetween, greeting, longDate } from "@/lib/time";
 import { Brief, type BriefData } from "./Brief";
 import { Header } from "./Header";
+import { ImportDialog } from "./ImportDialog";
 import { ItemCard } from "./ItemCard";
 import { Logo } from "./Logo";
+import { OfficeHours } from "./OfficeHours";
 import { SettingsDialog } from "./SettingsDialog";
 
 type View = "open" | "done" | "dismissed";
@@ -99,6 +107,8 @@ export function Dashboard({
     text: string;
   } | null>(null);
   const [settings, setSettings] = useState(false);
+  const [importing, setImporting] = useState(false);
+  const [officeHours, setOfficeHours] = useState<OfficeHourSlot[]>([]);
   const [showNoise, setShowNoise] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [highlight, setHighlight] = useState<string | null>(null);
@@ -134,6 +144,9 @@ export function Dashboard({
       if (version !== loadVersion.current) return;
       setItems(list);
       setNoise(noiseList);
+      api<OfficeHourSlot[]>("/office-hours")
+        .then((slots) => setOfficeHours(Array.isArray(slots) ? slots : []))
+        .catch(() => setOfficeHours([]));
       void loadBrief();
     } catch (error) {
       if (version === loadVersion.current) {
@@ -438,6 +451,7 @@ export function Dashboard({
           syncing={syncing}
           onRefresh={refresh}
           onSettings={() => setSettings(true)}
+          onImport={() => setImporting(true)}
         />
         <nav className="mobile-nav" aria-label="Mobile navigation">
           {navigation.map(({ id, label }) => (
@@ -580,6 +594,10 @@ export function Dashboard({
                   </button>
                 ))}
               </div>
+              <OfficeHours
+                slots={officeHours}
+                calendarConnected={!!me.calendar_connected}
+              />
             </>
           )}
           <div className="content-toolbar">
@@ -933,6 +951,15 @@ export function Dashboard({
             void load();
           }}
           onDeleted={onSignedOut}
+        />
+      )}
+      {importing && (
+        <ImportDialog
+          onClose={() => setImporting(false)}
+          onImported={(text) => {
+            setNotice(text);
+            void load();
+          }}
         />
       )}
     </div>

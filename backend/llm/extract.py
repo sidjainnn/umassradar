@@ -176,10 +176,11 @@ async def call_gemini(prompt: str) -> LLMResult:
     return await generate_json(prompt, SYSTEM, LLMResult, temperature=0)
 
 
-async def generate_json(prompt: str, system: str, schema: type[BaseModel], temperature: float = 0):
+async def generate_json(prompt, system: str, schema: type[BaseModel], temperature: float = 0):
     """Structured Gemini call shared by extraction and the brief.
 
-    Retries busy/rate-limited responses; if the main model is overloaded, uses the fallback model for a while.
+    `prompt` is text, or a list of parts (text + image) for vision. Retries busy/rate-limited responses;
+    if the main model is overloaded, uses the fallback model for a while.
     """
     global _client, _main_down_until, last_model_used
     from google import genai

@@ -52,6 +52,8 @@ export function ItemCard({
   const source =
     item.source === "canvas"
       ? "Canvas"
+      : item.source === "web"
+        ? "page"
       : item.source === "demo"
         ? "Demo email"
         : "Gmail";
@@ -100,7 +102,7 @@ export function ItemCard({
         <div className="item-links">
           {safeUrl ? (
             <a href={safeUrl} target="_blank" rel="noreferrer">
-              Open in {source}
+              {item.source === "web" ? "Open page" : `Open in ${source}`}
               <ArrowUpRight size={13} aria-hidden="true" />
             </a>
           ) : item.source === "demo" ? (

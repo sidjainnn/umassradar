@@ -40,6 +40,7 @@ export type Me = {
   gmail_granted: boolean;
   last_sync_at: string | null;
   canvas_feed_set: boolean;
+  calendar_connected?: boolean;
 };
 
 export class ApiError extends Error {
@@ -64,3 +65,68 @@ export async function api<T>(path: string, init?: RequestInit): Promise<T> {
   }
   return res.json() as Promise<T>;
 }
+
+export type OfficeHourSlot = {
+  course: string | null;
+  who: string;
+  location: string | null;
+  evidence: string;
+  starts_at: string;
+  ends_at: string;
+  can_make?: boolean | null;
+};
+
+/** multipart upload to the API (no JSON content-type, so the browser sets the boundary) */
+export async function upload<T>(path: string, file: File): Promise<T> {
+  const body = new FormData();
+  body.append("file", file);
+  const res = await fetch(`/api${path}`, { method: "POST", body, credentials: "include" });
+  if (!res.ok) {
+    let detail = res.statusText;
+    try {
+      detail = (await res.json()).detail ?? detail;
+    } catch {}
+    throw new ApiError(res.status, detail);
+  }
+  return res.json() as Promise<T>;
+}
+
+export type CourseSummary = {
+  code: string;
+  title: string;
+  term: string | null;
+  credits: string | null;
+  instructors: string[];
+  has_syllabus: boolean;
+  mine: boolean;
+  planned: boolean;
+};
+
+export type Section = {
+  section: string;
+  class_number: string;
+  days: number[];
+  start: string | null;
+  end: string | null;
+  location: string | null;
+  instructor: string | null;
+  conflicts_with: string[];
+  chosen: boolean;
+};
+
+export type CourseProfile = CourseSummary & {
+  terms: string[];
+  description: string | null;
+  prerequisites: string | null;
+  catalog_url: string | null;
+  sections: Section[];
+  shared: {
+    syllabus_uploads: number;
+    office_hours: { who: string; weekday: number; start: string; end: string; location: string | null }[];
+    dates: { title: string; category: string; when: string; location: string | null }[];
+    grading: string | null;
+    late_policy: string | null;
+    updated_at: string | null;
+  };
+  your_items: Item[];
+};

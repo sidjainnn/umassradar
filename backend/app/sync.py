@@ -94,6 +94,8 @@ async def sync_user(user_id: str, full: bool = False) -> dict:
 
     await db.users.update_one({"_id": user_id}, {"$set": {"pending_llm": pending}})
     canvas = await sync_canvas(user_id)
+    from app.watchers import share_web_items  # RA/PM postings and campus events from watched pages
+    await share_web_items(user_id)
 
     # Only move the history pointer after a complete pass, so nothing is skipped.
     await db.users.update_one(

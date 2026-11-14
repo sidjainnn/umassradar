@@ -12,7 +12,7 @@ from google_auth_oauthlib.flow import Flow
 
 from app.config import get_settings
 from app.db import get_db
-from app.gmail_client import SCOPES
+from app.gmail_client import CALENDAR_SCOPE, SCOPES
 from app.models import now_utc
 from app.security import (
     SESSION_COOKIE,
@@ -38,7 +38,7 @@ ERROR_MESSAGES = {
 }
 
 
-def _flow(state: str | None = None, code_verifier: str | None = None) -> Flow:
+def _flow(state: str | None = None, code_verifier: str | None = None, scopes: list[str] | None = None) -> Flow:
     s = get_settings()
     config = {
         "web": {
@@ -49,7 +49,7 @@ def _flow(state: str | None = None, code_verifier: str | None = None) -> Flow:
             "redirect_uris": [s.oauth_redirect_uri],
         }
     }
-    flow = Flow.from_client_config(config, scopes=SCOPES, state=state, code_verifier=code_verifier)
+    flow = Flow.from_client_config(config, scopes=scopes or SCOPES, state=state, code_verifier=code_verifier)
     flow.redirect_uri = s.oauth_redirect_uri
     return flow
 
@@ -60,16 +60,18 @@ def _frontend(path: str = "/", **params) -> str:
 
 
 @router.get("/auth/login")
-async def login():
+async def login(calendar: bool = False):
+    """Gmail sign-in. With ?calendar=1 it also asks for read-only Calendar (added on top of existing access)."""
     if not get_settings().google_configured:
         raise HTTPException(503, "Google sign-in isn't configured: set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET.")
     if os.environ.get("OAUTHLIB_INSECURE_TRANSPORT") is None and get_settings().oauth_redirect_uri.startswith("http://"):
         os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"  # local dev only
     state = secrets.token_urlsafe(24)
-    flow = _flow(state=state)
+    scopes = SCOPES + [CALENDAR_SCOPE] if calendar else SCOPES
+    flow = _flow(state=state, scopes=scopes)
     url, _ = flow.authorization_url(access_type="offline", prompt="consent", include_granted_scopes="true")
     await get_db().oauth_states.insert_one(
-        {"_id": state, "code_verifier": flow.code_verifier, "created_at": now_utc()}
+        {"_id": state, "code_verifier": flow.code_verifier, "scopes": scopes, "created_at": now_utc()}
     )
     response = RedirectResponse(url, status_code=302)
     set_cookie(response, STATE_COOKIE, state, 900)
@@ -90,7 +92,7 @@ async def callback(request: Request, radar_oauth_state: str | None = Cookie(defa
     if not pending:
         return RedirectResponse(_frontend("/", error="state_expired", message="Sign-in expired. Please try again."))
 
-    flow = _flow(state=state, code_verifier=pending.get("code_verifier"))
+    flow = _flow(state=state, code_verifier=pending.get("code_verifier"), scopes=pending.get("scopes"))
     try:
         await asyncio.to_thread(flow.fetch_token, code=params.get("code"))
     except Exception as e:  # oauthlib raises several error types
@@ -109,6 +111,7 @@ async def callback(request: Request, radar_oauth_state: str | None = Cookie(defa
         "email": info.get("email", ""),
         "name": info.get("name", ""),
         "gmail_granted": "https://www.googleapis.com/auth/gmail.readonly" in granted,
+        "calendar_granted": CALENDAR_SCOPE in granted,
         "needs_reconnect": False,
         "updated_at": now_utc(),
     }
@@ -139,6 +142,7 @@ async def me(user: dict = Depends(current_user)):
         "demo": user.get("demo", False),
         "needs_reconnect": user.get("needs_reconnect", False),
         "gmail_granted": user.get("gmail_granted", False),
+        "calendar_connected": user.get("calendar_granted", False),
         "last_sync_at": user.get("last_sync_at"),
         "canvas_feed_set": bool(user.get("canvas_feed_enc")),
     }

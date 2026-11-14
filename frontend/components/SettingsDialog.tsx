@@ -1,6 +1,13 @@
 "use client";
 
-import { CalendarDays, RefreshCcw, ShieldCheck, Trash2, X } from "lucide-react";
+import {
+  CalendarCheck,
+  CalendarDays,
+  RefreshCcw,
+  ShieldCheck,
+  Trash2,
+  X,
+} from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { api, type Me } from "@/lib/api";
 
@@ -128,6 +135,30 @@ export function SettingsDialog({ me, onClose, onChanged, onDeleted }: Props) {
             <p className="mt-2 text-xs text-stone-500">
               Connect your own inbox to add a Canvas feed or re-scan email.
             </p>
+          )}
+        </section>
+
+        <section className="mt-6">
+          <h3 className="flex items-center gap-2 font-medium">
+            <CalendarCheck className="h-4 w-4 text-maroon-600" /> Google
+            Calendar
+          </h3>
+          <p className="mt-1 text-sm text-stone-500">
+            Read-only. Used to check which office hours fit around your classes;
+            events aren&apos;t stored.
+          </p>
+          {me.calendar_connected ? (
+            <p className="mt-2 text-sm font-medium text-emerald-700">
+              Connected.
+            </p>
+          ) : (
+            <a
+              href={me.demo ? undefined : "/api/auth/login?calendar=1"}
+              aria-disabled={me.demo}
+              className={`mt-2 inline-block rounded-lg border border-stone-200 px-3 py-2 text-sm font-medium hover:bg-stone-50 ${me.demo ? "pointer-events-none opacity-50" : ""}`}
+            >
+              Connect Google Calendar
+            </a>
           )}
         </section>
 
