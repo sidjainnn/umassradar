@@ -18,6 +18,7 @@ import {
   ShieldCheck,
   Sparkles,
 } from "lucide-react";
+import Image from "next/image";
 import { CampusPals } from "./CampusPals";
 import { Logo } from "./Logo";
 
@@ -84,6 +85,15 @@ export function Landing({ notice, onDemo, demoLoading }: Props) {
         </div>
 
         <div className="hero-product relative z-10 lg:pl-4" aria-label="Illustrative UMass Radar morning screen">
+          <div className="hero-sam" aria-label="Sam the Minuteman welcomes students to UMass Radar">
+            <Image
+              src="/mascots/sam-minuteman-3d.png"
+              alt="A friendly 3D Sam the Minuteman holding a class schedule"
+              width={1024}
+              height={1536}
+              priority
+            />
+          </div>
           <div className="hero-window rounded-[26px] border border-white/30 bg-white/94 p-4 shadow-[0_36px_100px_rgba(0,0,0,0.38)] backdrop-blur sm:p-5">
             <div className="flex items-center gap-2 border-b border-line-soft pb-3">
               <span className="h-2.5 w-2.5 rounded-full bg-maroon-200" />
