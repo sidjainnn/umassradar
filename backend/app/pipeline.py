@@ -1,11 +1,14 @@
-"""Email -> items. Pure functions only; storage lives in app/store.py.
+"""Email -> items. Pure-ish functions; storage lives in app/store.py.
 
-Order: sender parser -> noise rule -> (later) LLM for anything left over.
+Order: skip sent-only mail -> sender parser -> noise rule -> LLM for anything left -> merge -> rank.
 """
 
 from dataclasses import dataclass, field
 
+from app.merge import merge_items
 from app.models import EmailMsg, Item
+from app.ranking import urgency
+from llm.extract import extract_items
 from parsers import find_parser
 from parsers.noise import is_noise, noise_item
 
@@ -18,10 +21,15 @@ class RuleResult:
 
 def apply_rules(msg: EmailMsg) -> tuple[list[Item], bool]:
     """Returns (items, needs_llm)."""
+    if "SENT" in msg.label_ids and "INBOX" not in msg.label_ids:
+        return [], False  # the student's own outgoing mail
     parser = find_parser(msg)
     if parser:
-        return parser.parse(msg), False
-    if is_noise(msg):
+        items = parser.parse(msg)
+        if items is not None:
+            return items, False
+        return [], True  # parser recognized the sender but wants the LLM to read this one
+    if is_noise(msg) or "CATEGORY_SOCIAL" in msg.label_ids:
         return [noise_item(msg)], False
     return [], True
 
@@ -36,8 +44,16 @@ def run_rules(msgs: list[EmailMsg]) -> RuleResult:
     return result
 
 
-async def process_emails(msgs: list[EmailMsg], user_id: str) -> list[Item]:
-    result = run_rules(msgs)
-    for item in result.items:
+def finalize(items: list[Item], user_id: str) -> list[Item]:
+    for item in items:
         item.user_id = user_id
-    return result.items
+        item.urgency_score = urgency(item)
+    return merge_items(items)
+
+
+async def process_emails(msgs: list[EmailMsg], user_id: str, use_llm: bool = True, generate=None) -> list[Item]:
+    result = run_rules(msgs)
+    items = list(result.items)
+    if use_llm and result.needs_llm:
+        items += await extract_items(result.needs_llm, user_id, generate=generate)
+    return finalize(items, user_id)
