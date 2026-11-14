@@ -7,6 +7,7 @@ instructions inside it, and every item's evidence must be a quote from the email
 import asyncio
 import logging
 import re
+import time
 from datetime import datetime
 from typing import Awaitable, Callable, Literal
 
@@ -153,11 +154,14 @@ def to_item(raw: LLMItem, msg: EmailMsg) -> Item:
 # ---------- Gemini call ----------
 
 _client = None
+_main_down_until = 0.0  # while the main model is overloaded, skip straight to the fallback
+BREAKER_SECONDS = 300
+last_model_used = ""
 
 
 async def call_gemini(prompt: str) -> LLMResult:
     """One structured extraction call. Retries busy/rate-limited responses, then falls back to a lighter model."""
-    global _client
+    global _client, _main_down_until, last_model_used
     from google import genai
     from google.genai import types
 
@@ -167,11 +171,12 @@ async def call_gemini(prompt: str) -> LLMResult:
     config = types.GenerateContentConfig(
         system_instruction=SYSTEM, response_mime_type="application/json", response_schema=LLMResult, temperature=0
     )
-    # two tries on the main model, then the fallback; overloads (503) switch fast, rate limits (429) wait longer
-    plan = [settings.gemini_model, settings.gemini_model, settings.gemini_fallback_model, settings.gemini_fallback_model]
+    main, fallback = settings.gemini_model, settings.gemini_fallback_model
+    plan = [fallback, fallback] if time.monotonic() < _main_down_until else [main, fallback, fallback]
     for attempt, model in enumerate(plan):
         try:
             resp = await _client.aio.models.generate_content(model=model, contents=prompt, config=config)
+            last_model_used = model
             return resp.parsed if isinstance(resp.parsed, LLMResult) else LLMResult.model_validate_json(resp.text)
         except Exception as e:
             text = str(e)
@@ -179,7 +184,11 @@ async def call_gemini(prompt: str) -> LLMResult:
             rate_limited = any(code in text for code in ("429", "RESOURCE_EXHAUSTED"))
             if not (overloaded or rate_limited) or attempt == len(plan) - 1:
                 raise
-            wait = 3 if overloaded else 15 * (attempt + 1)
+            if overloaded and model == main:
+                _main_down_until = time.monotonic() + BREAKER_SECONDS
+                log.info("Gemini %s is overloaded; using %s for the next %ss", main, fallback, BREAKER_SECONDS)
+                continue
+            wait = 2 if overloaded else 15 * (attempt + 1)
             log.info("Gemini %s on %s, retrying in %ss", "busy" if overloaded else "rate limited", model, wait)
             await asyncio.sleep(wait)
     raise RuntimeError("Gemini unavailable: gave up after retries")
@@ -246,7 +255,7 @@ async def extract_items(
             for mid, raws in per_msg.items():
                 await db.llm_cache.update_one(
                     {"user_id": user_id, "message_id": mid},
-                    {"$set": {"items": raws, "model": get_settings().gemini_model, "created_at": now_utc()}},
+                    {"$set": {"items": raws, "model": last_model_used or get_settings().gemini_model, "created_at": now_utc()}},
                     upsert=True,
                 )
         return out
