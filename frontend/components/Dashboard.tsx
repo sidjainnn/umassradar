@@ -90,6 +90,7 @@ export function Dashboard({
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("");
   const [course, setCourse] = useState("");
+  const [source, setSource] = useState("");
   const [syncing, setSyncing] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
   const [toast, setToast] = useState<{
@@ -246,6 +247,7 @@ export function Dashboard({
     setQuery("");
     setCategory("");
     setCourse("");
+    setSource("");
     setPeriod("all");
   }
 
@@ -287,6 +289,9 @@ export function Dashboard({
       (items ?? []).map((item) => item.course).filter(Boolean) as string[],
     ),
   ].sort();
+  const sources = [
+    ...new Set((items ?? []).map((item) => item.source).filter(Boolean)),
+  ].sort();
   const isOverview = focus === "overview" && view === "open";
   const filtered = (items ?? []).filter(
     (item) =>
@@ -294,9 +299,10 @@ export function Dashboard({
       focusMatches(item, focus) &&
       matchesSearch(item, query) &&
       (!category || item.category === category) &&
-      (!course || item.course === course),
+      (!course || item.course === course) &&
+      (!source || item.source === source),
   );
-  const searching = !!(query || category || course);
+  const searching = !!(query || category || course || source);
   const shownItems =
     focus === "deadline" && period === "today" && !searching
       ? filtered.filter(
@@ -604,7 +610,9 @@ export function Dashboard({
               aria-controls="radar-filters"
             >
               <SlidersHorizontal size={14} />
-              Filters{(category || course) && <span className="filter-dot" />}
+              Filters{(category || course || source) && (
+                <span className="filter-dot" />
+              )}
             </button>
           </div>
           {showFilters && (
@@ -637,11 +645,32 @@ export function Dashboard({
                   ))}
                 </select>
               </label>
+              <label>
+                Source
+                <select
+                  value={source}
+                  onChange={(event) => setSource(event.target.value)}
+                >
+                  <option value="">All sources</option>
+                  {sources.map((value) => (
+                    <option key={value} value={value}>
+                      {value === "gmail"
+                        ? "Gmail"
+                        : value === "canvas"
+                          ? "Canvas"
+                          : value === "demo"
+                            ? "Demo inbox"
+                            : value}
+                    </option>
+                  ))}
+                </select>
+              </label>
               <button
                 className="text-button"
                 onClick={() => {
                   setCategory("");
                   setCourse("");
+                  setSource("");
                   setQuery("");
                 }}
               >

@@ -1,15 +1,16 @@
 import type { Metadata, Viewport } from "next";
-import { Fredoka, Nunito_Sans } from "next/font/google";
+import { Lora, Open_Sans } from "next/font/google";
 import { RegisterSW } from "@/components/RegisterSW";
 import "./globals.css";
 
-const bodyFont = Nunito_Sans({
+const bodyFont = Open_Sans({
   subsets: ["latin"],
   variable: "--font-body",
 });
-const displayFont = Fredoka({
+const displayFont = Lora({
   subsets: ["latin"],
   variable: "--font-display",
+  weight: ["600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -19,7 +20,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#F0445E",
+  themeColor: "#840028",
 };
 
 export default function RootLayout({

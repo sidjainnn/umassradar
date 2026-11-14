@@ -6,37 +6,37 @@ export function CampusPals() {
           <path
             className="pal-tail"
             d="M115 87c31-5 33-32 17-40-8-4-16 0-17 8 12-5 19 8 10 16-5 5-12 5-20 4"
-            fill="#FFADB9"
-            stroke="#542A34"
+            fill="#A2AAAD"
+            stroke="#212721"
             strokeWidth="4"
             strokeLinecap="round"
           />
           <path
             d="M38 48 28 25l28 10M102 48l10-23-28 10"
-            fill="#FFADB9"
-            stroke="#542A34"
+            fill="#A2AAAD"
+            stroke="#212721"
             strokeWidth="4"
             strokeLinejoin="round"
           />
           <path
             d="M34 58c0-22 16-36 36-36s36 14 36 36v21c0 21-17 34-36 34S34 100 34 79Z"
-            fill="#FFD6DD"
-            stroke="#542A34"
+            fill="#E6E8E7"
+            stroke="#212721"
             strokeWidth="4"
           />
           <path
             d="M39 57c11-12 50-12 62 0-4 20-15 27-31 27S43 77 39 57Z"
-            fill="#8D4050"
+            fill="#505759"
           />
           <ellipse cx="52" cy="61" rx="7" ry="9" fill="#fff" />
           <ellipse cx="88" cy="61" rx="7" ry="9" fill="#fff" />
-          <circle cx="54" cy="63" r="3.5" fill="#542A34" />
-          <circle cx="86" cy="63" r="3.5" fill="#542A34" />
-          <path d="M64 75h12l-6 7Z" fill="#542A34" />
+          <circle cx="54" cy="63" r="3.5" fill="#212721" />
+          <circle cx="86" cy="63" r="3.5" fill="#212721" />
+          <path d="M64 75h12l-6 7Z" fill="#212721" />
           <path
             d="M62 88c5 5 11 5 16 0"
             fill="none"
-            stroke="#542A34"
+            stroke="#212721"
             strokeWidth="3"
             strokeLinecap="round"
           />
@@ -44,7 +44,7 @@ export function CampusPals() {
           <circle cx="95" cy="79" r="5" fill="#F4A6B9" opacity=".7" />
           <path
             d="M48 105v10M92 105v10"
-            stroke="#542A34"
+            stroke="#212721"
             strokeWidth="4"
             strokeLinecap="round"
           />
@@ -62,13 +62,13 @@ export function CampusPals() {
         <svg viewBox="0 0 130 110" role="presentation">
           <path
             d="M34 67c0-23 15-39 36-39 24 0 39 17 39 39 0 21-17 35-40 35-22 0-35-14-35-35Z"
-            fill="#FFD96A"
+            fill="#FFC72C"
             stroke="#51451C"
             strokeWidth="4"
           />
           <path
             d="M27 65 8 73l21 7"
-            fill="#FF9D7A"
+            fill="#FF9E1B"
             stroke="#51451C"
             strokeWidth="4"
             strokeLinejoin="round"
@@ -104,7 +104,7 @@ export function CampusPals() {
           <path
             className="pal-tail"
             d="M100 88c42 4 47-50 19-59-22-7-38 13-25 28 8 9 22 6 24-4 11 17-5 29-24 22"
-            fill="#F5A677"
+            fill="#FF9E1B"
             stroke="#5F3526"
             strokeWidth="4"
             strokeLinecap="round"
@@ -112,13 +112,13 @@ export function CampusPals() {
           />
           <path
             d="M34 64c0-25 15-41 35-41s34 17 34 41v19c0 19-14 31-34 31S34 102 34 83Z"
-            fill="#E98759"
+            fill="#CB6015"
             stroke="#5F3526"
             strokeWidth="4"
           />
           <path
             d="m43 38-8-21 22 13M91 38l10-21-25 13"
-            fill="#E98759"
+            fill="#CB6015"
             stroke="#5F3526"
             strokeWidth="4"
             strokeLinejoin="round"
