@@ -140,7 +140,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
         <div className="mx-auto max-w-5xl px-4 pt-6 sm:px-8 sm:pt-8">
           {me.needs_reconnect && (
-            <a href="/api/auth/login" className="mb-5 block rounded-xl border border-maroon-200 bg-maroon-50 px-4 py-3 text-sm text-maroon-800">
+            <a href="/api/auth/login?consent=1" className="mb-5 block rounded-xl border border-maroon-200 bg-maroon-50 px-4 py-3 text-sm text-maroon-800">
               Google paused your Gmail connection (it does this every few days while the app is in testing).{" "}
               <span className="font-semibold underline">Reconnect Gmail</span>
             </a>

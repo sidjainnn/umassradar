@@ -127,8 +127,8 @@ async def callback(request: Request, radar_oauth_state: str | None = Cookie(defa
         {"_id": user_id}, {"$set": update, "$setOnInsert": {"created_at": now_utc(), "demo": False}},
         upsert=True, return_document=ReturnDocument.AFTER,
     )
-    if not user.get("refresh_token_enc"):
-        # signed in without the consent screen but we have no Gmail token yet: ask once, properly
+    if not user.get("refresh_token_enc") or (user.get("needs_reconnect") and not creds.refresh_token):
+        # no usable Gmail token (first time, or the old one expired): only the consent screen issues a new one
         return RedirectResponse(_frontend("/api/auth/login", consent="1"))
 
     response = RedirectResponse(_frontend("/", connected="1"))
