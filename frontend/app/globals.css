@@ -2666,3 +2666,119 @@ body {
 .landing-preview::after {
   display: none;
 }
+
+/* Mobile usability: comfortable touch targets and layouts that never depend on desktop width. */
+@media (max-width: 760px) {
+  .topbar {
+    min-width: 0;
+    padding-inline: 12px;
+    gap: 8px;
+  }
+  .search-field {
+    min-width: 0;
+  }
+  .search-field kbd {
+    display: none;
+  }
+  .topbar-actions {
+    gap: 4px;
+  }
+  .topbar-link,
+  .topbar .icon-button,
+  .topbar .avatar {
+    width: 40px;
+    height: 40px;
+    min-height: 40px;
+  }
+  .mobile-nav {
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+  }
+  .mobile-nav::-webkit-scrollbar {
+    display: none;
+  }
+  .mobile-nav button {
+    min-height: 48px;
+    scroll-snap-align: start;
+  }
+  .landing-actions > a,
+  .landing-actions > button {
+    min-height: 48px;
+  }
+  .complete-button,
+  .dismiss-button,
+  .item-actions .icon-button {
+    width: 40px;
+    height: 40px;
+  }
+  .agenda-tabs {
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+  }
+  .agenda-tabs::-webkit-scrollbar {
+    display: none;
+  }
+  .reconnect-notice {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .reconnect-notice a {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+  .dashboard-footer {
+    flex-wrap: wrap;
+  }
+  .cics-site-nav .radar-logo small {
+    display: none;
+  }
+  .cics-site-nav nav {
+    flex-shrink: 0;
+  }
+  .cics-site-nav nav a {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 10px;
+  }
+}
+
+@media (max-width: 430px) {
+  .landing-actions > a,
+  .landing-actions > button {
+    width: 100%;
+  }
+  .filter-panel label {
+    flex-basis: 100%;
+  }
+  .dashboard-footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .cics-site-nav .radar-logo {
+    gap: 7px;
+  }
+  .cics-site-nav .radar-logo strong {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 360px) {
+  .mobile-brand {
+    display: none;
+  }
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+  .landing-copy h1 {
+    font-size: 42px;
+  }
+  .campus-pals {
+    transform: scale(0.9);
+    transform-origin: center top;
+    margin-bottom: -12px;
+  }
+}

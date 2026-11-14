@@ -15,8 +15,8 @@ export function NavBar({ active }: { active: "dashboard" | "courses" }) {
     <div className="cics-site-nav">
       <CampusTophat />
       <header className="border-b border-stone-200 bg-white">
-        <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-5 sm:px-6">
-          <Link href="/">
+        <div className="mx-auto flex max-w-6xl items-center gap-2 px-4 py-4 sm:gap-3 sm:px-6 sm:py-5">
+          <Link href="/" className="min-w-0">
             <Logo />
           </Link>
           <nav className="ml-auto flex gap-1">

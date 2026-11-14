@@ -86,7 +86,7 @@ export default function CoursePage({ params }: { params: Promise<{ code: string 
           <ArrowLeft className="h-4 w-4" /> All courses
         </Link>
 
-        <section className="mt-4 rounded-2xl bg-white p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)] ring-1 ring-stone-200">
+        <section className="mt-4 rounded-2xl bg-white p-4 shadow-[0_1px_2px_rgba(0,0,0,0.04)] ring-1 ring-stone-200 sm:p-6">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
               <div className="flex flex-wrap items-center gap-2 text-xs">
@@ -97,12 +97,12 @@ export default function CoursePage({ params }: { params: Promise<{ code: string 
               <h1 className="mt-2 text-2xl font-semibold tracking-tight text-stone-900">{course.title}</h1>
               <p className="mt-1 text-sm text-stone-500">{course.instructors.join(", ") || "Instructor TBA"}</p>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:flex-nowrap">
               {course.terms.length > 1 && (
                 <select
                   value={course.term ?? ""}
                   onChange={(e) => setTerm(e.target.value)}
-                  className="rounded-lg border border-stone-200 bg-white px-2 py-2 text-sm"
+                  className="min-h-11 min-w-0 flex-1 rounded-lg border border-stone-200 bg-white px-2 py-2 text-sm sm:flex-none"
                 >
                   {course.terms.map((t) => <option key={t}>{t}</option>)}
                 </select>
@@ -110,7 +110,7 @@ export default function CoursePage({ params }: { params: Promise<{ code: string 
               <button
                 disabled={saving}
                 onClick={() => setPlan(course.planned ? null : [])}
-                className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium disabled:opacity-60 ${
+                className={`inline-flex min-h-11 flex-1 items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium disabled:opacity-60 sm:flex-none ${
                   course.planned ? "border border-stone-200 bg-white text-stone-700" : "bg-maroon-600 text-white hover:bg-maroon-700"
                 }`}
               >
@@ -137,7 +137,7 @@ export default function CoursePage({ params }: { params: Promise<{ code: string 
             ) : (
               <div className="overflow-hidden rounded-xl border border-stone-200 bg-white">
                 {course.sections.map((s) => (
-                  <div key={s.class_number} className="flex items-center gap-3 border-b border-stone-100 px-4 py-3 last:border-0">
+                  <div key={s.class_number} className="flex flex-col items-stretch gap-3 border-b border-stone-100 px-4 py-3 last:border-0 sm:flex-row sm:items-center">
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-medium text-stone-900">
                         {s.section.replace(/^U\d\s*/, "")} <span className="font-normal text-stone-400">#{s.class_number}</span>
@@ -160,7 +160,7 @@ export default function CoursePage({ params }: { params: Promise<{ code: string 
                       <button
                         disabled={saving}
                         onClick={() => toggleSection(s)}
-                        className={`rounded-lg px-2.5 py-1 text-xs font-medium ${s.chosen ? "bg-stone-900 text-white" : "border border-stone-200 text-stone-600 hover:border-stone-300"}`}
+                        className={`min-h-11 rounded-lg px-3 py-2 text-xs font-medium sm:min-h-0 sm:px-2.5 sm:py-1 ${s.chosen ? "bg-stone-900 text-white" : "border border-stone-200 text-stone-600 hover:border-stone-300"}`}
                       >
                         {s.chosen ? "Chosen" : "Choose"}
                       </button>
@@ -184,7 +184,7 @@ export default function CoursePage({ params }: { params: Promise<{ code: string 
           </section>
 
           <section>
-            <h2 className="mb-3 flex items-center justify-between text-sm font-semibold uppercase tracking-wider text-stone-500">
+            <h2 className="mb-3 flex flex-col items-start gap-1 text-sm font-semibold uppercase tracking-wider text-stone-500 sm:flex-row sm:items-center sm:justify-between">
               From the syllabus
               {shared.syllabus_uploads > 0 && (
                 <span className="inline-flex items-center gap-1 text-xs font-normal normal-case tracking-normal text-stone-400">

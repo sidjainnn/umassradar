@@ -55,7 +55,7 @@ export function ImportDialog({ onClose, onImported }: Props) {
 
   return (
     <div className="fixed inset-0 z-40 grid place-items-center bg-stone-900/40 p-4" onClick={onClose}>
-      <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+      <div className="max-h-[calc(100dvh-2rem)] w-full max-w-md overflow-y-auto rounded-2xl bg-white p-5 shadow-2xl sm:p-6" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold">Import</h2>
           <button onClick={onClose} className="rounded-lg p-1 text-stone-400 hover:bg-stone-100" aria-label="Close">

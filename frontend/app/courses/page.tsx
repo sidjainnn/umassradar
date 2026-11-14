@@ -56,7 +56,7 @@ export default function CoursesPage() {
         {all?.length === 0 && <p className="mt-8 text-sm text-stone-400">No courses match “{q}”.</p>}
         {groups.map((g) => (
           <section key={g.title} className="mt-8">
-            <div className="mb-3 flex items-baseline justify-between">
+            <div className="mb-3 flex flex-col items-start gap-1 sm:flex-row sm:items-baseline sm:justify-between">
               <h2 className="text-sm font-semibold uppercase tracking-wider text-stone-500">
                 {g.title} <span className="ml-1 text-stone-400">{g.items.length}</span>
               </h2>

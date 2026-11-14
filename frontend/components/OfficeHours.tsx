@@ -8,7 +8,7 @@ export function OfficeHours({ slots, calendarConnected }: { slots: OfficeHourSlo
   if (slots.length === 0) return null;
   return (
     <section className="office-hours-section lg:col-span-2">
-      <div className="mb-3 flex items-baseline justify-between">
+      <div className="mb-3 flex flex-col items-start gap-1 sm:flex-row sm:items-baseline sm:justify-between">
         <h2 className="text-sm font-semibold uppercase tracking-wider text-stone-500">
           Office hours this week <span className="ml-1 text-stone-400">{slots.length}</span>
         </h2>
