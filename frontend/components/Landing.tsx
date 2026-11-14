@@ -8,6 +8,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { Logo } from "./Logo";
+import { CampusPals } from "./CampusPals";
 
 type Props = {
   notice: string | null;
@@ -29,9 +30,9 @@ export function Landing({ notice, onDemo, demoLoading }: Props) {
             Your day. A little clearer.
           </p>
           <h1>
-            A full college life.
+            College is a lot.
             <br />
-            <em>A quieter inbox.</em>
+            <em>Your inbox can chill.</em>
           </h1>
           <p className="landing-description">
             Deadlines, appointments, replies you owe. UMass Radar brings the
@@ -122,7 +123,25 @@ export function Landing({ notice, onDemo, demoLoading }: Props) {
           <p className="preview-caption">
             An example day. Your radar is built from your inbox.
           </p>
+          <div className="preview-pal" aria-hidden="true">
+            <span>you got this!</span>
+            <div className="preview-pal-face">
+              <i />
+              <i />
+              <b />
+            </div>
+          </div>
         </div>
+      </section>
+      <section
+        className="pal-zone"
+        aria-label="Meet the animated Radar campus pals"
+      >
+        <div>
+          <span className="pal-zone-kicker">tiny campus helpers</span>
+          <h2>They keep watch while you do literally anything else.</h2>
+        </div>
+        <CampusPals />
       </section>
       <section className="landing-benefits" aria-label="How Radar helps">
         <article>
