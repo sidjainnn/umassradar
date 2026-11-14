@@ -31,3 +31,7 @@ next-env.d.ts
 # local agent skills
 .agents/
 skills-lock.json
+
+# syllabus PDFs provided for the library (may be copyrighted)
+backend/seed/syllabi/*
+!backend/seed/syllabi/README.md

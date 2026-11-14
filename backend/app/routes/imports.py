@@ -36,7 +36,8 @@ def require_gemini() -> None:
 
 
 @router.post("/import/syllabus")
-async def import_syllabus(file: UploadFile = File(...), user: dict = Depends(current_user)):
+async def import_syllabus(file: UploadFile = File(...), expected_course: str | None = None,
+                          user: dict = Depends(current_user)):
     require_gemini()
     data = await read_upload(file, MAX_PDF_BYTES)
     if not data.startswith(b"%PDF"):
@@ -58,8 +59,12 @@ async def import_syllabus(file: UploadFile = File(...), user: dict = Depends(cur
     await save_items(user["_id"], finalize(items, user["_id"]))
     if course and not user.get("demo"):
         # share the course facts (not the file, not who uploaded it) on the course's profile
-        await add_syllabus_facts(course, office_hours, items, result.grading, result.late_policy)
-    return {"course": course, "office_hours": len(office_hours), "items": len(items)}
+        await add_syllabus_facts(course, office_hours, items, result.grading, result.late_policy, term=result.term)
+    warning = None
+    if expected_course and course and course.replace(" ", "") != expected_course.replace(" ", ""):
+        warning = f"That syllabus looks like {course}, not {expected_course}. It was added to {course}."
+    return {"course": course, "office_hours": len(office_hours), "items": len(items), "term": result.term,
+            "warning": warning}
 
 
 @router.get("/office-hours")

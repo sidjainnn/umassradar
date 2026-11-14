@@ -29,6 +29,7 @@ Extract:
 - dated: exams, quizzes, project/homework due dates and other one-time dated items that have a specific date.
   category is "deadline" for things due, "event" for exams, reviews and other things that happen.
   date is "YYYY-MM-DD" (use the semester and year given; the current date is provided). time is "HH:MM" or null.
+- term: the semester the syllabus is for, as "Spring 2026", "Summer 2026" or "Fall 2026", or null if not stated.
 - grading: one short line with the grade breakdown, e.g. "Projects 40%, Midterms 30%, Final 25%, Participation 5%", or null.
 - late_policy: one short sentence summarizing the late-work policy, or null.
 - evidence: copy the line from the syllabus word for word.
@@ -59,6 +60,7 @@ class SyllabusResult(BaseModel):
     dated: list[DatedItem]
     grading: str | None
     late_policy: str | None
+    term: str | None = None
 
 
 class SyllabusError(ValueError):

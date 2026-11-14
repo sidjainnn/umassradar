@@ -64,15 +64,40 @@ def summary(course: dict) -> dict:
     }
 
 
+TERM_START = {"Spring": (1, 20), "Summer": (6, 1), "Fall": (9, 2)}
+
+
+def term_start(term: str | None):
+    """Rough first day of a term like "Spring 2026", or None if it can't be read."""
+    import re
+    from datetime import date
+
+    m = re.search(r"(Spring|Summer|Fall)\s+(20\d\d)", term or "", re.I)
+    if not m:
+        return None
+    month, day = TERM_START[m.group(1).title()]
+    return date(int(m.group(2)), month, day)
+
+
 async def add_syllabus_facts(code: str, office_hours: list[dict], items: list[Item], grading: str | None,
-                             late_policy: str | None) -> None:
-    """Share what a syllabus says about a course with everyone. No uploader info, no file."""
+                             late_policy: str | None, term: str | None = None, source_url: str | None = None,
+                             from_student: bool = True) -> bool:
+    """Share what a syllabus says about a course with everyone. No uploader info, no file.
+
+    An older syllabus never replaces facts from a newer one. Returns True if the profile was updated.
+    """
+    current = await get_db().courses.find_one({"_id": code}, {"shared.term": 1})
+    have, new = term_start(((current or {}).get("shared") or {}).get("term")), term_start(term)
+    if have and new and new < have:
+        return False
     exams = [
         {"title": i.title, "category": i.category, "when": (i.due_at or i.starts_at), "location": i.location}
         for i in items if i.confidence >= 0.6
     ]
     hours = [{k: oh[k] for k in ("who", "weekday", "start", "end", "location")} for oh in office_hours]
-    shared = {"shared.office_hours": hours, "shared.dates": exams, "shared.updated_at": now_utc()}
+    shared = {"shared.office_hours": hours, "shared.dates": exams, "shared.updated_at": now_utc(),
+              "shared.term": term, "shared.source_url": source_url,
+              "shared.source": "student" if from_student else "public"}
     if grading:
         shared["shared.grading"] = grading[:300]
     if late_policy:
@@ -82,6 +107,7 @@ async def add_syllabus_facts(code: str, office_hours: list[dict], items: list[It
         {"$set": shared, "$inc": {"shared.syllabus_uploads": 1}, "$setOnInsert": {"created_at": now_utc()}},
         upsert=True,
     )
+    return True
 
 
 def upcoming_dates(dates: list[dict], now: datetime | None = None) -> list[dict]:

@@ -61,3 +61,16 @@ def test_upcoming_slots_next_week():
     slots = upcoming_slots(office_hours, now=NOW)
     assert len(slots) == 1
     assert local(slots[0]["starts_at"]) == (2026, 11, 17, 14, 30)  # next Tuesday
+
+
+def test_library_keeps_only_recent_syllabi():
+    from datetime import date
+
+    from app.syllabus_library import is_recent
+
+    today = date(2026, 11, 14)
+    assert is_recent("Spring 2026", today)
+    assert is_recent("Fall 2026", today)
+    assert is_recent("Spring 2027", today)
+    assert not is_recent("Fall 2025", today)  # started Sep 2025, more than 12 months ago
+    assert not is_recent(None, today)
