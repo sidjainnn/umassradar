@@ -109,7 +109,7 @@ In Testing mode Google expires refresh tokens after about 7 days. The app notice
 | `MONGODB_URI`, `MONGODB_DB` | Local Docker Mongo or MongoDB Atlas |
 | `TOKEN_ENCRYPTION_KEY` | Fernet key for refresh tokens. Generate: `python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"` |
 | `COOKIE_SECURE` | `true` when served over HTTPS |
-| `GEMINI_API_KEY`, `GEMINI_MODEL` | Google AI Studio key; default model `gemini-2.5-flash` |
+| `GEMINI_API_KEY`, `GEMINI_MODEL` | Google AI Studio key; default model `gemini-3.8-flash` |
 | `ENABLE_SCHEDULER` | Background syncs on/off |
 
 The frontend needs only `BACKEND_URL` (default `http://localhost:8000`). Every `/api/*` request is proxied there, so the browser only talks to one origin.

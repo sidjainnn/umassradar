@@ -18,7 +18,7 @@ class Settings(BaseSettings):
     cookie_secure: bool = False
 
     gemini_api_key: str = ""
-    gemini_model: str = "gemini-2.5-flash"
+    gemini_model: str = "gemini-3.8-flash"
 
     initial_sync_days: int = 14
     max_initial_messages: int = 300

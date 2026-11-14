@@ -178,7 +178,9 @@ async def call_gemini(prompt: str) -> LLMResult:
             return resp.parsed if isinstance(resp.parsed, LLMResult) else LLMResult.model_validate_json(resp.text)
         except Exception as e:  # rate limits come back as 429 ClientError
             if "429" in str(e) or "RESOURCE_EXHAUSTED" in str(e):
-                await asyncio.sleep(10 * (attempt + 1))
+                wait = 10 * (attempt + 1)
+                log.info("Gemini rate limit, retrying in %ss", wait)
+                await asyncio.sleep(wait)
                 continue
             raise
     raise RuntimeError("Gemini rate limit: gave up after retries")
