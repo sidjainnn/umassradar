@@ -122,7 +122,7 @@ export default function CoursePage({ params }: { params: Promise<{ code: string 
           {course.prerequisites && <p className="mt-3 text-sm text-stone-500">{course.prerequisites}</p>}
           {course.catalog_url && (
             <a href={course.catalog_url} target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-maroon-600 hover:underline">
-              CICS catalog <ExternalLink className="h-3 w-3" />
+              Official course catalog <ExternalLink className="h-3 w-3" />
             </a>
           )}
         </section>

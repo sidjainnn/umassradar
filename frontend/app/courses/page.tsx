@@ -29,7 +29,7 @@ export default function CoursesPage() {
     return [
       { title: "Your courses", hint: "From your email, Canvas and syllabi", items: list.filter((c) => c.mine) },
       { title: "In your plan", hint: "Courses you're considering", items: list.filter((c) => c.planned && !c.mine) },
-      { title: q ? "Results" : "All CICS courses", hint: "From the CICS catalog", items: list.filter((c) => !c.mine && !c.planned) },
+      { title: q ? "Results" : "All courses", hint: "From public catalog data", items: list.filter((c) => !c.mine && !c.planned) },
     ].filter((g) => g.items.length > 0);
   }, [all, q]);
 
@@ -39,7 +39,7 @@ export default function CoursesPage() {
       <main className="mx-auto max-w-6xl px-4 pb-24 pt-8 sm:px-6">
         <h1 className="text-2xl font-semibold tracking-tight">Courses</h1>
         <p className="mt-1 text-sm text-stone-500">
-          Every CICS course with its sections, plus office hours, exam dates and grading shared from students&apos; syllabi.
+          Browse course sections alongside office hours, exam dates and grading details shared from students&apos; syllabi.
         </p>
         <label className="relative mt-5 block max-w-xl">
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-stone-400" />

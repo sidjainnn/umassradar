@@ -23,7 +23,7 @@ export function Landing({ notice, onDemo, demoLoading }: Props) {
       <CampusTophat />
       <header className="landing-header">
         <Logo />
-        <span>BUILT FOR LIFE AT UMASS AMHERST</span>
+        <span>BUILT BY STUDENTS, FOR STUDENT LIFE</span>
       </header>
       <section className="landing-hero">
         <div className="landing-copy">

@@ -378,9 +378,9 @@ export function Dashboard({
           <Logo />
         </Link>
         <div className="workspace-label">
-          <span className="campus-mark">C</span>
+          <span className="campus-mark">R</span>
           <span>
-            Manning CICS<small>Your student radar</small>
+            UMass Radar<small>Your student workspace</small>
           </span>
         </div>
         <p className="nav-heading">YOUR SPACE</p>

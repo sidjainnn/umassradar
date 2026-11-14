@@ -1,8 +1,8 @@
 export function CampusTophat() {
   return (
-    <div className="campus-tophat" aria-label="UMass Amherst and Manning CICS">
-      <span>University of Massachusetts Amherst</span>
-      <span>Manning College of Information &amp; Computer Sciences</span>
+    <div className="campus-tophat" aria-label="UMass Radar project notice">
+      <span>UMass Radar</span>
+      <span>Independent student project · Not an official university service</span>
     </div>
   );
 }
