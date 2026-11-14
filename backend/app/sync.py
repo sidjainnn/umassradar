@@ -14,9 +14,11 @@ from app.store import already_processed, mark_processed, save_items
 
 log = logging.getLogger("radar.sync")
 
+CHUNK = 25  # fetch + process + save this many emails at a time, so progress survives errors
 
-def _fetch(refresh_token: str, history_id: str | None, days: int, limit: int):
-    """Runs in a worker thread. Returns (message ids, new history id, was_full_sync)."""
+
+def _list(refresh_token: str, history_id: str | None, days: int, limit: int):
+    """Runs in a worker thread. Returns (service, message ids, new history id, was_full_sync)."""
     service = gc.build_service(refresh_token)
     new_history = gc.current_history_id(service)
     ids = gc.list_ids_since(service, history_id) if history_id else None
@@ -33,7 +35,7 @@ async def sync_user(user_id: str, full: bool = False) -> dict:
     if not user:
         return {"status": "error", "message": "user not found"}
 
-    refresh_token = decrypt_token(user.get("refresh_token_enc", "")) if user.get("refresh_token_enc") else None
+    refresh_token = decrypt_token(user["refresh_token_enc"]) if user.get("refresh_token_enc") else None
     if not refresh_token:
         await db.users.update_one({"_id": user_id}, {"$set": {"needs_reconnect": True}})
         return {"status": "reconnect", "message": "Reconnect Gmail to keep syncing."}
@@ -43,27 +45,39 @@ async def sync_user(user_id: str, full: bool = False) -> dict:
         await db.items.delete_many({"user_id": user_id, "source": "gmail", "status": "open"})
 
     history_id = None if full else user.get("history_id")
+    done = 0
+    items_saved = 0
     try:
         service, ids, new_history, was_full = await asyncio.to_thread(
-            _fetch, refresh_token, history_id, settings.initial_sync_days, settings.max_initial_messages
+            _list, refresh_token, history_id, settings.initial_sync_days, settings.max_initial_messages
         )
         seen = await already_processed(user_id, ids) if ids else set()
         todo = [i for i in ids if i not in seen]
-        raw = await asyncio.to_thread(gc.get_messages, service, todo)
+
+        for start in range(0, len(todo), CHUNK):
+            raw = await asyncio.to_thread(gc.get_messages, service, todo[start: start + CHUNK])
+            msgs = [parse_gmail_message(m) for m in raw]
+            items = await process_emails(msgs, user_id)
+            await save_items(user_id, items)
+            await mark_processed(user_id, [m.id for m in msgs])
+            done += len(msgs)
+            items_saved += len(items)
     except gc.ReconnectRequired:
         log.info("refresh token rejected for %s", user_id)
         await db.users.update_one({"_id": user_id}, {"$set": {"needs_reconnect": True}})
         return {"status": "reconnect", "message": "Your Gmail connection expired. Reconnect Gmail to keep syncing."}
     except HttpError as e:
-        log.warning("gmail error for %s: %s", user_id, e)
-        return {"status": "error", "message": f"Gmail returned an error ({e.resp.status})."}
+        log.warning("gmail error for %s after %d messages: %s", user_id, done, e)
+        await db.users.update_one({"_id": user_id}, {"$set": {"last_sync_at": now_utc()}})
+        if gc.is_rate_limited(e):
+            msg = f"Gmail asked us to slow down. Synced {done} emails so far; try Refresh again in a minute."
+        else:
+            msg = f"Gmail returned an error ({e.resp.status}). Synced {done} emails so far."
+        return {"status": "partial", "message": msg, "new_messages": done, "items": items_saved}
 
-    msgs = [parse_gmail_message(m) for m in raw]
-    items = await process_emails(msgs, user_id)
-    await save_items(user_id, items)
-    await mark_processed(user_id, [m.id for m in msgs])
+    # Only move the history pointer after a complete pass, so nothing is skipped.
     await db.users.update_one(
         {"_id": user_id},
         {"$set": {"history_id": new_history, "last_sync_at": now_utc(), "needs_reconnect": False}},
     )
-    return {"status": "ok", "new_messages": len(msgs), "items": len(items), "full_sync": was_full}
+    return {"status": "ok", "new_messages": done, "items": items_saved, "full_sync": was_full}

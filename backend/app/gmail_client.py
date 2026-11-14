@@ -32,7 +32,8 @@ def build_service(refresh_token: str):
 
 def _call(request):
     try:
-        return request.execute()
+        # num_retries backs off on 429/5xx and 403 rateLimitExceeded
+        return request.execute(num_retries=5)
     except RefreshError as e:
         raise ReconnectRequired(str(e)) from e
 
@@ -80,6 +81,10 @@ def list_ids_since(service, history_id: str) -> list[str] | None:
         page = resp.get("nextPageToken")
         if not page:
             return ids
+
+
+def is_rate_limited(error: HttpError) -> bool:
+    return error.resp.status in (403, 429) and "ratelimitexceeded" in str(error).lower().replace(" ", "")
 
 
 def get_messages(service, ids: list[str]) -> list[dict]:
