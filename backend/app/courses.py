@@ -41,11 +41,13 @@ async def plan_sections(plan: dict, term: str, exclude: str | None = None) -> di
 
 
 async def my_courses(user_id: str) -> set[str]:
-    """Courses the student is taking, inferred from their own items (email, Canvas, syllabus...)."""
+    """Courses the student is taking: their uploaded schedule, plus courses inferred from their own items."""
     codes = await get_db().items.distinct(
         "course", {"user_id": user_id, "source": {"$in": ["gmail", "canvas", "syllabus", "screenshot", "demo"]}}
     )
-    return {c for c in codes if c}
+    user = await get_db().users.find_one({"_id": user_id}, {"schedule.classes.course": 1})
+    scheduled = {c["course"] for c in ((user or {}).get("schedule") or {}).get("classes", [])}
+    return {c for c in codes if c} | scheduled
 
 
 def summary(course: dict) -> dict:

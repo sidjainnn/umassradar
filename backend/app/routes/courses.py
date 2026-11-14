@@ -44,10 +44,16 @@ async def course_profile(code: str, term: str | None = None, user: dict = Depend
 
     # flag sections that clash with what's already in the student's plan
     others = await plan_sections(plan, term, exclude=code) if term else {}
+    schedule = user.get("schedule") or {}
+    current = schedule.get("classes", []) if schedule.get("term") == term else []
     sections = []
     for s in info.get("sections", []):
-        clashes = sorted({c for c, secs in others.items() if any(overlaps(s, o) for o in secs)})
-        sections.append({**s, "conflicts_with": clashes, "chosen": s["class_number"] in plan.get(code, [])})
+        clashes = {c for c, secs in others.items() if any(overlaps(s, o) for o in secs)}
+        clashes |= {c["course"] for c in current if c["course"] != code and overlaps(s, c)}
+        yours = any(c["course"] == code and c["start"] == s.get("start") and set(c["days"]) == set(s.get("days", []))
+                    for c in current)
+        sections.append({**s, "conflicts_with": sorted(clashes), "chosen": s["class_number"] in plan.get(code, []),
+                         "yours": yours})
 
     shared = course.get("shared", {})
     items = await get_db().items.find({"user_id": user["_id"], "course": code, "status": "open"}).to_list(50)

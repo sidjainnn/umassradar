@@ -1,11 +1,12 @@
 """Read-only Google Calendar: busy times, used to tell which office hours you can actually make."""
 
 import asyncio
-from datetime import datetime, timedelta
+from datetime import datetime, time, timedelta
 
 from googleapiclient.errors import HttpError
 
 from app import gmail_client as gc
+from app.models import EASTERN
 from app.security import decrypt_token
 
 BUFFER = timedelta(minutes=10)  # time to walk across campus
@@ -50,3 +51,20 @@ def can_make(slot_start: datetime, slot_end: datetime, busy: list[tuple[datetime
                 nxt.append((b_end, f_end))
         free = nxt
     return any(e - s >= timedelta(minutes=20) for s, e in free)
+
+
+def class_intervals(schedule: dict | None, start: datetime, end: datetime) -> list[tuple[datetime, datetime]]:
+    """Weekly class meetings from an uploaded schedule, as concrete busy intervals between start and end."""
+    if not schedule:
+        return []
+    out = []
+    day = start.astimezone(EASTERN).date()
+    while day <= end.astimezone(EASTERN).date():
+        for c in schedule.get("classes", []):
+            if day.weekday() in c["days"]:
+                h1, m1 = map(int, c["start"].split(":"))
+                h2, m2 = map(int, c["end"].split(":"))
+                out.append((datetime.combine(day, time(h1, m1), tzinfo=EASTERN),
+                            datetime.combine(day, time(h2, m2), tzinfo=EASTERN)))
+        day += timedelta(days=1)
+    return out
