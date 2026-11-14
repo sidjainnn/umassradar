@@ -46,11 +46,17 @@ def primary(items: list[Item]) -> Item | None:
 async def predict(use_llm: bool) -> dict[str, Item | None]:
     msgs = load_demo_emails()
     predictions: dict[str, Item | None] = {}
+    leftover = []
     for msg in msgs:
         items, needs_llm = apply_rules(msg)
-        if needs_llm and use_llm:
-            items = await extract_items([msg], "eval")
         predictions[demo_key(msg.id)] = primary(items)
+        if needs_llm:
+            leftover.append(msg)
+    if use_llm and leftover:
+        # one batched pass (8 emails per request) instead of a request per email
+        llm_items = await extract_items(leftover, "eval")
+        for msg in leftover:
+            predictions[demo_key(msg.id)] = primary([i for i in llm_items if i.source_ref == msg.id])
     return predictions
 
 
