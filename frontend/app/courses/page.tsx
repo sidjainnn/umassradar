@@ -36,7 +36,7 @@ export default function CoursesPage() {
   return (
     <div className="min-h-screen">
       <NavBar active="courses" />
-      <main className="mx-auto max-w-6xl px-4 pb-24 pt-8 sm:px-6">
+      <main className="course-shell mx-auto max-w-6xl px-4 pb-24 pt-8 sm:px-6">
         <h1 className="text-2xl font-semibold tracking-tight">Courses</h1>
         <p className="mt-1 text-sm text-stone-500">
           Browse course sections alongside office hours, exam dates and grading details shared from students&apos; syllabi.
@@ -67,7 +67,7 @@ export default function CoursesPage() {
                 <Link
                   key={c.code}
                   href={`/courses/${encodeURIComponent(c.code)}`}
-                  className="rounded-xl border border-stone-200 bg-white p-4 transition hover:border-maroon-500 hover:shadow-md"
+                  className="course-card rounded-xl border border-stone-200 bg-white p-4 transition hover:border-maroon-500 hover:shadow-md"
                 >
                   <div className="flex items-center justify-between text-xs">
                     <span className="rounded-full bg-stone-900 px-2 py-0.5 font-medium text-white">{c.code}</span>

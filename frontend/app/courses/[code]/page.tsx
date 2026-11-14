@@ -81,12 +81,12 @@ export default function CoursePage({ params }: { params: Promise<{ code: string 
   return (
     <div className="min-h-screen">
       <NavBar active="courses" />
-      <main className="mx-auto max-w-6xl px-4 pb-24 pt-6 sm:px-6">
+      <main className="course-shell mx-auto max-w-6xl px-4 pb-24 pt-6 sm:px-6">
         <Link href="/courses" className="inline-flex items-center gap-1 text-sm text-stone-500 hover:text-stone-900">
           <ArrowLeft className="h-4 w-4" /> All courses
         </Link>
 
-        <section className="mt-4 rounded-2xl bg-white p-4 shadow-[0_1px_2px_rgba(0,0,0,0.04)] ring-1 ring-stone-200 sm:p-6">
+        <section className="course-hero mt-4 rounded-2xl bg-white p-4 shadow-[0_1px_2px_rgba(0,0,0,0.04)] ring-1 ring-stone-200 sm:p-6">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
               <div className="flex flex-wrap items-center gap-2 text-xs">
@@ -135,7 +135,7 @@ export default function CoursePage({ params }: { params: Promise<{ code: string 
             {course.sections.length === 0 ? (
               <p className="rounded-xl border border-dashed border-stone-200 p-5 text-sm text-stone-400">No sections listed for this term.</p>
             ) : (
-              <div className="overflow-hidden rounded-xl border border-stone-200 bg-white">
+              <div className="course-panel overflow-hidden rounded-xl border border-stone-200 bg-white">
                 {course.sections.map((s) => (
                   <div key={s.class_number} className="flex flex-col items-stretch gap-3 border-b border-stone-100 px-4 py-3 last:border-0 sm:flex-row sm:items-center">
                     <div className="min-w-0 flex-1">
