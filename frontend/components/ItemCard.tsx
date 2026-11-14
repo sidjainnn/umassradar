@@ -13,6 +13,7 @@ type Props = {
 
 function sourceLabel(item: Item): string {
   if (item.source === "canvas") return "Open in Canvas";
+  if (item.source === "web") return "Open page";
   if (item.source === "demo") return "Demo email";
   return "Open in Gmail";
 }
