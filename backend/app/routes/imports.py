@@ -5,6 +5,7 @@ import hashlib
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 
 from app.calendar_client import busy_intervals, can_make
+from app.courses import add_syllabus_facts
 from app.config import get_settings
 from app.db import get_db
 from app.pipeline import finalize
@@ -52,6 +53,9 @@ async def import_syllabus(file: UploadFile = File(...), user: dict = Depends(cur
     if office_hours:
         await db.office_hours.insert_many(office_hours)
     await save_items(user["_id"], finalize(items, user["_id"]))
+    if course and not user.get("demo"):
+        # share the course facts (not the file, not who uploaded it) on the course's profile
+        await add_syllabus_facts(course, office_hours, items, result.grading, result.late_policy)
     return {"course": course, "office_hours": len(office_hours), "items": len(items)}
 
 

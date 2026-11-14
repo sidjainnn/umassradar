@@ -38,6 +38,8 @@ def result() -> SyllabusResult:
             DatedItem(category="event", title="Made up", date="2026-12-01", time=None, location=None,
                       evidence="this sentence is not in the syllabus"),
         ],
+        grading="Projects 40%, Midterms 30%, Final 25%, Participation 5%",
+        late_policy="Projects lose 10% per day, up to three days.",
     )
 
 

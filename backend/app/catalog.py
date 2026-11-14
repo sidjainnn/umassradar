@@ -157,7 +157,8 @@ async def import_term(term: str) -> int:
         await db.courses.update_one(
             {"_id": code},
             # newest term wins for the catalog fields; syllabus facts live under "shared" and are kept
-            {"$set": {f"terms.{label}": fields, "updated_at": now_utc()},
+            {"$set": {f"terms.{label}": fields, "updated_at": now_utc(),
+                      "search_text": " ".join([code, course["title"], *course["instructors"], course["description"]])},
              "$setOnInsert": {"created_at": now_utc()}},
             upsert=True,
         )
