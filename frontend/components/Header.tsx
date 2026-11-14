@@ -1,6 +1,7 @@
 "use client";
 
 import { LogOut, Plus, RefreshCw, Search, Settings } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import type { Me } from "@/lib/api";
 import { relative } from "@/lib/time";
@@ -36,6 +37,9 @@ export function Header({ me, query, onQuery, syncing, onRefresh, onSettings, onI
     <header className="sticky top-0 z-20 border-b border-stone-200/80 bg-[#f7f6f4]/85 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3 sm:px-6">
         <Logo />
+        <Link href="/courses" className="hidden rounded-lg px-3 py-1.5 text-sm font-medium text-stone-600 hover:text-stone-900 sm:block">
+          Courses
+        </Link>
         <label className="relative ml-auto flex-1 sm:max-w-md">
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-stone-400" />
           <input

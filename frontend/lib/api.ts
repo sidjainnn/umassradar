@@ -90,3 +90,43 @@ export async function upload<T>(path: string, file: File): Promise<T> {
   }
   return res.json() as Promise<T>;
 }
+
+export type CourseSummary = {
+  code: string;
+  title: string;
+  term: string | null;
+  credits: string | null;
+  instructors: string[];
+  has_syllabus: boolean;
+  mine: boolean;
+  planned: boolean;
+};
+
+export type Section = {
+  section: string;
+  class_number: string;
+  days: number[];
+  start: string | null;
+  end: string | null;
+  location: string | null;
+  instructor: string | null;
+  conflicts_with: string[];
+  chosen: boolean;
+};
+
+export type CourseProfile = CourseSummary & {
+  terms: string[];
+  description: string | null;
+  prerequisites: string | null;
+  catalog_url: string | null;
+  sections: Section[];
+  shared: {
+    syllabus_uploads: number;
+    office_hours: { who: string; weekday: number; start: string; end: string; location: string | null }[];
+    dates: { title: string; category: string; when: string; location: string | null }[];
+    grading: string | null;
+    late_policy: string | null;
+    updated_at: string | null;
+  };
+  your_items: Item[];
+};
