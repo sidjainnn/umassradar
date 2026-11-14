@@ -39,6 +39,9 @@ COURSE_RE = re.compile(
 )
 
 
+DEPT_ALIASES = {"CS": "COMPSCI", "STATISTC": "STAT", "E&C-ENG": "ECE", "BIO": "BIOLOGY"}
+
+
 def parse_time(text: str | None) -> time | None:
     if not text:
         return None
@@ -131,7 +134,7 @@ def find_course(*texts: str) -> str | None:
         m = COURSE_RE.search(text)
         if m:
             dept = m.group(1).upper()
-            dept = "COMPSCI" if dept == "CS" else dept
+            dept = DEPT_ALIASES.get(dept, dept)
             return f"{dept} {m.group(2).upper()}"
     return None
 

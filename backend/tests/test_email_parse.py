@@ -52,3 +52,8 @@ def test_parse_gmail_message_headers():
     assert "CATEGORY_UPDATES" in m.label_ids
     assert m.body == "Quiz 5 opens Thursday."
     assert m.date.year == 2026
+
+
+def test_entities_in_plain_text_are_decoded():
+    payload = {"mimeType": "text/plain", "body": {"data": b64("Room 1348&nbsp;During review &amp; Q&A")}}
+    assert extract_body(payload) == "Room 1348 During review & Q&A"

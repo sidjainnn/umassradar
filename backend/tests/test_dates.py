@@ -53,3 +53,7 @@ def test_find_course():
     assert find_course("Assignment for CS 230 SEC 01") == "COMPSCI 230"
     assert find_course("STAT315 quiz") == "STAT 315"
     assert find_course("no course here") is None
+
+
+def test_course_aliases():
+    assert find_course("STATISTC 315 review") == "STAT 315"

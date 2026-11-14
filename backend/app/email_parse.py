@@ -43,10 +43,11 @@ def html_to_text(raw: str) -> str:
         text = "".join(parser.parts)
     except Exception:
         text = re.sub(r"<[^>]+>", " ", raw)
-    return clean_text(html.unescape(text))
+    return clean_text(text)
 
 
 def clean_text(text: str) -> str:
+    text = html.unescape(text)  # plain-text parts sometimes still carry &nbsp; and friends
     text = text.replace("\r\n", "\n").replace("\xa0", " ")
     text = re.sub(r"[ \t]+", " ", text)
     text = re.sub(r"\n\s*\n+", "\n\n", text)
