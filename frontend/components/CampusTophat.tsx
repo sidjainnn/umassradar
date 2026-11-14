@@ -1,8 +1,8 @@
 export function CampusTophat() {
   return (
-    <div className="campus-tophat" aria-label="UMass Radar project notice">
+    <div className="campus-tophat" aria-label="UMass Radar">
       <span>UMass Radar</span>
-      <span>Independent student project · Not an official university service</span>
+      <span>Less noise. More college.</span>
     </div>
   );
 }
