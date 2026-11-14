@@ -111,6 +111,31 @@ async def add_syllabus_facts(code: str, office_hours: list[dict], items: list[It
     return True
 
 
+def current_term(today=None) -> str:
+    """The term in session (or about to be): Jan-May Spring, Jun-Aug Summer, Sep-Dec Fall."""
+    from app.models import EASTERN, now_utc
+
+    today = today or now_utc().astimezone(EASTERN).date()
+    season = "Spring" if today.month <= 5 else "Summer" if today.month <= 8 else "Fall"
+    return f"{season} {today.year}"
+
+
+async def shared_office_hours(user: dict) -> list[dict]:
+    """Office hours from the shared syllabus library for the courses this student takes, but only when that
+    syllabus is from the current term (last term's office hours would be wrong)."""
+    term = (user.get("schedule") or {}).get("term") or current_term()
+    codes = sorted(await my_courses(user["_id"]))
+    own = set(await get_db().office_hours.distinct("course", {"user_id": user["_id"]}))
+    out = []
+    async for c in get_db().courses.find({"_id": {"$in": codes}, "shared.term": term, "shared.office_hours.0": {"$exists": True}},
+                                         {"shared": 1}):
+        if c["_id"] in own:  # their own uploaded syllabus wins
+            continue
+        for oh in c["shared"]["office_hours"]:
+            out.append({**oh, "course": c["_id"], "evidence": f"From the {term} syllabus", "shared": True})
+    return out
+
+
 def upcoming_dates(dates: list[dict], now: datetime | None = None) -> list[dict]:
     now = now or now_utc()
     out = []
