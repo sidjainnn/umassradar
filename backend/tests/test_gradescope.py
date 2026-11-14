@@ -23,3 +23,13 @@ def test_grades_released():
     assert item.category == "status_update"
     assert item.course == "MATH 235"
     assert "Midterm 1" in item.title
+
+
+def test_real_subject_format_with_course_prefix():
+    from tests.helpers import load
+    msg = load("gradescope_submitted")
+    msg.subject = "[COMPSCI 220 on Gradescope] Successfully submitted to Homework 7b"
+    [item] = gradescope.parse(msg)
+    assert item.category == "status_update"
+    assert item.title == "Submitted Homework 7b"
+    assert item.course == "COMPSCI 220"

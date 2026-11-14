@@ -12,28 +12,32 @@ def matches(msg: EmailMsg) -> bool:
     return msg.from_domain.endswith("gradescope.com")
 
 
-def _assignment(msg: EmailMsg) -> str:
+def _assignment(subject: str) -> str:
     for pattern in (
         r"submission (?:to|for) (.+?) (?:has been|was) ",
+        r"submitted (?:to|for) (.+)$",
         r"(?:grades? (?:released|published) for|graded:?)\s+(.+)$",
         r"new assignment:?\s+(.+?)(?:\s+in\s+|$)",
         r"^(.+?) (?:has been graded|is now available|is due)",
     ):
-        m = re.search(pattern, msg.subject, re.I)
+        m = re.search(pattern, subject, re.I)
         if m:
             return m.group(1).strip(" .\"'")
-    return msg.subject
+    return subject
 
 
 def parse(msg: EmailMsg) -> list[Item]:
-    course = find_course(msg.subject, msg.body)
-    name = _assignment(msg)
-    subject = msg.subject.lower()
+    # Real subjects look like "[COMPSCI 220 on Gradescope] Successfully submitted to Homework 7b"
+    prefix = re.match(r"\s*\[(.+?)\s+on Gradescope\]\s*", msg.subject, re.I)
+    subject_text = msg.subject[prefix.end():] if prefix else msg.subject
+    course = find_course(prefix.group(1) if prefix else "", subject_text, msg.body)
+    name = _assignment(subject_text)
+    subject = subject_text.lower()
 
-    if "submission" in subject and ("received" in subject or "successfully" in msg.body.lower()):
+    if "submitted" in subject or ("submission" in subject and ("received" in subject or "successfully" in msg.body.lower())):
         return [make_item(msg, "status_update", f"Submitted {name}", course=course,
                           evidence=sentence_with(msg.body, "submitted", "received") or msg.subject)]
-    if "grade" in subject or "graded" in subject:
+    if re.search(r"\b(grades?|graded)\b", subject):
         return [make_item(msg, "status_update", f"{name} graded", course=course,
                           evidence=sentence_with(msg.body, "grade") or msg.subject)]
 

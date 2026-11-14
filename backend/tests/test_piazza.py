@@ -18,3 +18,20 @@ def test_note_without_date_is_course_info():
     [item] = piazza.parse(load("piazza_note"))
     assert item.category == "course_info"
     assert item.course == "COMPSCI 220"
+
+
+def test_daily_digest_is_course_info():
+    msg = load("piazza_note")
+    msg.from_name = "Piazza Team"
+    msg.subject = "11/12/26 Daily Digest for STAT 315 on Piazza"
+    msg.body = "Quiz 5 is due Friday."
+    [item] = piazza.parse(msg)
+    assert item.category == "course_info"
+    assert item.course == "STAT 315"
+
+
+def test_ambiguous_date_post_goes_to_llm():
+    msg = load("piazza_note")
+    msg.subject = "[Instr Note] Quiz 5 postponed to next week"
+    msg.body = "Quiz 5 will now open next Thursday instead."
+    assert piazza.parse(msg) is None

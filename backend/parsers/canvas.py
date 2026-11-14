@@ -28,7 +28,9 @@ def _split(subject: str) -> tuple[str, str, str]:
     return kind, rest.strip(), ""
 
 
-def parse(msg: EmailMsg) -> list[Item]:
+def parse(msg: EmailMsg) -> list[Item] | None:
+    if "recent canvas notifications" in msg.subject.lower():
+        return None  # a bundle of several notifications: the LLM splits it into items
     kind, name, course_text = _split(msg.subject)
     course = find_course(course_text, msg.subject, msg.body) or (course_text or None)
 
