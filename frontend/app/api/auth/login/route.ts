@@ -3,9 +3,9 @@ import { NextRequest, NextResponse } from "next/server";
 const backend = process.env.BACKEND_URL ?? "http://localhost:8000";
 
 function landingError(request: NextRequest, message: string) {
-  const url = request.nextUrl.clone();
-  url.pathname = "/";
-  url.search = "";
+  const host = request.headers.get("x-forwarded-host") ?? request.headers.get("host");
+  const protocol = request.headers.get("x-forwarded-proto") ?? request.nextUrl.protocol.replace(":", "");
+  const url = new URL("/", host ? `${protocol}://${host}` : request.nextUrl.origin);
   url.searchParams.set("error", "sign_in_unavailable");
   url.searchParams.set("message", message);
   return NextResponse.redirect(url);
