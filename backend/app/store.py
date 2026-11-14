@@ -94,4 +94,5 @@ async def delete_user_data(user_id: str) -> None:
     db = get_db()
     for coll in ("items", "processed_messages", "llm_cache", "sessions"):
         await db[coll].delete_many({"user_id": user_id})
+    await db.briefs.delete_one({"_id": user_id})
     await db.users.delete_one({"_id": user_id})

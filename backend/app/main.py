@@ -7,7 +7,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from app import auth
 from app.config import get_settings
 from app.db import ensure_indexes
-from app.routes import account, items, settings
+from app.routes import account, brief, items, settings
+from app.scheduler import start_scheduler
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s %(levelname)s %(message)s")
 
@@ -15,7 +16,10 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s %(levelname
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await ensure_indexes()
+    scheduler = start_scheduler() if get_settings().enable_scheduler else None
     yield
+    if scheduler:
+        scheduler.shutdown(wait=False)
 
 
 app = FastAPI(title="UMass Radar API", lifespan=lifespan)
@@ -31,6 +35,7 @@ app.include_router(auth.router)
 app.include_router(items.router)
 app.include_router(account.router)
 app.include_router(settings.router)
+app.include_router(brief.router)
 
 
 @app.get("/health")
