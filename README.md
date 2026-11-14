@@ -17,6 +17,10 @@ Built for HackUMass XIV.
 - **A short brief** at the top, written only from the extracted items (never raw email), with links to each item.
 - Sections for **Coming up next**, **Today**, **This week**, **Opportunities**, **Waiting on**, **Course updates** and **Later**, plus search and filters.
 - Syncs when you open it, when you hit Refresh, and in the background (6 AM, then every 30 minutes until midnight).
+- **Imports**: upload a **syllabus PDF** (office hours, exam dates, due dates, grading and late policy) or a **screenshot** of SPIRE, the housing portal or Navigate (enrollment appointments, holds, time slots). Files are read once and thrown away.
+- **Office hours you can make**: connect Google Calendar (read-only) and each office-hour slot from your syllabi says whether you're actually free, with a 10-minute walking buffer.
+- **Campus page watchers**: Residential Life jobs and events and CICS events are checked twice a day. When a page changes, new RA/PM postings and events show up for everyone.
+- **Course profiles and search**: every CICS course from the public catalog, with sections, times, rooms, prerequisites and instructors. Student-shared syllabus facts (office hours, grading, late policy, exam dates) are added on top. Your current courses are detected from your inbox. Add courses to a plan, pick sections, and see which ones clash with the rest of your plan.
 - **Demo mode**: "Load demo inbox" runs 40 realistic fake UMass emails through the same pipeline, with no Google login needed.
 - Installable as a PWA.
 
@@ -37,7 +41,9 @@ flowchart LR
         Sched[APScheduler]
     end
     Gmail[(Gmail API<br/>read-only)]
+    GCal[(Google Calendar<br/>free/busy, read-only)]
     Canvas[(Canvas .ics feed)]
+    Pages[(Res Life + CICS pages,<br/>CICS course catalog)]
     Gemini[(Gemini API)]
     DB[(MongoDB<br/>items, processed ids,<br/>encrypted tokens)]
 
@@ -48,6 +54,9 @@ flowchart LR
     Sync --> Rules --> LLM --> Merge --> DB
     LLM --> Gemini
     API --> Canvas
+    API --> GCal
+    Sched --> Pages
+    API -- "syllabus PDF / screenshot" --> Gemini
     API --> Brief --> Gemini
     API --> DB
 ```
@@ -61,6 +70,8 @@ backend/
   llm/          Gemini extraction and the brief
   demo/         demo inbox (emails.json) and labels (labels.csv)
   eval/         accuracy evaluation
+  app/catalog.py    CICS course catalog import (python -m app.catalog)
+  app/watchers.py   Res Life / CICS page watchers
   tests/        pytest + sample emails in tests/fixtures
 frontend/       Next.js (App Router) + TypeScript + Tailwind
 ```
@@ -86,6 +97,12 @@ npm install
 npm run dev
 ```
 
+Load the course catalog once (and again each semester):
+
+```bash
+cd backend && .venv/bin/python -m app.catalog
+```
+
 Open http://localhost:3000. Click **Load demo inbox** to try it without Google, or sign in with your UMass account.
 
 ### Google setup
@@ -94,7 +111,7 @@ UMass doesn't let student accounts create Google Cloud projects, so the project 
 
 1. Create a Cloud project and enable the **Gmail API**.
 2. Google Auth Platform → Audience: **External**, publishing status **Testing**. Add each UMass address that should be able to sign in as a **test user**.
-3. Data access: add `gmail.readonly`, `openid`, `userinfo.email`.
+3. Data access: add `gmail.readonly`, `openid`, `userinfo.email` and (for the optional Calendar feature) `calendar.readonly`. Enable the **Google Calendar API** too. Calendar is requested separately, from Settings → Connect Google Calendar, so people who only want email aren't asked for it.
 4. Clients → **Web application**, with redirect URI `http://localhost:8000/auth/callback` (plus your production URL later). Put the client ID and secret in `backend/.env`.
 
 In Testing mode Google expires refresh tokens after about 7 days. The app notices (`invalid_grant`) and shows a **Reconnect Gmail** banner. If Google returns `access_denied` or `admin_policy_enforced`, you get a clear message and the rest of the app keeps working.
@@ -110,6 +127,7 @@ In Testing mode Google expires refresh tokens after about 7 days. The app notice
 | `TOKEN_ENCRYPTION_KEY` | Fernet key for refresh tokens. Generate: `python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"` |
 | `COOKIE_SECURE` | `true` when served over HTTPS |
 | `GEMINI_API_KEY`, `GEMINI_MODEL` | Google AI Studio key; default model `gemini-3.8-flash` |
+| `GEMINI_FALLBACK_MODEL` | Used for 5 minutes whenever the main model is overloaded (default `gemini-3.5-flash-lite`) |
 | `ENABLE_SCHEDULER` | Background syncs on/off |
 
 The frontend needs only `BACKEND_URL` (default `http://localhost:8000`). Every `/api/*` request is proxied there, so the browser only talks to one origin.
@@ -141,6 +159,9 @@ Rules alone have precision 1.00 in every category except noise, but they only co
 - **Tokens never reach the browser.** Refresh tokens and the Canvas feed URL are encrypted with Fernet. The browser holds only a random session id in a `Secure`, `httpOnly`, `SameSite=Lax` cookie, and sessions are stored hashed.
 - **Minimal data to the model.** Gemini gets a cleaned subject plus the first 2000 characters of the plain-text body, with quoted reply history and URLs stripped. Each email is processed once (cached by message id). The brief is generated from item fields only.
 - **Prompt-injection guard.** Email text is wrapped as untrusted data, and the model is told never to follow instructions inside it. Evidence that doesn't actually appear in the email drops the item's confidence.
+- **Syllabi and screenshots aren't kept.** They're read once. A syllabus adds course facts (office hours, grading, late policy, exam dates) to that course's shared profile, with no record of who uploaded it.
+- **Calendar is optional and read-only.** Only free/busy times are read, to check office hours. Events aren't stored.
+- **Page watchers are polite.** They only read public pages allowed by robots.txt, twice a day, and only send a page to Gemini when it changed.
 - **One-click delete.** Settings → *Delete all my data* removes the user, tokens, sessions, items, processed ids and cached model output.
 
 ## Deploying
@@ -151,7 +172,6 @@ Rules alone have precision 1.00 in every category except noise, but they only co
 
 ## Roadmap
 
-- Syllabus PDF upload (office hours, exam dates)
-- Google Calendar (read-only): "office hours you can make this week"
-- Screenshot import (SPIRE, housing portal) with Gemini vision
-- Watchers for Res Life and CICS pages (RA/PM postings, events)
+- Course catalogs beyond CICS (UMass has no single public catalog page to read from yet)
+- Use Calendar class times to flag plan conflicts with this semester's schedule
+- Push notifications for deadlines in the next few hours
