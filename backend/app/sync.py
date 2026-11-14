@@ -43,6 +43,8 @@ async def sync_user(user_id: str, full: bool = False) -> dict:
     if full:
         await db.processed_messages.delete_many({"user_id": user_id})
         await db.items.delete_many({"user_id": user_id, "source": "gmail", "status": "open"})
+        # Forget the history pointer so an interrupted re-scan resumes with a full listing.
+        await db.users.update_one({"_id": user_id}, {"$unset": {"history_id": ""}})
 
     history_id = None if full else user.get("history_id")
     done = 0

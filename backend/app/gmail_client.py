@@ -1,5 +1,6 @@
 """Thin synchronous wrapper around the Gmail API. Call it via asyncio.to_thread."""
 
+import time
 from datetime import datetime, timezone
 
 from google.auth.exceptions import RefreshError
@@ -87,9 +88,14 @@ def is_rate_limited(error: HttpError) -> bool:
     return error.resp.status in (403, 429) and "ratelimitexceeded" in str(error).lower().replace(" ", "")
 
 
+FETCH_PAUSE = 0.3  # ~200 messages/minute keeps us under the per-user Gmail quota
+
+
 def get_messages(service, ids: list[str]) -> list[dict]:
     out = []
-    for mid in ids:
+    for n, mid in enumerate(ids):
+        if n:
+            time.sleep(FETCH_PAUSE)
         try:
             out.append(_call(service.users().messages().get(userId="me", id=mid, format="full")))
         except HttpError as e:
