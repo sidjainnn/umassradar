@@ -357,6 +357,65 @@ a {
   box-shadow: 0 34px 90px rgba(94, 0, 28, 0.12);
 }
 
+.landing-cinematic-home {
+  background:
+    radial-gradient(circle at 50% 7%, rgba(255, 255, 255, 0.98), transparent 22rem),
+    radial-gradient(circle at 12% 72%, rgba(255, 199, 44, 0.2), transparent 19rem),
+    linear-gradient(180deg, #fffafb 0%, #fbeef2 42%, #efd4dd 100%);
+}
+
+.landing-underline::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: 1%;
+  right: 1%;
+  bottom: 0.04em;
+  height: 0.13em;
+  border-radius: 999px;
+  background: var(--color-maroon-600);
+  transform: rotate(-1.3deg);
+}
+
+.hero-product-home {
+  padding-bottom: 0;
+}
+
+.hero-window-home {
+  transform: rotateX(1deg);
+}
+
+.hero-sam-home {
+  width: 165px;
+  left: 50%;
+  bottom: -58px;
+  transform: translateX(-50%);
+  animation: sam-welcome-centered 4.6s ease-in-out infinite;
+}
+
+.feature-tabs {
+  scrollbar-width: none;
+}
+
+.feature-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.feature-demo {
+  box-shadow: 0 24px 70px rgba(33, 39, 33, 0.08);
+}
+
+.feature-demo-canvas {
+  background:
+    radial-gradient(circle at 80% 10%, rgba(255, 255, 255, 0.9), transparent 14rem),
+    linear-gradient(145deg, #fbf0f3, #f2dce3);
+}
+
+.feature-demo-window {
+  position: relative;
+  z-index: 1;
+}
+
 .landing-cinematic::before {
   content: "";
   position: absolute;
@@ -630,6 +689,11 @@ a {
   50% { transform: translateY(-9px) rotate(1deg); }
 }
 
+@keyframes sam-welcome-centered {
+  0%, 100% { transform: translateX(-50%) translateY(0) rotate(-1deg); }
+  50% { transform: translateX(-50%) translateY(-9px) rotate(1deg); }
+}
+
 /* Small animated campus companions, kept secondary to the student's timeline. */
 .landing-pals {
   min-height: 68px;
@@ -719,6 +783,12 @@ a {
     bottom: -58px;
   }
 
+  .hero-sam-home {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+  }
+
   .hero-float-left {
     left: 8px;
   }
@@ -772,6 +842,13 @@ a {
     width: 108px;
     right: -8px;
     left: auto;
+    bottom: -48px;
+  }
+
+  .hero-sam-home {
+    width: 96px;
+    right: auto;
+    left: 50%;
     bottom: -48px;
   }
 

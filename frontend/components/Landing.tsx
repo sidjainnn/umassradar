@@ -19,6 +19,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import Image from "next/image";
+import { useState } from "react";
 import { CampusPals } from "./CampusPals";
 import { Logo } from "./Logo";
 
@@ -38,14 +39,24 @@ const FAQ = [
   ["Is the demo connected to my inbox?", "No. The demo uses sample student data, so you can explore the complete product without connecting anything."],
 ];
 
+const SHOWCASES = [
+  { label: "Morning brief", icon: Sparkles, eyebrow: "Start clear", title: "Your whole morning, explained in seconds.", text: "Radar turns the useful parts of your inbox, schedule and course files into a short brief with links back to every source.", points: ["Deadlines and appointments", "Replies people are waiting on", "What changed since yesterday"] },
+  { label: "To do", icon: Check, eyebrow: "Act on it", title: "Every important message becomes a next step.", text: "Instead of rereading long threads, work from one calm list and mark items done without losing the original context.", points: ["Due dates with course labels", "Evidence from the original source", "Done and dismissed states"] },
+  { label: "Planner", icon: CalendarDays, eyebrow: "See the week", title: "Classes, deadlines and free time finally line up.", text: "Your schedule becomes a useful plan with office hours you can actually attend and conflicts you can spot early.", points: ["Today timeline", "Schedule imports", "Office-hour fit checks"] },
+  { label: "Opportunities", icon: BriefcaseBusiness, eyebrow: "Find the good stuff", title: "Campus opportunities stop getting buried.", text: "Research roles, jobs, clubs and events get their own focused space instead of competing with inbox noise.", points: ["Research and campus jobs", "Clubs and events", "Deadlines kept visible"] },
+];
+
 export function Landing({ notice, onDemo, demoLoading }: Props) {
+  const [activeShowcase, setActiveShowcase] = useState(0);
+  const showcase = SHOWCASES[activeShowcase];
+
   return (
     <main className="landing-shell min-h-screen overflow-hidden">
       <header className="landing-nav mx-auto flex max-w-7xl items-center gap-4 px-4 py-5 sm:px-7">
         <a href="#top" aria-label="UMass Radar home"><Logo size={36} /></a>
         <nav className="ml-auto hidden items-center gap-1 md:flex" aria-label="Homepage">
-          <a href="#how-it-works">How it works</a>
-          <a href="#what-it-finds">What it finds</a>
+          <a href="#features">Features</a>
+          <a href="#sources-heading">Sources</a>
           <a href="#privacy">Privacy</a>
         </nav>
         <a href="/api/auth/login" className="landing-nav-cta ml-auto inline-flex min-h-10 items-center rounded-full bg-maroon-600 px-4 text-sm font-semibold text-white md:ml-3">
@@ -53,23 +64,23 @@ export function Landing({ notice, onDemo, demoLoading }: Props) {
         </a>
       </header>
 
-      <section id="top" className="landing-cinematic relative mx-auto grid min-h-[690px] max-w-7xl items-center gap-12 overflow-hidden rounded-[30px] px-5 py-14 sm:px-10 lg:grid-cols-[0.92fr_1.08fr] lg:px-14">
+      <section id="top" className="landing-cinematic landing-cinematic-home relative mx-auto min-h-[820px] max-w-7xl overflow-hidden rounded-[30px] px-5 pb-0 pt-10 text-center sm:px-10 sm:pt-14 lg:px-14">
         <div className="landing-orbit" aria-hidden="true" />
-        <div className="relative z-10">
+        <div className="relative z-10 mx-auto max-w-5xl">
           <p className="inline-flex items-center gap-2 rounded-full border border-maroon-200 bg-white/82 px-3 py-2 text-[11px] font-bold uppercase tracking-[0.15em] text-maroon-700 backdrop-blur">
             <span className="h-2 w-2 rounded-full bg-maroon-600" />
-            Built around a UMass student’s day
+            One calm place for your UMass day
           </p>
-          <h1 className="mt-7 max-w-[11ch] font-serif text-[48px] font-semibold leading-[1.03] tracking-[-0.045em] text-ink sm:text-[64px] lg:text-[72px]">
-            Wake up already <span className="text-maroon-600">caught up.</span>
+          <h1 className="mx-auto mt-7 max-w-[15ch] font-sans text-[46px] font-semibold leading-[1.01] tracking-[-0.055em] text-ink sm:text-[66px] lg:text-[82px]">
+            Everything college needs from you, <span className="landing-underline relative whitespace-nowrap">in one view.</span>
           </h1>
-          <p className="mt-6 max-w-[49ch] text-base leading-relaxed text-ink-soft sm:text-lg">
-            UMass Radar turns the scattered parts of college—email, Canvas, schedules and syllabi—into one clear view of what needs you today.
+          <p className="mx-auto mt-6 max-w-[64ch] text-base leading-relaxed text-ink-soft sm:text-lg">
+            Radar reads the sources you choose, finds the deadlines, replies and opportunities that matter, and builds a morning plan around your real UMass schedule.
           </p>
-          {notice && <p role="alert" className="mt-5 rounded-2xl border border-maroon-100 bg-white/80 px-4 py-3 text-sm text-ink-soft">{notice}</p>}
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-            <a href="/api/auth/login" className="landing-hero-primary inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-maroon-600 px-6 py-3 font-semibold text-white">
-              Connect UMass Google <ArrowRight className="h-4 w-4" />
+          {notice && <p role="alert" className="mx-auto mt-5 max-w-xl rounded-2xl border border-maroon-100 bg-white/80 px-4 py-3 text-sm text-ink-soft">{notice}</p>}
+          <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row sm:flex-wrap">
+            <a href="/api/auth/login" className="landing-hero-primary inline-flex min-h-13 items-center justify-center gap-2 rounded-full bg-maroon-600 px-9 py-3.5 font-semibold text-white">
+              Get started with UMass Google <ArrowRight className="h-4 w-4" />
             </a>
             {onDemo && (
               <button onClick={onDemo} disabled={demoLoading}
@@ -78,14 +89,14 @@ export function Landing({ notice, onDemo, demoLoading }: Props) {
               </button>
             )}
           </div>
-          <p className="mt-4 flex max-w-[50ch] items-start gap-2 text-[13px] leading-relaxed text-ink-muted">
+          <p className="mx-auto mt-4 flex max-w-[50ch] items-start justify-center gap-2 text-left text-[13px] leading-relaxed text-ink-muted">
             <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-forest" />
             Read-only Gmail access. Email bodies and uploaded files are never stored.
           </p>
         </div>
 
-        <div className="hero-product relative z-10 lg:pl-4" aria-label="Illustrative UMass Radar morning screen">
-          <div className="hero-sam" aria-label="Sam the Minuteman welcomes students to UMass Radar">
+        <div className="hero-product hero-product-home relative z-10 mx-auto mt-8 max-w-4xl" aria-label="Illustrative UMass Radar morning screen">
+          <div className="hero-sam hero-sam-home" aria-label="Sam the Minuteman welcomes students to UMass Radar">
             <Image
               src="/mascots/sam-minuteman-3d.png"
               alt="A friendly 3D Sam the Minuteman holding a class schedule"
@@ -94,7 +105,7 @@ export function Landing({ notice, onDemo, demoLoading }: Props) {
               priority
             />
           </div>
-          <div className="hero-window rounded-[26px] border border-white/30 bg-white/94 p-4 shadow-[0_36px_100px_rgba(0,0,0,0.38)] backdrop-blur sm:p-5">
+          <div className="hero-window hero-window-home rounded-[26px] border border-white/50 bg-white/94 p-4 text-left shadow-[0_36px_100px_rgba(94,0,28,0.25)] backdrop-blur sm:p-5">
             <div className="flex items-center gap-2 border-b border-line-soft pb-3">
               <span className="h-2.5 w-2.5 rounded-full bg-maroon-200" />
               <span className="h-2.5 w-2.5 rounded-full bg-[#ffc72c]" />
@@ -150,6 +161,40 @@ export function Landing({ notice, onDemo, demoLoading }: Props) {
               <p className="mt-1 text-sm leading-relaxed text-ink-muted">{detail}</p>
             </article>
           ))}
+        </div>
+      </section>
+
+      <section id="features" className="feature-stage mx-auto max-w-7xl px-4 py-14 sm:px-7 sm:py-20" aria-labelledby="feature-stage-heading">
+        <div className="text-center">
+          <p className="landing-kicker">Built for the part after “check your email”</p>
+          <h2 id="feature-stage-heading" className="mx-auto mt-3 max-w-3xl font-serif text-4xl font-semibold tracking-tight text-ink sm:text-5xl">See what your day looks like when the noise is already sorted.</h2>
+        </div>
+        <div className="feature-tabs mx-auto mt-8 flex max-w-3xl gap-2 overflow-x-auto rounded-2xl border border-line bg-white p-2" role="tablist" aria-label="Product features">
+          {SHOWCASES.map(({ label, icon: Icon }, index) => (
+            <button key={label} role="tab" aria-selected={activeShowcase === index} onClick={() => setActiveShowcase(index)} className={`flex min-w-max flex-1 items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold transition ${activeShowcase === index ? "bg-maroon-600 text-white shadow-lg" : "text-ink-muted hover:bg-maroon-50 hover:text-maroon-700"}`}>
+              <Icon className="h-4 w-4" /> {label}
+            </button>
+          ))}
+        </div>
+        <div className="feature-demo mt-5 grid overflow-hidden rounded-[28px] border border-line bg-white lg:grid-cols-[0.82fr_1.18fr]">
+          <div className="flex flex-col justify-center p-6 sm:p-10 lg:p-12">
+            <p className="landing-kicker">{showcase.eyebrow}</p>
+            <h3 className="mt-3 font-serif text-3xl font-semibold leading-tight text-ink sm:text-4xl">{showcase.title}</h3>
+            <p className="mt-4 leading-relaxed text-ink-muted">{showcase.text}</p>
+            <ul className="mt-6 space-y-3 text-sm text-ink-soft">
+              {showcase.points.map((point) => <CheckLine key={point}>{point}</CheckLine>)}
+            </ul>
+            <a href="/api/auth/login" className="mt-7 inline-flex items-center gap-2 font-bold text-maroon-600 hover:underline">Try it with your account <ArrowRight className="h-4 w-4" /></a>
+          </div>
+          <div className="feature-demo-canvas relative min-h-[430px] p-5 sm:p-8">
+            <div className="feature-demo-window rounded-[24px] border border-white/70 bg-white/94 p-4 shadow-[0_28px_70px_rgba(94,0,28,0.16)] sm:p-6">
+              <div className="flex items-center justify-between border-b border-line-soft pb-4"><span className="text-xs font-bold uppercase tracking-[0.14em] text-maroon-600">{showcase.label}</span><span className="rounded-full bg-forest/10 px-3 py-1 text-[10px] font-bold text-forest">Live from your sources</span></div>
+              {activeShowcase === 0 && <div className="mt-5"><p className="font-serif text-2xl font-semibold text-ink">Good morning, Maya.</p><div className="mt-4 rounded-2xl bg-maroon-600 p-5 text-white"><p className="text-xs font-bold uppercase tracking-wider text-white/60">Your brief</p><p className="mt-2 leading-relaxed">Lab 6 is due tonight. Advising starts at 2 PM, and Prof. Chen is waiting on your availability.</p></div><div className="mt-4 grid grid-cols-3 gap-2"><Stat n="3" label="due this week" /><Stat n="1" label="reply owed" /><Stat n="12" label="noise filtered" /></div></div>}
+              {activeShowcase === 1 && <div className="mt-4 divide-y divide-line-soft"><TaskRow title="Lab 6: circuits & signals" meta="ECE 122 · Tonight 11:59 PM" label="Due soon" /><TaskRow title="Send research availability" meta="Prof. Maria Chen" label="Reply owed" /><TaskRow title="Spring advising appointment" meta="Goodell 613 · Tomorrow 2 PM" label="Appointment" /></div>}
+              {activeShowcase === 2 && <div className="mt-5"><div className="grid grid-cols-5 gap-2 text-center text-xs font-bold text-ink-muted">{["Mon", "Tue", "Wed", "Thu", "Fri"].map((d, i) => <span key={d} className={`rounded-xl py-2 ${i === 2 ? "bg-maroon-600 text-white" : "bg-paper"}`}>{d}</span>)}</div><div className="relative mt-5 space-y-3 border-l border-line pl-5"><MiniTask icon={BookOpen} title="COMPSCI 311 lecture" meta="10:10 AM · ILC S120" tone="navy" /><MiniTask icon={CalendarDays} title="Academic advising" meta="2:00 PM · Goodell 613" tone="maroon" /><MiniTask icon={Clock3} title="Office hours: Prof. Chen" meta="4:00 PM · You’re free" tone="gold" /></div></div>}
+              {activeShowcase === 3 && <div className="mt-5 grid gap-3 sm:grid-cols-2"><Opportunity icon={BriefcaseBusiness} eyebrow="Campus job" title="Student Web Developer" meta="Apply by Nov 24" /><Opportunity icon={Sparkles} eyebrow="Research" title="Undergraduate HCI Lab" meta="Interest form open" /><Opportunity icon={GraduationCap} eyebrow="Academic" title="HackUMass Workshop" meta="Friday · 5 PM" /><Opportunity icon={CalendarDays} eyebrow="Club event" title="Design Club Meetup" meta="Campus Center" /></div>}
+            </div>
+          </div>
         </div>
       </section>
 
