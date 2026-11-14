@@ -5,6 +5,7 @@ from pydantic import BaseModel
 
 from app.courses import latest_term, my_courses, overlaps, plan_sections, summary, upcoming_dates
 from app.db import get_db
+from app.fivecolleges import fetch_details
 from app.security import current_user
 from app.store import doc_to_item
 
@@ -32,6 +33,13 @@ async def course_profile(code: str, term: str | None = None, user: dict = Depend
     terms = course.get("terms", {})
     term = term if term in terms else latest_term(terms)
     info = terms.get(term, {}) if term else {}
+    if term and info.get("source") == "fivecolleges" and not info.get("description"):
+        try:  # first view of this course: pull its description from the Five College page
+            await fetch_details(code, term)
+            course = await get_db().courses.find_one({"_id": code})
+            info = course["terms"][term]
+        except Exception:
+            pass
     plan = user.get("plan", {})
 
     # flag sections that clash with what's already in the student's plan
@@ -49,7 +57,7 @@ async def course_profile(code: str, term: str | None = None, user: dict = Depend
         "terms": sorted(terms),
         "description": info.get("description"),
         "prerequisites": info.get("prerequisites"),
-        "catalog_url": info.get("catalog_url"),
+        "catalog_url": info.get("catalog_url") or info.get("detail_url"),
         "sections": sections,
         "shared": {
             "syllabus_uploads": shared.get("syllabus_uploads", 0),
