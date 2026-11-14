@@ -1,0 +1,10 @@
+{
+  "from_name": "Instructure Canvas",
+  "from_email": "notifications@instructure.com",
+  "subject": "Assignment Due Date Changed: Lab 4, ECE 122 Fall 2026",
+  "date": "2026-11-12T08:30:00",
+  "label_ids": [
+    "INBOX"
+  ],
+  "body": "The due date for assignment Lab 4 for ECE 122 Fall 2026 has changed to:\n\nNov 18 at 5pm"
+}

@@ -1,0 +1,10 @@
+{
+  "from_name": "Gradescope",
+  "from_email": "no-reply@gradescope.com",
+  "subject": "New Assignment: Homework 6 in COMPSCI 311",
+  "date": "2026-11-11T12:00:00",
+  "label_ids": [
+    "INBOX"
+  ],
+  "body": "A new assignment, Homework 6, has been released for COMPSCI 311: Introduction to Algorithms.\nDue: Nov 19, 2026 at 10:00 PM\nLate Due: Nov 21, 2026 at 10:00 PM"
+}

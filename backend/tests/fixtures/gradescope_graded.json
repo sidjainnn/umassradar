@@ -1,0 +1,10 @@
+{
+  "from_name": "Gradescope",
+  "from_email": "no-reply@gradescope.com",
+  "subject": "Grades released for Midterm 1",
+  "date": "2026-11-09T18:00:00",
+  "label_ids": [
+    "INBOX"
+  ],
+  "body": "Your instructor has published grades for Midterm 1 in MATH 235. Log in to view your grade and regrade options."
+}

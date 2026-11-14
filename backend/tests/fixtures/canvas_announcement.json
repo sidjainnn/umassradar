@@ -1,0 +1,10 @@
+{
+  "from_name": "Instructure Canvas",
+  "from_email": "notifications@instructure.com",
+  "subject": "Announcement: Midterm 2 room change, STAT 315 Fall 2026",
+  "date": "2026-11-13T10:00:00",
+  "label_ids": [
+    "INBOX"
+  ],
+  "body": "Midterm 2 will be held Thursday, November 19 at 7:00 PM in Thompson 104 instead of Hasbrouck 20."
+}

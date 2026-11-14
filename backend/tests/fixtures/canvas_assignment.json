@@ -1,0 +1,11 @@
+{
+  "from_name": "Instructure Canvas",
+  "from_email": "notifications@instructure.com",
+  "subject": "Assignment Created - Project 2, COMPSCI 230 SEC 01 Fall 2026",
+  "date": "2026-11-10T14:00:00",
+  "label_ids": [
+    "INBOX",
+    "CATEGORY_UPDATES"
+  ],
+  "body": "A new assignment has been created for your course, COMPSCI 230 SEC 01 Fall 2026\n\nProject 2\n\ndue: Nov 24 at 11:59pm\n\nClick here to view the assignment."
+}
