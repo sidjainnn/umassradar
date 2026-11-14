@@ -51,9 +51,12 @@ def finalize(items: list[Item], user_id: str) -> list[Item]:
     return merge_items(items)
 
 
-async def process_emails(msgs: list[EmailMsg], user_id: str, use_llm: bool = True, generate=None) -> list[Item]:
+async def process_emails(
+    msgs: list[EmailMsg], user_id: str, use_llm: bool = True, generate=None, cache_user: str | None = None
+) -> list[Item]:
     result = run_rules(msgs)
     items = list(result.items)
     if use_llm and result.needs_llm:
-        items += await extract_items(result.needs_llm, user_id, generate=generate)
+        # cache_user lets every demo visitor share one LLM cache for the (identical) demo emails
+        items += await extract_items(result.needs_llm, cache_user or user_id, generate=generate)
     return finalize(items, user_id)
