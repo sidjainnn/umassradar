@@ -213,7 +213,7 @@ export function Landing({ notice, onDemo, demoLoading }: Props) {
           <WorkspaceCard icon={BriefcaseBusiness} title="Opportunities" text="Campus jobs, research roles, clubs and events separated from inbox noise." />
           <WorkspaceCard icon={BellRing} title="Updates" text="Course news, status changes and filtered newsletters kept out of the way." />
           <WorkspaceCard icon={BookOpen} title="Course profiles" text="Sections, instructors, syllabus facts, exam dates and shared resources." />
-          <WorkspaceCard icon={FileText} title="Smart imports" text="Schedules, syllabi, club flyers and portal screenshots become usable items." />
+          <WorkspaceCard icon={FileText} title="Smart imports" text="Schedules, syllabi, job boards and portal screenshots become usable items." />
           <WorkspaceCard icon={ShieldCheck} title="Profile & privacy" text="Connections, re-sync controls, data visibility and account deletion." />
         </div>
       </section>
