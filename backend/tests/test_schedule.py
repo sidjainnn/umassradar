@@ -46,3 +46,27 @@ def test_class_intervals_for_office_hours():
     end = datetime(2026, 11, 19, 23, 0, tzinfo=EASTERN)
     busy = class_intervals(schedule, start, end)
     assert [b[0].strftime("%a %H:%M") for b in busy] == ["Tue 16:00", "Thu 16:00"]
+
+
+def test_college_scheduler_labels():
+    assert course_code("Statistics-310") == "STAT 310"
+    assert course_code("InfoCompSc-237") == "CICS 237"  # not COMPSCI
+    assert course_code("CompSci-220") == "COMPSCI 220"
+    assert course_code("Mathematics-235") == "MATH 235"
+
+
+def test_match_section_snaps_to_catalog_times():
+    from llm.schedule import match_section
+
+    cs220 = [
+        {"section": "U1 LEC01", "days": [1, 3], "start": "16:00", "end": "17:15", "location": "HAS 134"},
+        {"section": "U1 LAB01LM", "days": [2], "start": "09:05", "end": "09:55", "location": "EnginLb306"},
+        {"section": "U1 LAB01LN", "days": [2], "start": "08:00", "end": "08:50", "location": "EnginLb305"},
+    ]
+    # read off the picture as 8:30-9:45 in "ELAB 305": closest Wednesday lab in that room is LAB01LN 8:00
+    lab = match_section({"days": [2], "start": "08:30", "location": "ELAB 305"}, cs220)
+    assert lab["section"] == "U1 LAB01LN"
+    # different days never match
+    assert match_section({"days": [0], "start": "16:00", "location": None}, cs220) is None
+    # too far off in time: keep what was read
+    assert match_section({"days": [1, 3], "start": "19:00", "location": None}, cs220) is None

@@ -188,7 +188,8 @@ async def generate_json(prompt, system: str, schema: type[BaseModel], temperatur
 
     settings = get_settings()
     if _client is None:
-        _client = genai.Client(api_key=settings.gemini_api_key)
+        # without a timeout one stuck request can hang a sync or an upload forever
+        _client = genai.Client(api_key=settings.gemini_api_key, http_options=types.HttpOptions(timeout=45_000))
     config = types.GenerateContentConfig(
         system_instruction=system, response_mime_type="application/json", response_schema=schema,
         temperature=temperature,
@@ -207,7 +208,7 @@ async def generate_json(prompt, system: str, schema: type[BaseModel], temperatur
             return resp.parsed if isinstance(resp.parsed, schema) else schema.model_validate_json(resp.text)
         except Exception as e:
             text = str(e)
-            overloaded = any(code in text for code in ("503", "UNAVAILABLE", "500 INTERNAL"))
+            overloaded = any(code in text for code in ("503", "UNAVAILABLE", "500 INTERNAL")) or "timeout" in type(e).__name__.lower() or "timed out" in text.lower()
             rate_limited = any(code in text for code in ("429", "RESOURCE_EXHAUSTED"))
             if not (overloaded or rate_limited) or attempt == len(plan) - 1:
                 raise

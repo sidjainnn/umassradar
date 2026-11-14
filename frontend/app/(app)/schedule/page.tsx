@@ -119,7 +119,7 @@ export default function SchedulePage() {
           <CalendarRange className="h-6 w-6 text-maroon-600" />
           <h2 className="mt-3 font-serif text-lg font-semibold">Add your class schedule</h2>
           <p className="mt-1 max-w-[60ch] text-[15px] text-ink-muted">
-            Take a screenshot of your weekly schedule in SPIRE (Student Center, then My Class Schedule), or download SPIRE&apos;s
+            Take a screenshot of your weekly schedule in SPIRE or College Scheduler (Current Schedule), or download SPIRE&apos;s
             calendar export (.ics). Your classes show up on Home, office hours are checked against them, and your courses
             get their own pages.
           </p>

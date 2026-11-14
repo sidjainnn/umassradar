@@ -13,7 +13,7 @@ from app.security import current_user
 from app.store import save_items
 from app.calendar_client import class_intervals
 from app.models import now_utc
-from llm.schedule import schedule_from_ics, schedule_from_image
+from llm.schedule import schedule_from_ics, schedule_from_image, snap_to_catalog
 from llm.screenshot import extract_screenshot, image_type, to_items
 from llm.syllabus import SyllabusError, extract_syllabus, pdf_text, to_records, upcoming_slots
 
@@ -105,6 +105,7 @@ async def import_schedule(file: UploadFile = File(...), user: dict = Depends(cur
             term, classes = await schedule_from_image(data, mime)
         except Exception:
             raise HTTPException(502, "Couldn't read the screenshot right now. Try again in a minute.")
+        classes = await snap_to_catalog(term, classes)  # exact times and sections from the course catalog
     if not classes:
         raise HTTPException(400, "No classes with meeting times were found. Try a clearer screenshot of the weekly schedule.")
     await get_db().users.update_one(
