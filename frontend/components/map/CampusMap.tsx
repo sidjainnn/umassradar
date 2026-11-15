@@ -2,7 +2,7 @@
 
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-import { Dices, LocateFixed, Navigation, X } from "lucide-react";
+import { BedDouble, BookOpen, CalendarDays, Dices, GraduationCap, HeartPulse, LocateFixed, MapPin, Navigation, Sparkles, Trees, Utensils, X, type LucideIcon } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { KINDS, PLACES, type Place, type PlaceKind, placeForRoom } from "@/lib/places";
 import type { ScheduleClass } from "@/lib/store";
@@ -11,6 +11,10 @@ import { useResource } from "@/lib/useResource";
 import { useMode } from "@/lib/mode";
 
 const CENTER: [number, number] = [42.3895, -72.5265];
+const CATEGORY_ICONS: Record<PlaceKind, LucideIcon> = {
+  class: GraduationCap, study: BookOpen, food: Utensils, fun: Sparkles,
+  outdoors: Trees, living: BedDouble, help: HeartPulse,
+};
 
 function pinHtml(n?: number, selected = false) {
   return `<span class="campus-dot${selected ? " campus-dot-selected" : ""}">${n ?? ""}</span>`;
@@ -68,8 +72,8 @@ export default function CampusMap({ classesToday, locatedRoom, onRoomQuery }: Pr
     const g = roomLayer.current, m = map.current;
     if (!g || !m) return;
     g.clearLayers();
-    if (!locatedRoom) return;
     setPicked(null);
+    if (!locatedRoom) return;
     const color = mode === "work" ? "#254e3b" : "#840028";
     if (locatedRoom.building.outline.length >= 3) L.polygon(locatedRoom.building.outline, { color, weight: 3, fillOpacity: 0.18 }).addTo(g);
     for (const [i, door] of locatedRoom.entrances.entries()) {
@@ -136,7 +140,8 @@ export default function CampusMap({ classesToday, locatedRoom, onRoomQuery }: Pr
     }, () => setLocating(false), { enableHighAccuracy: true, timeout: 10_000 });
   }
 
-  const chip = (on: boolean) => `inline-flex shrink-0 items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-semibold shadow-sm transition ${on ? "bg-ink text-white" : "bg-white text-ink-soft ring-1 ring-line hover:text-ink"}`;
+  const chip = (on: boolean) => `inline-flex shrink-0 items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-semibold shadow-sm transition ${on ? "bg-maroon-600 text-white" : "bg-white text-ink-soft ring-1 ring-line hover:text-ink"}`;
+  const PlaceIcon = picked ? CATEGORY_ICONS[picked.kind] : MapPin;
 
   return (
     <div className="relative overflow-hidden rounded-[28px] ring-1 ring-line-soft shadow-[0_30px_60px_-40px_rgba(60,0,20,0.6)]">
@@ -146,11 +151,12 @@ export default function CampusMap({ classesToday, locatedRoom, onRoomQuery }: Pr
         {buildings.error && <p className="pointer-events-auto w-fit rounded-xl bg-white p-2 text-xs text-ink-muted">Building outlines unavailable. <button onClick={buildings.reload} className="underline">Retry</button></p>}
         <div className="pointer-events-auto flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none]">
           {route.length > 0 && (
-            <button onClick={() => toggle("today")} className={chip(kinds.has("today"))}>🎒 My classes today</button>
+            <button onClick={() => toggle("today")} aria-pressed={kinds.has("today")} className={chip(kinds.has("today"))}><CalendarDays className="h-4 w-4" aria-hidden="true" />My classes today</button>
           )}
-          {KINDS.map((k) => (
-            <button key={k.id} onClick={() => toggle(k.id)} className={chip(kinds.has(k.id))}>{k.emoji} {k.label}</button>
-          ))}
+          {KINDS.map((k) => {
+            const Icon = CATEGORY_ICONS[k.id];
+            return <button key={k.id} onClick={() => toggle(k.id)} aria-pressed={kinds.has(k.id)} className={chip(kinds.has(k.id))}><Icon className="h-4 w-4" aria-hidden="true" />{k.label}</button>;
+          })}
         </div>
       </div>
 
@@ -166,7 +172,7 @@ export default function CampusMap({ classesToday, locatedRoom, onRoomQuery }: Pr
       {picked && (
         <div className="rise absolute inset-x-3 bottom-3 z-[600] max-h-[70%] overflow-y-auto rounded-[24px] bg-white p-4 shadow-2xl ring-1 ring-line-soft sm:left-3 sm:right-auto sm:w-[360px]">
           <div className="flex items-start gap-3">
-            <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-maroon-50 text-2xl">{picked.emoji}</span>
+            <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-maroon-50 text-maroon-700"><PlaceIcon className="h-5 w-5" aria-hidden="true" /></span>
             <div className="min-w-0 flex-1">
               <p className="font-display text-[18px] font-extrabold leading-tight tracking-[-0.02em]">{picked.name}</p>
               <p className="text-[13px] text-ink-muted">{KINDS.find((k) => k.id === picked.kind)?.label}</p>

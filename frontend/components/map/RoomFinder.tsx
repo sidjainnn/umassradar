@@ -55,6 +55,7 @@ export function RoomFinder({ requestedRoom, onLocated }: { requestedRoom: string
   }, [onLocated]);
   useEffect(() => {
     if (requestedRoom) { setQ(requestedRoom); setAccessible(false); void lookup(requestedRoom, false); }
+    else { setQ(""); setResult(null); setIndoor(null); setIndoorRoute(null); setRoute(null); setError(null); setNotice(null); }
     return () => request.current?.abort();
   }, [requestedRoom, lookup]);
   async function walk(e: React.FormEvent) {

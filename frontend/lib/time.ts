@@ -21,6 +21,18 @@ export function clock(d: Date): string {
   return timeFmt.format(d).replace(":00", "");
 }
 
+/** Campus time, e.g. "Sun 9–10:30 AM" or "Sun 11 PM – Mon 1 AM". */
+export function formatTimeRange(start: string, end: string, now: Date = new Date()): string {
+  const a = new Date(start), b = new Date(end);
+  if (!Number.isFinite(a.getTime()) || !Number.isFinite(b.getTime())) return "Time unavailable";
+  const label = (d: Date) => Math.abs(daysBetween(now, d)) < 7 ? weekdayFmt.format(d) : dateFmt.format(d);
+  const from = clock(a), to = clock(b);
+  if (dayKey(a) !== dayKey(b)) return `${label(a)} ${from} – ${label(b)} ${to}`;
+  const period = (d: Date) => timeFmt.formatToParts(d).find((p) => p.type === "dayPeriod")?.value;
+  const compactFrom = period(a) === period(b) ? from.replace(/\s*(AM|PM)$/i, "") : from;
+  return `${label(a)} ${compactFrom}–${to}`;
+}
+
 /** "Today 11:59 PM", "Tomorrow 2 PM", "Fri 5 PM" (this week), "Tue, Dec 1 · 5 PM". */
 export function formatWhen(iso: string, now: Date = new Date()): string {
   const d = new Date(iso);

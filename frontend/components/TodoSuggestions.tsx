@@ -5,6 +5,7 @@ import { useState } from "react";
 import { decideSuggestion, type Suggestion } from "@/lib/features";
 import { useStore } from "@/lib/store";
 import { ResourceError } from "./ResourceError";
+import { formatTimeRange } from "@/lib/time";
 
 export function TodoSuggestions({ suggestions, onChanged }: { suggestions: Suggestion[]; onChanged: () => void }) {
   const { reload, setNotice } = useStore();
@@ -33,7 +34,7 @@ export function TodoSuggestions({ suggestions, onChanged }: { suggestions: Sugge
     <ul className="grid gap-3 sm:grid-cols-2">{suggestions.map((s) => <li key={s.id} className="rounded-[24px] border border-maroon-100 bg-white p-5">
       <p className="text-xs font-semibold uppercase tracking-wider text-maroon-600">{s.kind.replaceAll("_", " ")}</p>
       <h3 className="mt-2 font-semibold">{s.title}</h3><p className="mt-2 text-sm leading-relaxed text-ink-muted">{s.why}</p>
-      {s.action.type === "block_time" && <p className="mt-2 text-xs text-ink-muted">{new Date(s.action.starts_at).toLocaleString()} – {new Date(s.action.ends_at).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}</p>}
+      {s.action.type === "block_time" && <p className="mt-2 text-xs text-ink-muted" title="Eastern Time"><time dateTime={s.action.starts_at}>{formatTimeRange(s.action.starts_at, s.action.ends_at)}</time></p>}
       {s.action.type === "copy_text" && <details className="mt-3 text-sm text-ink-soft"><summary className="cursor-pointer">Preview the note</summary><p className="mt-2 whitespace-pre-wrap">{s.action.text}</p></details>}
       <div className="mt-4 flex flex-wrap gap-3"><button disabled={busy !== null} onClick={() => decide(s, "accept")} className="rounded-full bg-maroon-600 px-3 py-2 text-xs font-semibold text-white disabled:opacity-40">{busy === s.id ? "Working…" : s.action.label}</button>
         <button disabled={busy !== null} onClick={() => decide(s, "dismiss")} className="text-xs font-semibold text-ink-muted disabled:opacity-40">Dismiss</button></div>

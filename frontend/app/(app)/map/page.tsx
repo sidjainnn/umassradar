@@ -1,8 +1,8 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useMemo, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { PageHeader } from "@/components/Page";
 import { useStore } from "@/lib/store";
 import { easternWeekday } from "@/lib/time";
@@ -17,18 +17,21 @@ const CampusMap = dynamic(() => import("@/components/map/CampusMap"), {
 
 function MapContent() {
   const { schedule } = useStore();
-  const [requestedRoom, setRequestedRoom] = useState("");
   const [locatedRoom, setLocatedRoom] = useState<LocatedRoom | null>(null);
   const params = useSearchParams();
-  const target = params.get("room") ?? "";
-  useEffect(() => { setRequestedRoom(target); }, [target]);
+  const router = useRouter();
+  const requestedRoom = params.get("room") ?? "";
+  useEffect(() => { setLocatedRoom(null); }, [requestedRoom]);
+  const openRoom = useCallback((query: string) => {
+    router.push(`/map?room=${encodeURIComponent(query)}`, { scroll: false });
+  }, [router]);
   const today = easternWeekday();
   const classesToday = useMemo(() => (schedule?.classes ?? []).filter((c) => c.days.includes(today)), [schedule, today]);
   return (
     <div className="pb-10">
       <PageHeader title="Explore Amherst" subtitle="Classes, food, study spots and the best places to get outside. Tap a pin, or let Sam surprise you." />
       <RoomFinder requestedRoom={requestedRoom} onLocated={setLocatedRoom} />
-      <CampusMap classesToday={classesToday} locatedRoom={locatedRoom} onRoomQuery={setRequestedRoom} />
+      <CampusMap classesToday={classesToday} locatedRoom={locatedRoom} onRoomQuery={openRoom} />
     </div>
   );
 }

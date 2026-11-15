@@ -7,6 +7,7 @@ import { RadarLoader } from "@/components/RadarLoader";
 import { api, ApiError, type Me } from "@/lib/api";
 import { StoreProvider } from "@/lib/store";
 import { MIN_LOADING_MS } from "@/lib/loading";
+import { enterDemo } from "@/lib/demo";
 
 async function withMinimumLoading<T>(load: () => Promise<T>): Promise<T> {
   const minimum = new Promise<void>((resolve) => setTimeout(resolve, MIN_LOADING_MS));
@@ -24,6 +25,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const [demoLoading, setDemoLoading] = useState(false);
   const [loginLoading, setLoginLoading] = useState(false);
   const loginTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const demoInFlight = useRef(false);
 
   const loadMe = useCallback(async () => {
     try {
@@ -57,15 +59,16 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   }
 
   async function loadDemo() {
+    if (demoInFlight.current) return;
+    demoInFlight.current = true;
+    setNotice(null);
     setDemoLoading(true);
     try {
-      await withMinimumLoading(async () => {
-        await api("/demo/load", { method: "POST" });
-        await loadMe();
-      });
+      setMe(await withMinimumLoading(enterDemo));
     } catch {
-      setNotice("The demo inbox didn't load. Check that the server is running and try again.");
+      setNotice("The demo couldn't connect. Please try the demo button again.");
     } finally {
+      demoInFlight.current = false;
       setDemoLoading(false);
     }
   }
