@@ -1,4 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
+from typing import Literal
+
 from pydantic import BaseModel
 
 from app.db import get_db
@@ -32,3 +34,14 @@ async def remove_canvas_feed(user: dict = Depends(current_user)):
     await get_db().users.update_one({"_id": user["_id"]}, {"$unset": {"canvas_feed_enc": ""}})
     await get_db().items.delete_many({"user_id": user["_id"], "source": "canvas", "status": "open"})
     return {"ok": True}
+
+
+class Mode(BaseModel):
+    mode: Literal["study", "work"]
+
+
+@router.put("/settings/mode")
+async def set_mode(body: Mode, user: dict = Depends(current_user)):
+    """Study mode puts classes first; work mode puts jobs, shifts and applications first."""
+    await get_db().users.update_one({"_id": user["_id"]}, {"$set": {"mode": body.mode}})
+    return {"mode": body.mode}

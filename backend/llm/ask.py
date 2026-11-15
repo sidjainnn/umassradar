@@ -60,7 +60,9 @@ def build_context(items: list[Item], schedule: dict | None, courses: dict[str, d
     return json.dumps(data, default=str)
 
 
-async def ask(question: str, context: str, history: list[dict] | None = None) -> Answer:
+async def ask(question: str, context: str, history: list[dict] | None = None, mode: str = "study") -> Answer:
     turns = "".join(f"\n{h['role']}: {h['text'][:400]}" for h in (history or [])[-6:])
-    prompt = f"<data>\n{context}\n</data>\n\nEarlier in this chat:{turns or ' (nothing)'}\n\nStudent's question: {question[:500]}"
+    focus = ("The student is in work mode: when the question is open-ended, lead with jobs, shifts, applications "
+             "and interviews.\n" if mode == "work" else "")
+    prompt = f"{focus}<data>\n{context}\n</data>\n\nEarlier in this chat:{turns or ' (nothing)'}\n\nStudent's question: {question[:500]}"
     return await generate_json(prompt, SYSTEM, Answer, temperature=0.2, model=get_settings().gemini_brief_model)

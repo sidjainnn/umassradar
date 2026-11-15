@@ -163,6 +163,7 @@ async def me(user: dict = Depends(current_user)):
         },
         "followed_groups": user.get("followed_groups", []),
         "has_schedule": bool(user.get("schedule")),
+        "mode": user.get("mode", "study"),
         "member_since": user.get("created_at"),
     }
 

@@ -53,7 +53,7 @@ async def ask_sam(body: Question, user: dict = Depends(current_user)):
     courses = {c["_id"]: c.get("shared") or {} async for c in db.courses.find({"_id": {"$in": sorted(mine)}}, {"shared": 1})}
     context = build_context(items, user.get("schedule"), courses, user.get("followed_groups", []), now_utc())
     try:
-        answer = await ask(body.question, context, [t.model_dump() for t in body.history])
+        answer = await ask(body.question, context, [t.model_dump() for t in body.history], user.get("mode", "study"))
     except Exception:
         raise HTTPException(502, "Sam couldn't think of an answer right now. Try again in a minute.")
     known = {i.id: i for i in items}
