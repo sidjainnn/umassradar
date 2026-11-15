@@ -12,11 +12,12 @@ import {
   EyeOff,
   FileText,
   GraduationCap,
+  House,
   LockKeyhole,
   Mail,
-  MessageCircle,
   ShieldCheck,
   Sparkles,
+  Upload,
 } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
@@ -44,6 +45,17 @@ const SHOWCASES = [
   { label: "To do", icon: Check, eyebrow: "Act on it", title: "Every important message becomes a next step.", text: "Instead of rereading long threads, work from one calm list and mark items done without losing the original context.", points: ["Due dates with course labels", "Evidence from the original source", "Done and dismissed states"] },
   { label: "Planner", icon: CalendarDays, eyebrow: "See the week", title: "Classes, deadlines and free time finally line up.", text: "Your schedule becomes a useful plan with office hours you can actually attend and conflicts you can spot early.", points: ["Today timeline", "Schedule imports", "Office-hour fit checks"] },
   { label: "Opportunities", icon: BriefcaseBusiness, eyebrow: "Find the good stuff", title: "Campus opportunities stop getting buried.", text: "Research roles, jobs, clubs and events get their own focused space instead of competing with inbox noise.", points: ["Research and campus jobs", "Clubs and events", "Deadlines kept visible"] },
+];
+
+const FEATURE_CARDS = [
+  { icon: Sparkles, title: "Morning Brief", detail: "Your day, distilled" },
+  { icon: Check, title: "To Do", detail: "Deadlines and replies" },
+  { icon: CalendarDays, title: "Schedule", detail: "Classes and free time" },
+  { icon: House, title: "Housing", detail: "Sublets, swaps, roommates" },
+  { icon: BookOpen, title: "Courses", detail: "Sections and syllabi" },
+  { icon: BriefcaseBusiness, title: "Opportunities", detail: "Jobs, research, events" },
+  { icon: BellRing, title: "Updates", detail: "Course and campus news" },
+  { icon: Upload, title: "Smart Imports", detail: "Files and screenshots" },
 ];
 
 export function Landing({ notice, onDemo, demoLoading }: Props) {
@@ -95,56 +107,20 @@ export function Landing({ notice, onDemo, demoLoading }: Props) {
           </p>
         </div>
 
-        <div className="hero-product hero-product-home relative z-10 mx-auto mt-8 max-w-4xl" aria-label="Illustrative UMass Radar morning screen">
-          <div className="hero-sam hero-sam-home" aria-label="Sam the Minuteman welcomes students to UMass Radar">
-            <Image
-              src="/mascots/sam-minuteman-3d.png"
-              alt="A friendly 3D Sam the Minuteman holding a class schedule"
-              width={1024}
-              height={1536}
-              priority
-            />
+        <div className="hero-card-stage relative z-10 mx-auto mt-6 max-w-6xl" aria-label="Explore every UMass Radar feature">
+          <div className="hero-card-halo" aria-hidden="true" />
+          <Image className="hero-card-sam" src="/mascots/sam-minuteman-3d.png" alt="Sam the Minuteman presenting UMass Radar features" width={1024} height={1536} priority />
+          <div className="hero-capability-deck">
+            {FEATURE_CARDS.map(({ icon: Icon, title, detail }, index) => (
+              <a key={title} href="#all-features" className="hero-capability-card" aria-label={`Explore ${title}`}>
+                <span className="hero-card-number">{String(index + 1).padStart(2, "0")}</span>
+                <span className="hero-card-icon"><Icon className="h-6 w-6" /></span>
+                <strong>{title}</strong>
+                <small>{detail}</small>
+                <span className="hero-card-arrow"><ArrowRight className="h-4 w-4" /></span>
+              </a>
+            ))}
           </div>
-          <div className="hero-window hero-window-home rounded-[26px] border border-white/50 bg-white/94 p-4 text-left shadow-[0_36px_100px_rgba(94,0,28,0.25)] backdrop-blur sm:p-5">
-            <div className="flex items-center gap-2 border-b border-line-soft pb-3">
-              <span className="h-2.5 w-2.5 rounded-full bg-maroon-200" />
-              <span className="h-2.5 w-2.5 rounded-full bg-[#ffc72c]" />
-              <span className="h-2.5 w-2.5 rounded-full bg-[#86c8bc]" />
-              <span className="ml-auto text-[10px] font-bold uppercase tracking-[0.15em] text-ink-faint">Saturday · your campus</span>
-            </div>
-            <div className="grid gap-4 pt-4 sm:grid-cols-[1.15fr_0.85fr]">
-              <div>
-                <p className="text-xs text-ink-muted">Good morning.</p>
-                <h2 className="mt-1 font-serif text-2xl font-semibold text-ink">Here’s what needs you.</h2>
-                <div className="mt-4 rounded-2xl bg-maroon-600 p-4 text-white shadow-[0_14px_30px_rgba(132,0,40,0.2)]">
-                  <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.13em] text-white/65"><Sparkles className="h-3.5 w-3.5" /> Your morning brief</div>
-                  <p className="mt-2 text-sm leading-relaxed">Lab 6 is due tonight. Advising starts at 2, and Prof. Chen is waiting on your availability.</p>
-                </div>
-                <div className="mt-4 space-y-2">
-                  <MiniTask icon={Clock3} title="Lab 6: circuits & signals" meta="ECE 122 · 11:59 PM" tone="maroon" />
-                  <MiniTask icon={CalendarDays} title="Academic advising" meta="Goodell 613 · 2:00 PM" tone="navy" />
-                  <MiniTask icon={MessageCircle} title="Send research availability" meta="Reply owed" tone="gold" />
-                </div>
-              </div>
-              <div className="rounded-2xl border border-line bg-[#f7f7f6] p-4">
-                <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-ink-faint">At a glance</p>
-                <div className="mt-3 grid grid-cols-2 gap-2">
-                  <Stat n="3" label="this week" />
-                  <Stat n="1" label="reply owed" />
-                  <Stat n="4" label="opportunities" />
-                  <Stat n="12" label="noise filtered" />
-                </div>
-                <div className="mt-4 rounded-xl border border-line bg-white p-3">
-                  <p className="text-xs font-semibold text-ink">Next on campus</p>
-                  <p className="mt-1 text-[11px] text-ink-muted">Office hours · 4 PM</p>
-                  <p className="text-[11px] text-forest">You’re free</p>
-                </div>
-              </div>
-            </div>
-            <div className="hero-pals mt-3 border-t border-line-soft pt-2"><CampusPals /></div>
-          </div>
-          <div className="hero-float hero-float-left"><BellRing className="h-4 w-4" /><span>Deadline found</span></div>
-          <div className="hero-float hero-float-right"><EyeOff className="h-4 w-4" /><span>12 distractions filtered</span></div>
         </div>
       </section>
 
@@ -255,21 +231,21 @@ export function Landing({ notice, onDemo, demoLoading }: Props) {
         </div>
       </section>
 
-      <section className="product-map mx-auto max-w-7xl rounded-[30px] border border-line px-5 py-14 sm:px-10 sm:py-20 lg:px-14" aria-labelledby="workspace-heading">
+      <section id="all-features" className="product-map mx-auto max-w-7xl rounded-[30px] border border-line px-5 py-14 sm:px-10 sm:py-20 lg:px-14" aria-labelledby="workspace-heading">
         <div className="max-w-3xl">
           <p className="landing-kicker">A complete student workspace</p>
-          <h2 id="workspace-heading" className="mt-4 font-serif text-4xl font-semibold leading-tight text-ink sm:text-5xl">Every backend capability has a clear place to live.</h2>
-          <p className="mt-5 text-lg leading-relaxed text-ink-muted">The homepage explains the promise. Once signed in, the product turns each real integration into a focused screen and a usable next step.</p>
+          <h2 id="workspace-heading" className="mt-4 font-serif text-4xl font-semibold leading-tight text-ink sm:text-5xl">One student system. Every part of campus life.</h2>
+          <p className="mt-5 text-lg leading-relaxed text-ink-muted">Each card is a focused workspace backed by the same student context, so schedules, housing, courses and inbox items work together instead of becoming more tabs to check.</p>
         </div>
-        <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <WorkspaceCard icon={Sparkles} title="Home" text="Morning brief, today timeline, coming up and at-a-glance counts." />
+        <div className="feature-system-grid mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <WorkspaceCard icon={Sparkles} title="Morning Brief" text="A personalized summary, today timeline, coming up and live counts." />
           <WorkspaceCard icon={Check} title="To do" text="Deadlines, appointments and replies with sources and completion states." />
           <WorkspaceCard icon={CalendarDays} title="Schedule" text="SPIRE schedules, calendar conflicts and office hours you can attend." />
+          <WorkspaceCard icon={House} title="Housing" text="UMass-only sublets, room swaps, roommate matching, requests and safety flags." />
+          <WorkspaceCard icon={BookOpen} title="Courses" text="Sections, instructors, syllabus facts, exam dates and shared resources." />
           <WorkspaceCard icon={BriefcaseBusiness} title="Opportunities" text="Campus jobs, research roles, clubs and events separated from inbox noise." />
-          <WorkspaceCard icon={BellRing} title="Updates" text="Course news, status changes and filtered newsletters kept out of the way." />
-          <WorkspaceCard icon={BookOpen} title="Course profiles" text="Sections, instructors, syllabus facts, exam dates and shared resources." />
-          <WorkspaceCard icon={FileText} title="Smart imports" text="Schedules, syllabi, job boards and portal screenshots become usable items." />
-          <WorkspaceCard icon={ShieldCheck} title="Profile & privacy" text="Connections, re-sync controls, data visibility and account deletion." />
+          <WorkspaceCard icon={BellRing} title="Campus Updates" text="Course news, status changes and followed groups kept out of the noise." />
+          <WorkspaceCard icon={Upload} title="Smart Imports" text="Schedules, syllabi, job boards and portal screenshots become usable items." />
         </div>
       </section>
 

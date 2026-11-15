@@ -381,6 +381,107 @@ a {
   padding-bottom: 0;
 }
 
+.hero-card-stage {
+  min-height: 390px;
+}
+
+.hero-card-halo {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 310px;
+  height: 310px;
+  border: 1px solid rgba(132, 0, 40, 0.12);
+  border-radius: 50%;
+  box-shadow: 0 0 0 55px rgba(132, 0, 40, 0.025), 0 0 0 110px rgba(132, 0, 40, 0.018);
+  transform: translateX(-50%);
+}
+
+.hero-card-sam {
+  position: absolute;
+  z-index: 2;
+  top: -6px;
+  left: 50%;
+  width: 175px;
+  height: auto;
+  filter: drop-shadow(0 20px 22px rgba(94, 0, 28, 0.2));
+  animation: sam-welcome-centered 4.6s ease-in-out infinite;
+}
+
+.hero-capability-deck {
+  position: absolute;
+  z-index: 3;
+  right: -5%;
+  bottom: 36px;
+  left: -5%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.hero-capability-card {
+  position: relative;
+  display: flex;
+  width: 154px;
+  min-width: 154px;
+  height: 190px;
+  flex-direction: column;
+  padding: 17px;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.72);
+  border-radius: 22px;
+  background: linear-gradient(150deg, #fff 0%, #f8e9ee 100%);
+  color: var(--color-ink);
+  box-shadow: 0 20px 44px rgba(94, 0, 28, 0.16);
+  text-align: left;
+  transform-origin: 50% 120%;
+  transition: transform 220ms ease, box-shadow 220ms ease;
+}
+
+.hero-capability-card + .hero-capability-card {
+  margin-left: -27px;
+}
+
+.hero-capability-card:nth-child(1) { transform: translateY(25px) rotate(-12deg); }
+.hero-capability-card:nth-child(2) { transform: translateY(9px) rotate(-8deg); }
+.hero-capability-card:nth-child(3) { transform: translateY(0) rotate(-4deg); }
+.hero-capability-card:nth-child(4) { transform: translateY(-4px) rotate(-1deg); }
+.hero-capability-card:nth-child(5) { transform: translateY(-4px) rotate(2deg); }
+.hero-capability-card:nth-child(6) { transform: translateY(0) rotate(5deg); }
+.hero-capability-card:nth-child(7) { transform: translateY(10px) rotate(9deg); }
+.hero-capability-card:nth-child(8) { transform: translateY(26px) rotate(13deg); }
+
+.hero-capability-card:hover {
+  z-index: 10;
+  transform: translateY(-24px) rotate(0) scale(1.06);
+  box-shadow: 0 28px 60px rgba(94, 0, 28, 0.25);
+}
+
+.hero-capability-card:nth-child(3n + 2) { background: linear-gradient(150deg, #fff 0%, #fff5d8 100%); }
+.hero-capability-card:nth-child(3n) { background: linear-gradient(150deg, #fff 0%, #e8f3f1 100%); }
+
+.hero-card-number {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: var(--color-ink-faint);
+}
+
+.hero-card-icon {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  margin-top: 16px;
+  place-items: center;
+  border-radius: 15px;
+  background: var(--color-maroon-600);
+  color: #fff;
+}
+
+.hero-capability-card strong { margin-top: 14px; font-family: var(--font-lora), Georgia, serif; font-size: 16px; }
+.hero-capability-card small { margin-top: 4px; color: var(--color-ink-muted); font-size: 10px; line-height: 1.3; }
+.hero-card-arrow { position: absolute; right: 15px; bottom: 14px; color: var(--color-maroon-600); }
+
 .hero-window-home {
   transform: rotateX(1deg);
 }
@@ -647,6 +748,23 @@ a {
   box-shadow: 0 16px 38px rgba(94, 0, 28, 0.1);
 }
 
+.feature-system-grid .workspace-card {
+  position: relative;
+  min-height: 210px;
+  overflow: hidden;
+}
+
+.feature-system-grid .workspace-card::after {
+  content: "";
+  position: absolute;
+  right: -32px;
+  bottom: -42px;
+  width: 110px;
+  height: 110px;
+  border: 18px solid rgba(132, 0, 40, 0.055);
+  border-radius: 50%;
+}
+
 .privacy-section {
   background:
     radial-gradient(circle at 85% 18%, rgba(132, 0, 40, 0.12), transparent 21rem),
@@ -772,6 +890,16 @@ a {
     min-height: auto;
   }
 
+  .hero-capability-deck {
+    right: -12%;
+    left: -12%;
+  }
+
+  .hero-capability-card {
+    width: 138px;
+    min-width: 138px;
+  }
+
   .hero-product {
     max-width: 720px;
     margin-inline: auto;
@@ -826,6 +954,50 @@ a {
   .final-cta {
     border-radius: 24px;
   }
+
+  .landing-cinematic-home {
+    min-height: auto;
+    padding-bottom: 1.25rem;
+  }
+
+  .hero-card-stage {
+    min-height: 330px;
+    margin-right: -1.25rem;
+    margin-left: -1.25rem;
+  }
+
+  .hero-card-halo {
+    width: 220px;
+    height: 220px;
+  }
+
+  .hero-card-sam {
+    top: 6px;
+    width: 118px;
+  }
+
+  .hero-capability-deck {
+    right: 0;
+    bottom: 6px;
+    left: 0;
+    justify-content: flex-start;
+    padding: 28px 22px 22px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .hero-capability-deck::-webkit-scrollbar { display: none; }
+
+  .hero-capability-card,
+  .hero-capability-card:nth-child(n) {
+    width: 142px;
+    min-width: 142px;
+    height: 176px;
+    margin-left: 10px;
+    transform: none;
+  }
+
+  .hero-capability-card:first-child { margin-left: 0; }
 
   .landing-orbit {
     width: 440px;
