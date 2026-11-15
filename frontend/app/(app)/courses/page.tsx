@@ -2,7 +2,7 @@
 
 import { FileCheck2, Search } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ImportDialog } from "@/components/ImportDialog";
 import { PageHeader } from "@/components/Page";
 import { api, type CourseSummary } from "@/lib/api";
@@ -17,7 +17,7 @@ function CourseRow({ c, onAddSyllabus }: { c: CourseSummary; onAddSyllabus?: (co
           <span className="ml-2 text-ink-soft">{c.title}</span>
         </span>
         <span className="mt-0.5 block truncate text-[13px] text-ink-muted">
-          {[c.instructors.slice(0, 2).join(", ") || "Instructor not listed", c.term, c.credits && `${c.credits} credits`].filter(Boolean).join(", ")}
+          {[(c.instructors ?? []).slice(0, 2).join(", ") || "Instructor not listed", c.term, c.credits && `${c.credits} credits`].filter(Boolean).join(", ")}
         </span>
       </Link>
       {c.has_syllabus ? (
@@ -54,17 +54,29 @@ export default function CoursesPage() {
   const [q, setQ] = useState("");
   const [total, setTotal] = useState<number | null>(null);
   const [syllabusFor, setSyllabusFor] = useState<string | null>(null);
+  const [error, setError] = useState("");
+  const request = useRef(0);
 
-  const load = (query: string) =>
-    api<CourseSummary[]>(`/courses?q=${encodeURIComponent(query)}`).then(setList).catch(() => setList([]));
+  const load = useCallback(async (query: string) => {
+    const id = ++request.current;
+    setError("");
+    setList(null);
+    try {
+      const rows = await api<CourseSummary[]>(`/courses?q=${encodeURIComponent(query)}`);
+      if (!Array.isArray(rows) || rows.some((c) => !c || typeof c.code !== "string")) throw new Error("The course catalog is temporarily unavailable. Please try again.");
+      if (id === request.current) setList(rows);
+    } catch (e) {
+      if (id === request.current) { setError(e instanceof Error ? e.message : "Could not load courses."); setList([]); }
+    }
+  }, []);
 
   useEffect(() => {
-    api<{ courses: number }>("/courses-count").then((r) => setTotal(r.courses)).catch(() => {});
+    api<{ courses: number }>("/courses-count").then((r) => setTotal(typeof r.courses === "number" ? r.courses : null)).catch(() => {});
   }, []);
   useEffect(() => {
     const t = setTimeout(() => load(q), 200);
     return () => clearTimeout(t);
-  }, [q]);
+  }, [q, load]);
 
   const groups = useMemo(() => {
     const all = list ?? [];
@@ -79,13 +91,14 @@ export default function CoursesPage() {
         <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-faint" />
         <input
           value={q}
+          aria-label="Search courses"
           onChange={(e) => setQ(e.target.value)}
           placeholder={total ? `Search ${total.toLocaleString()} courses by code, title or instructor` : "Search courses by code, title or instructor"}
           className="w-full rounded-xl border border-line bg-surface py-3 pl-10 pr-4 text-[15px] outline-none placeholder:text-ink-faint focus:border-maroon-600"
         />
       </label>
 
-      {list === null ? (
+      {error ? <p role="alert" className="rounded-xl border border-maroon-100 bg-maroon-50 p-4 text-sm text-maroon-800">{error} <button onClick={() => void load(q)} className="font-bold underline">Try again</button></p> : list === null ? (
         <div className="h-40 animate-pulse rounded-xl bg-line-soft" />
       ) : q ? (
         list.length === 0 ? (

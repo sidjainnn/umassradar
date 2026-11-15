@@ -31,9 +31,12 @@ export default function CoursePage({ params }: { params: Promise<{ code: string 
   const [addingSyllabus, setAddingSyllabus] = useState(false);
 
   const load = useCallback(async () => {
+    setError(null);
     try {
       const q = term ? `?term=${encodeURIComponent(term)}` : "";
-      setCourse(await api<CourseProfile>(`/courses/${encodeURIComponent(code)}${q}`));
+      const result = await api<CourseProfile>(`/courses/${encodeURIComponent(code)}${q}`);
+      if (!result || typeof result.code !== "string" || !Array.isArray(result.sections) || !Array.isArray(result.terms) || !result.shared || !Array.isArray(result.your_items)) throw new Error("This course could not be loaded. Please try again.");
+      setCourse(result);
     } catch (e) {
       setError(e instanceof ApiError && e.status === 404 ? `There's no page for ${code} yet.` : e instanceof Error ? e.message : String(e));
     }
@@ -47,6 +50,8 @@ export default function CoursePage({ params }: { params: Promise<{ code: string 
       if (classNumbers === null) await api(`/plan/${encodeURIComponent(code)}`, { method: "DELETE" });
       else await api(`/plan/${encodeURIComponent(code)}`, { method: "PUT", body: JSON.stringify({ class_numbers: classNumbers }) });
       await load();
+    } catch (e) {
+      setNotice(e instanceof Error ? e.message : "Could not update your course plan.");
     } finally {
       setSaving(false);
     }
@@ -63,7 +68,7 @@ export default function CoursePage({ params }: { params: Promise<{ code: string 
     load();
   }
 
-  if (error) return <p className="text-[15px] text-ink-muted">{error} <Link href="/courses" className="font-semibold text-maroon-600 hover:underline">Back to courses</Link></p>;
+  if (error) return <p role="alert" className="text-[15px] text-ink-muted">{error} <button onClick={() => void load()} className="mr-3 font-semibold text-maroon-600 underline">Try again</button><Link href="/courses" className="font-semibold text-maroon-600 hover:underline">Back to courses</Link></p>;
   if (!course) return <div className="h-60 animate-pulse rounded-xl bg-line-soft" />;
 
   const shared = course.shared;

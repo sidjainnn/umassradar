@@ -116,7 +116,7 @@ export default function SchedulePage() {
       <WeekAgenda />
 
       {schedule ? (
-        <WeekGrid classes={schedule.classes} />
+        <details className="rounded-xl border border-line bg-white p-4"><summary className="cursor-pointer text-sm font-semibold">Class timetable</summary><div className="mt-4"><WeekGrid classes={schedule.classes} /></div></details>
       ) : (
         <div className="rounded-xl border border-dashed border-line bg-surface px-6 py-8">
           <CalendarRange className="h-6 w-6 text-maroon-600" />
