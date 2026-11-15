@@ -22,6 +22,8 @@ from app.security import (
     current_user,
     encrypt_token,
     end_session,
+    hash_token,
+    new_session_token,
     set_cookie,
 )
 
@@ -63,7 +65,8 @@ def _frontend(path: str = "/", **params) -> str:
 
 
 @router.get("/auth/login")
-async def login(calendar: bool = False, consent: bool = False, radar_known: str | None = Cookie(default=None)):
+async def login(calendar: bool = False, consent: bool = False, mobile: bool = False,
+                radar_known: str | None = Cookie(default=None)):
     """Google sign-in. Returning users just pick their account; Google only shows the consent screen the first
     time, when access needs renewing (?consent=1), or when adding Calendar (?calendar=1)."""
     if not get_settings().google_configured:
@@ -76,7 +79,7 @@ async def login(calendar: bool = False, consent: bool = False, radar_known: str 
     prompt = "consent" if (consent or calendar or not radar_known) else "select_account"
     url, _ = flow.authorization_url(access_type="offline", prompt=prompt, include_granted_scopes="true")
     await get_db().oauth_states.insert_one(
-        {"_id": state, "code_verifier": flow.code_verifier, "scopes": scopes, "created_at": now_utc()}
+        {"_id": state, "code_verifier": flow.code_verifier, "scopes": scopes, "created_at": now_utc(), "mobile": mobile}
     )
     response = RedirectResponse(url, status_code=302)
     set_cookie(response, STATE_COOKIE, state, 900)
@@ -129,13 +132,43 @@ async def callback(request: Request, radar_oauth_state: str | None = Cookie(defa
     )
     if not user.get("refresh_token_enc") or (user.get("needs_reconnect") and not creds.refresh_token):
         # no usable Gmail token (first time, or the old one expired): only the consent screen issues a new one
-        return RedirectResponse(_frontend("/api/auth/login", consent="1"))
+        return RedirectResponse(_frontend("/api/auth/login", consent="1", **({"mobile": "1"} if pending.get("mobile") else {})))
+
+    if pending.get("mobile"):
+        # hand the app a one-time code (not the session token itself) through its deep link
+        code = secrets.token_urlsafe(24)
+        await get_db().mobile_codes.insert_one({"_id": hash_token(code), "user_id": user_id, "created_at": now_utc()})
+        response = RedirectResponse(f"umassradar://auth?code={code}")
+        response.delete_cookie(STATE_COOKIE, path="/")
+        return response
 
     response = RedirectResponse(_frontend("/", connected="1"))
     response.delete_cookie(STATE_COOKIE, path="/")
     set_cookie(response, KNOWN_COOKIE, "1", 365 * 86400)
     await create_session(response, user_id)
     return response
+
+
+class MobileCode(BaseModel):
+    code: str = Field(..., min_length=10, max_length=100)
+
+
+@router.post("/auth/mobile/exchange")
+async def mobile_exchange(body: MobileCode):
+    """Swap the one-time code from the sign-in deep link for a session token (valid once, for 5 minutes)."""
+    doc = await get_db().mobile_codes.find_one_and_delete({"_id": hash_token(body.code)})
+    if not doc:
+        raise HTTPException(400, "That sign-in link was already used or has expired. Sign in again.")
+    created = doc["created_at"] if doc["created_at"].tzinfo else doc["created_at"].replace(tzinfo=now_utc().tzinfo)
+    if (now_utc() - created).total_seconds() > 300:
+        raise HTTPException(400, "That sign-in link expired. Sign in again.")
+    return {"token": await new_session_token(doc["user_id"], kind="mobile")}
+
+
+@router.get("/auth/mobile/start")
+async def mobile_start(radar_known: str | None = Cookie(default=None)):
+    """Google sign-in for the mobile app, opened in the phone's browser; ends at umassradar://auth?code=..."""
+    return await login(mobile=True, radar_known=radar_known)
 
 
 @router.post("/auth/logout")

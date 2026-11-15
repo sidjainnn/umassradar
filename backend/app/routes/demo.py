@@ -11,7 +11,7 @@ from app.db import get_db
 from app.applications import AppSignal, learn_from_emails, record
 from app.models import now_utc
 from app.pipeline import process_emails
-from app.security import create_session
+from app.security import create_session, new_session_token
 from app.housing_samples import ensure_samples
 from app.store import delete_user_data, save_items
 from demo.loader import load_demo_emails
@@ -21,6 +21,19 @@ router = APIRouter()
 
 @router.post("/demo/load")
 async def load_demo(response: Response):
+    user_id, n = await make_demo_user()
+    await create_session(response, user_id)
+    return {"ok": True, "items": n}
+
+
+@router.post("/auth/mobile/demo")
+async def mobile_demo():
+    """The mobile app's 'Try the demo': a demo account and a session token for the Authorization header."""
+    user_id, _ = await make_demo_user()
+    return {"token": await new_session_token(user_id, kind="mobile"), "demo": True}
+
+
+async def make_demo_user() -> tuple[str, int]:
     db = get_db()
     # tidy up demo users from previous days
     async for old in db.users.find({"demo": True, "created_at": {"$lt": now_utc() - timedelta(days=1)}}, {"_id": 1}):
@@ -44,5 +57,4 @@ async def load_demo(response: Response):
     await record(user_id, AppSignal("HubSpot", "Product Design Intern", "applied", now - timedelta(days=12), "Sample"))
     await record(user_id, AppSignal("Wayfair", "Data Science Intern", "interview", now - timedelta(days=1), "Sample"))
     await ensure_samples()  # example housing posts, shown only in demo mode
-    await create_session(response, user_id)
-    return {"ok": True, "items": len(items)}
+    return user_id, len(items)
