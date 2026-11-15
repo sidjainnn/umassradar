@@ -1,0 +1,28 @@
+{
+  "building": "Integrative Learning Center",
+  "level": 1,
+  "source": "traced",
+  "note": "Hand-traced from the fire-evacuation plan posted by the ILC elevator (floor 1). Pixel coordinates in the 1125x2000 photo; up is north, left is west. Which classroom is which is matched from the registrar's room list (wing, floor, size).",
+  "image_box": [232, 625, 948, 1350],
+  "outline": [[232, 700], [490, 625], [525, 655], [555, 1005], [940, 1015], [948, 1350], [440, 1330], [350, 1290], [300, 990]],
+  "corridors": [[[330, 1000], [330, 1170], [552, 1170], [935, 1172]], [[330, 1000], [300, 870], [262, 720]]],
+  "rooms": [
+    {"slot": "north-auditorium", "wing": "N", "polygon": [[370, 770], [495, 755], [525, 800], [540, 990], [450, 1000], [415, 960], [380, 850]], "door": [430, 990]},
+    {"slot": "north-mid", "wing": "N", "polygon": [[370, 1030], [470, 1030], [475, 1150], [375, 1150]], "door": [420, 1160]},
+    {"slot": "north-small", "wing": "N", "polygon": [[420, 665], [500, 655], [505, 740], [425, 745]], "door": [425, 720]},
+    {"slot": "west-low", "wing": "N", "polygon": [[338, 1185], [440, 1185], [440, 1290], [355, 1285]], "door": [400, 1180]},
+    {"slot": "south-tiered", "wing": "S", "polygon": [[450, 1182], [580, 1182], [580, 1325], [450, 1320]], "door": [515, 1180]},
+    {"slot": "south-mid", "wing": "S", "polygon": [[585, 1185], [745, 1185], [745, 1335], [590, 1330]], "door": [665, 1182]},
+    {"slot": "south-east", "wing": "S", "polygon": [[750, 1185], [940, 1185], [945, 1345], [755, 1340]], "door": [845, 1182]},
+    {"slot": "south-north-side", "wing": "S", "polygon": [[585, 1015], [745, 1015], [745, 1160], [585, 1160]], "door": [665, 1165]}
+  ],
+  "other": [
+    {"label": "Restrooms and elevator core", "polygon": [[500, 1025], [578, 1025], [578, 1150], [500, 1150]]},
+    {"label": "Offices", "polygon": [[750, 1015], [940, 1020], [940, 1160], [750, 1160]]},
+    {"label": "Lobby", "polygon": [[240, 705], [410, 650], [420, 760], [400, 1000], [300, 990]]}
+  ],
+  "stairs": [[318, 1060], [910, 1110], [440, 645], [298, 775]],
+  "elevators": [[540, 1140], [408, 700]],
+  "entrances": [[322, 1000], [930, 1185]],
+  "you_are_here": [552, 1168]
+}

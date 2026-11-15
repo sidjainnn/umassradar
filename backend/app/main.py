@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app import auth
 from app.config import get_settings
 from app.db import ensure_indexes
-from app.routes import account, applications, ask, brief, clubs, courses, demo, events, find_room, housing, imports, items, jobs, preferences, progress, rooms, settings, todo
+from app.routes import account, applications, ask, brief, clubs, courses, demo, events, find_room, housing, imports, indoor, items, jobs, preferences, progress, rooms, settings, todo
 from app.scheduler import start_scheduler
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s %(levelname)s %(message)s")
@@ -50,6 +50,7 @@ app.include_router(preferences.router)
 app.include_router(applications.router)
 app.include_router(jobs.router)
 app.include_router(todo.router)
+app.include_router(indoor.router)
 
 
 @app.get("/health")
