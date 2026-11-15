@@ -62,7 +62,7 @@ class StatusUpdate(BaseModel):
 @router.patch("/items/{item_id}")
 async def update_item(item_id: str, body: StatusUpdate, user: dict = Depends(current_user)):
     result = await get_db().items.update_one(
-        {"_id": item_id, "user_id": user["_id"]}, {"$set": {"status": body.status, "updated_at": now_utc()}}
+        {"_id": item_id, "user_id": user["_id"]}, {"$set": {"status": body.status, "updated_at": now_utc(), "done_at": now_utc() if body.status == "done" else None}}
     )
     if not result.matched_count:
         raise HTTPException(404, "item not found")
