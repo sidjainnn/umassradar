@@ -71,3 +71,10 @@ def test_make_items_series_and_default_length():
 def test_event_must_end_after_start():
     with pytest.raises(ValueError):
         EventBody(title="x", starts_at=at(MON, 10), ends_at=at(MON, 9))
+
+
+def test_midnight_to_midnight_event_is_all_day():
+    item = Item(category="event", title="Career fair", source="manual", starts_at=at(MON, 0),
+                ends_at=at(MON + timedelta(days=1), 0))
+    (entry,) = build_week(MON, None, [item], [], None)
+    assert entry["all_day"] is True

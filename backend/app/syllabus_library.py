@@ -24,7 +24,7 @@ from app.db import get_db
 from app.models import EASTERN, now_utc
 from app.watchers import main_text
 from llm.extract import normalize_course
-from llm.syllabus import SyllabusError, extract_syllabus, pdf_text, to_records
+from llm.syllabus import SyllabusError, clean_materials, extract_syllabus, pdf_text, to_records
 
 SEED = Path(__file__).resolve().parents[1] / "seed"
 USER_AGENT = "Mozilla/5.0 (compatible; UMassRadar syllabus library; student project)"
@@ -71,11 +71,11 @@ async def read_url(url: str) -> str:
 
 
 async def import_text(text: str, source: str, expected: str | None = None, term_hint: str | None = None,
-                      since: date | None = None) -> str:
+                      since: date | None = None, reextract: bool = False) -> str:
     db = get_db()
     digest = hashlib.sha256(text.encode()).hexdigest()
     seen = await db.syllabus_sources.find_one({"_id": source})
-    if seen and seen.get("hash") == digest:
+    if seen and seen.get("hash") == digest and not (reextract and str(seen.get("status", "")).startswith("added")):
         return f"unchanged ({seen.get('status')})"
 
     result = await extract_syllabus(text)
@@ -91,7 +91,8 @@ async def import_text(text: str, source: str, expected: str | None = None, term_
     else:
         updated = await add_syllabus_facts(course, office_hours, items, result.grading, result.late_policy,
                                            term=result.term, source_url=source if source.startswith("http") else None,
-                                           from_student=False)
+                                           from_student=False, materials=clean_materials(result.materials),
+                                           count=not seen)
         status = f"added to {course} ({result.term})" if updated else f"kept newer syllabus for {course}"
     await db.syllabus_sources.update_one(
         {"_id": source}, {"$set": {"hash": digest, "status": status, "course": course, "term": result.term,
@@ -99,7 +100,7 @@ async def import_text(text: str, source: str, expected: str | None = None, term_
     return status
 
 
-async def main(since: date | None = None) -> None:
+async def main(since: date | None = None, reextract: bool = False) -> None:
     sources = []
     csv_path = SEED / "syllabus_sources.csv"
     if csv_path.exists():
@@ -112,7 +113,7 @@ async def main(since: date | None = None) -> None:
     for n, (kind, source, expected, term_hint) in enumerate(sources, 1):
         try:
             text = await read_url(source) if kind == "url" else pdf_text(Path(source).read_bytes())
-            status = await import_text(text, source, expected, term_hint, since)
+            status = await import_text(text, source, expected, term_hint, since, reextract)
         except Exception as e:  # one bad source shouldn't stop the rest
             status = f"failed: {str(e)[:120]}"
         tally[status.split(":")[0].split(" (")[0].split(" to ")[0]] += 1
@@ -125,5 +126,6 @@ async def main(since: date | None = None) -> None:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--since", help='oldest term to accept, e.g. "Fall 2025" (default: last 12 months)')
+    parser.add_argument("--reextract", action="store_true", help="read already-added syllabi again (e.g. for new fields)")
     args = parser.parse_args()
-    asyncio.run(main(term_start(args.since) if args.since else None))
+    asyncio.run(main(term_start(args.since) if args.since else None, args.reextract))
