@@ -58,16 +58,25 @@ function matches(e: Entry, q: string) {
 
 /** Side-by-side lanes for overlapping blocks in one day column. */
 function lanes(entries: Entry[]) {
+  // events only share width with events they actually overlap (a "cluster"), not with the whole day
   const sorted = [...entries].sort((a, b) => +new Date(a.start) - +new Date(b.start));
-  const ends: number[] = [];
-  const out = sorted.map((e) => {
+  const endOf = (e: Entry) => +new Date(e.end ?? e.start) || +new Date(e.start) + 3_600_000;
+  const out: { e: Entry; lane: number; lanes: number }[] = [];
+  let cluster: { e: Entry; lane: number; lanes: number }[] = [];
+  let ends: number[] = [];
+  let clusterEnd = -Infinity;
+  const flush = () => { const n = ends.length || 1; cluster.forEach((c) => { c.lanes = n; out.push(c); }); cluster = []; ends = []; };
+  for (const e of sorted) {
     const s = +new Date(e.start);
+    if (s >= clusterEnd) { flush(); clusterEnd = -Infinity; }
     let lane = ends.findIndex((end) => end <= s);
     if (lane === -1) { lane = ends.length; ends.push(0); }
-    ends[lane] = +new Date(e.end ?? e.start) || s + 3_600_000;
-    return { e, lane };
-  });
-  return out.map((x) => ({ ...x, lanes: ends.length }));
+    ends[lane] = endOf(e);
+    clusterEnd = Math.max(clusterEnd, endOf(e));
+    cluster.push({ e, lane, lanes: 1 });
+  }
+  flush();
+  return out;
 }
 
 // ---------- command bar ----------
@@ -206,12 +215,26 @@ function WeekGrid({ weekStart, entries, query, onOpen }: { weekStart: Date; entr
               <p className={`text-[12px] ${isToday ? "font-bold text-maroon-600" : "text-ink-muted"}`}>{DAY[i]}</p>
               <p className={`mx-auto mt-0.5 grid h-8 w-8 place-items-center rounded-full font-display text-[17px] font-extrabold ${isToday ? "bg-maroon-600 text-white" : "text-ink"}`}>{d.getDate()}</p>
               <div className="mt-1 space-y-1">
-                {allDay.filter((e) => sameDay(new Date(e.start), d)).map((e) => (
-                  <button key={e.id} onClick={() => onOpen(e)} title={e.title}
-                    className={`block w-full truncate rounded-full px-2 py-0.5 text-left text-[11.5px] font-semibold ${KIND[e.kind].block} ${dim(e)}`}>
-                    {e.kind === "deadline" ? `Due ${timeLabel(new Date(e.start))} · ` : ""}{e.title}
-                  </button>
-                ))}
+                {(() => {
+                  const today = allDay.filter((e) => sameDay(new Date(e.start), d));
+                  const shown = today.slice(0, 2); // keep the top row short; the rest open from "+ more"
+                  return (
+                    <>
+                      {shown.map((e) => (
+                        <button key={e.id} onClick={() => onOpen(e)} title={`${e.kind === "deadline" ? `Due ${timeLabel(new Date(e.start))}: ` : ""}${e.title}`}
+                          className={`block w-full truncate rounded-full px-2 py-0.5 text-left text-[11.5px] font-semibold ${KIND[e.kind].block} ${dim(e)}`}>
+                          {e.title}
+                        </button>
+                      ))}
+                      {today.length > 2 && (
+                        <button onClick={() => onOpen(today[2])} title={today.slice(2).map((e) => e.title).join("\n")}
+                          className="block w-full rounded-full px-2 py-0.5 text-left text-[11.5px] font-semibold text-ink-muted hover:bg-paper">
+                          + {today.length - 2} more
+                        </button>
+                      )}
+                    </>
+                  );
+                })()}
               </div>
             </div>
           );
