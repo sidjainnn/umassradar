@@ -30,7 +30,7 @@ export default function SignIn() {
     try {
       const { token } = await api<{ token: string }>("/auth/mobile/demo", { method: "POST" });
       await signIn(token);
-    } catch { setError(`Can't reach UMass Radar at ${API}.`); } finally { setBusy(false); }
+    } catch { setError(`Can't reach OneMass at ${API}.`); } finally { setBusy(false); }
   }
 
   return (

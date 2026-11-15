@@ -2,10 +2,10 @@
 
 import { useEffect, useRef } from "react";
 
-/** The bookmarklet. It opens UMass Radar's /send window and hands it the page the student is looking at. */
+/** The bookmarklet. It opens OneMass's /send window and hands it the page the student is looking at. */
 function bookmarklet(origin: string): string {
   const code = `(function(){var A=${JSON.stringify(origin)};var w=window.open(A+'/send','radar_send','width=440,height=600');` +
-    `if(!w){alert('Allow pop-ups for this page to send it to UMass Radar.');return;}` +
+    `if(!w){alert('Allow pop-ups for this page to send it to OneMass.');return;}` +
     `var d={type:'radar-page',url:location.href,title:document.title,text:(document.body.innerText||'').slice(0,60000)};` +
     `var n=0,t=setInterval(function(){n++;try{w.postMessage(d,A)}catch(e){}if(n>50)clearInterval(t)},300);` +
     `window.addEventListener('message',function(e){if(e.origin===A&&e.data==='radar-got-it')clearInterval(t)});})();`;
@@ -24,11 +24,11 @@ export function SendButton() {
         <li>Drag this button to your bookmarks bar:{" "}
           <a ref={link} onClick={(e) => e.preventDefault()} draggable
             className="ml-1 inline-block cursor-grab rounded-full bg-maroon-600 px-3 py-1 text-[13px] font-semibold text-white active:cursor-grabbing">
-            Send to UMass Radar
+            Send to OneMass
           </a>
         </li>
         <li>Open the <a href="https://yes.umass.edu/portal/jobsearch" target="_blank" rel="noreferrer" className="font-semibold text-maroon-600 hover:underline">Student Employment job board</a>, pick On- or Off-Campus and search.</li>
-        <li>Click <span className="font-semibold">Send to UMass Radar</span> in your bookmarks bar. The jobs on that page show up here.</li>
+        <li>Click <span className="font-semibold">Send to OneMass</span> in your bookmarks bar. The jobs on that page show up here.</li>
       </ol>
       <p className="mt-2 text-[13px] text-ink-muted">
         UMass doesn&apos;t let apps read the job board on their own, so the button only sends the page you&apos;re looking at, when you click it.

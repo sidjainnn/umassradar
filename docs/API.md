@@ -1,4 +1,4 @@
-# UMass Radar API: modes, personalization, the to-do agent and the room finder
+# OneMass API: modes, personalization, the to-do agent and the room finder
 
 This covers the endpoints added for Study/Work mode, jobs, applications, suggestions and finding rooms.
 The frontend calls them through `/api/*`, which proxies to the backend. All of them need a signed-in

@@ -9,9 +9,10 @@ const lora = Lora({ subsets: ["latin"], variable: "--font-lora" });
 const manrope = Manrope({ subsets: ["latin"], weight: ["600", "700", "800"], variable: "--font-manrope" });
 
 export const metadata: Metadata = {
-  title: "UMass Radar",
+  title: "OneMass",
   description: "Everything UMass needs from you, in one place.",
-  appleWebApp: { capable: true, title: "Radar", statusBarStyle: "default" },
+  applicationName: "OneMass",
+  appleWebApp: { capable: true, title: "OneMass", statusBarStyle: "default" },
 };
 
 export const viewport: Viewport = {

@@ -156,7 +156,7 @@ class JobPagePayload(BaseModel):
 
 @router.post("/import/jobs-page")
 async def import_jobs_page(body: JobPagePayload, user: dict = Depends(current_user)):
-    """Job postings from the job board page the student sent with the "Send to UMass Radar" button."""
+    """Job postings from the job board page the student sent with the "Send to OneMass" button."""
     try:
         text = check_source(body.url, body.text)
     except JobPageError as e:

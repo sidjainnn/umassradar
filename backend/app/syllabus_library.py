@@ -27,7 +27,7 @@ from llm.extract import normalize_course
 from llm.syllabus import SyllabusError, clean_materials, extract_syllabus, pdf_text, to_records
 
 SEED = Path(__file__).resolve().parents[1] / "seed"
-USER_AGENT = "Mozilla/5.0 (compatible; UMassRadar syllabus library; student project)"
+USER_AGENT = "Mozilla/5.0 (compatible; OneMass syllabus library; student project)"
 MAX_AGE = timedelta(days=365)
 
 

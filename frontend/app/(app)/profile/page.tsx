@@ -59,7 +59,7 @@ export default function ProfilePage() {
   return (
     <div className="max-w-2xl space-y-5 pb-16">
       <PageHeader title="Profile" subtitle={me.demo ? "This is the demo student. Sign in to save your own." :
-        `Signed in as ${me.email}${me.member_since ? `, using UMass Radar since ${new Date(me.member_since).toLocaleDateString("en-US", { month: "long", year: "numeric" })}` : ""}.`} />
+        `Signed in as ${me.email}${me.member_since ? `, using OneMass since ${new Date(me.member_since).toLocaleDateString("en-US", { month: "long", year: "numeric" })}` : ""}.`} />
       {error && <p role="alert" className="rounded-lg bg-maroon-50 px-4 py-3 text-sm text-maroon-800">{error}</p>}
 
       <Section title="Job matches and applications">
@@ -114,7 +114,7 @@ export default function ProfilePage() {
         </div>
       </Section>
 
-      <Section title="What UMass Radar remembers">
+      <Section title="What OneMass remembers">
         <Row label="Class schedule" value={schedule ? `${schedule.classes.length} class meetings${schedule.term ? `, ${schedule.term}` : ""}` : "Not added"}
           action={<Link href="/schedule" className="font-semibold text-maroon-600 hover:underline">{schedule ? "View" : "Add"}</Link>} />
         <Row label="Clubs and organizations you follow" value={me.followed_groups.length ? `${me.followed_groups.length}` : "None yet"}
@@ -151,7 +151,7 @@ export default function ProfilePage() {
         <div className="mt-4 flex flex-wrap gap-5 text-sm font-semibold">
           <button onClick={signOut} className="text-ink-soft hover:text-ink">{me.demo ? "Leave the demo" : "Sign out on this device"}</button>
           <button disabled={busy !== null}
-            onClick={() => { if (confirm("Delete everything UMass Radar has saved about you and sign out? This can't be undone.")) run("delete", async () => { await api("/account", { method: "DELETE" }); signOut(); }); }}
+            onClick={() => { if (confirm("Delete everything OneMass has saved about you and sign out? This can't be undone.")) run("delete", async () => { await api("/account", { method: "DELETE" }); signOut(); }); }}
             className="text-maroon-700 hover:underline">
             {busy === "delete" ? "Deleting…" : "Delete all my data"}
           </button>

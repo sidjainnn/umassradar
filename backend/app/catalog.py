@@ -18,7 +18,7 @@ from app.email_parse import html_to_text
 from app.models import now_utc
 
 DEFAULT_TERMS = ["spring-2027", "fall-2026"]
-USER_AGENT = "Mozilla/5.0 (compatible; UMassRadar catalog import; student project)"
+USER_AGENT = "Mozilla/5.0 (compatible; OneMass catalog import; student project)"
 DEPTS = ("COMPSCI", "CICS", "INFO")
 
 COURSE_HEAD = re.compile(rf"^\s*({'|'.join(DEPTS)})\s+(\d{{3}}[A-Z]?)\s*:\s*(.+?)\s*$", re.M)

@@ -379,7 +379,7 @@ export default function SchedulePage() {
   const parsed = useMemo(() => parseQuickAdd(query, new Date(), known), [query, known]);
   const entries = useMemo(() => week?.entries ?? [], [week]);
 
-  // search covers this week plus everything else UMass Radar knows about
+  // search covers this week plus everything else OneMass knows about
   const results = useMemo(() => {
     const q = query.trim();
     if (parsed || q.length < 2) return [];

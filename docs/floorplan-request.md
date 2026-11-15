@@ -5,7 +5,7 @@
 
 Hello,
 
-I'm a UMass Amherst student building UMass Radar, a free tool that helps students, especially first-years, find their
+I'm a UMass Amherst student building OneMass, a free tool that helps students, especially first-years, find their
 classrooms. It already shows the right building and door from public map data. What students still struggle with is
 finding the room once they're inside, for example Morrill I N375 or LGRT 0143.
 

@@ -1,4 +1,4 @@
-# UMass Radar handoff
+# OneMass handoff
 
 **For:** Shaurya (web frontend) and anyone running or testing the project
 **Last updated:** Nov 15, 2026

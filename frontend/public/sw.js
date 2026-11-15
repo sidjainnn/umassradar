@@ -1,6 +1,6 @@
 // Minimal service worker: makes the app installable and shows the last-loaded shell offline.
 // API responses are never cached (they're personal and change all day).
-const CACHE = "radar-shell-v1";
+const CACHE = "onemass-shell-v1";
 
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(CACHE).then((c) => c.addAll(["/"])));

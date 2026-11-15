@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "UMass Radar",
-    short_name: "Radar",
+    name: "OneMass",
+    short_name: "OneMass",
     description: "Everything UMass needs from you, in one place.",
     start_url: "/",
     display: "standalone",

@@ -108,7 +108,7 @@ def main() -> None:
     today = now_utc().astimezone(EASTERN).date()
     labels = load_labels(args.labels)
     predictions = asyncio.run(predict(args.llm))
-    print(f"UMass Radar eval: {len(labels)} labeled emails, {'rules + LLM' if args.llm else 'rules only'}")
+    print(f"OneMass eval: {len(labels)} labeled emails, {'rules + LLM' if args.llm else 'rules only'}")
     report(labels, predictions, today)
 
 

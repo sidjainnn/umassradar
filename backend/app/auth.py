@@ -37,7 +37,7 @@ KNOWN_COOKIE = "radar_known"  # set after a successful sign-in, so later sign-in
 os.environ.setdefault("OAUTHLIB_RELAX_TOKEN_SCOPE", "1")
 
 ERROR_MESSAGES = {
-    "access_denied": "You didn't grant Gmail access, so UMass Radar can't read your inbox. The rest of the app still works.",
+    "access_denied": "You didn't grant Gmail access, so OneMass can't read your inbox. The rest of the app still works.",
     "admin_policy_enforced": "Your school's Google admin blocks this app from reading Gmail. The rest of the app still works.",
     "org_internal": "This app is restricted to another organization's accounts.",
 }

@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Logo } from "@/components/Logo";
 import { api, ApiError } from "@/lib/api";
 
-// Pages the "Send to UMass Radar" button may send from
+// Pages the "Send to OneMass" button may send from
 const ALLOWED = ["yes.umass.edu", "careers.umass.edu", "umass.joinhandshake.com", "joinhandshake.com"];
 
 type Payload = { type: "radar-page"; url: string; title: string; text: string };
@@ -63,8 +63,8 @@ export default function SendPage() {
         {state.step === "signed-out" && (
           <>
             <h1 className="font-display text-xl font-extrabold tracking-[-0.03em] text-ink">Sign in first</h1>
-            <p className="mt-2">Open UMass Radar in this browser and sign in, then click the button on the job board again.</p>
-            <a href="/" target="_blank" rel="noreferrer" className="mt-4 inline-block rounded-full bg-maroon-600 px-4 py-2 text-sm font-semibold text-white">Open UMass Radar</a>
+            <p className="mt-2">Open OneMass in this browser and sign in, then click the button on the job board again.</p>
+            <a href="/" target="_blank" rel="noreferrer" className="mt-4 inline-block rounded-full bg-maroon-600 px-4 py-2 text-sm font-semibold text-white">Open OneMass</a>
           </>
         )}
         {state.step === "reading" && (
@@ -85,7 +85,7 @@ export default function SendPage() {
               <p className="mt-2">Run a search on the job board so the results are showing, then click the button again.</p>
             )}
             <div className="mt-5 flex gap-4 text-sm font-semibold">
-              <a href="/opportunities?tab=jobs" target="_blank" rel="noreferrer" className="text-maroon-600 hover:underline">See them in UMass Radar</a>
+              <a href="/opportunities?tab=jobs" target="_blank" rel="noreferrer" className="text-maroon-600 hover:underline">See them in OneMass</a>
               <button onClick={() => window.close()} className="text-ink-muted hover:text-ink">Close</button>
             </div>
           </>
@@ -98,7 +98,7 @@ export default function SendPage() {
           </>
         )}
       </div>
-      <p className="mt-8 text-[12px] leading-snug text-ink-faint">Only the page you sent is read, once. UMass Radar keeps the job postings, not the page.</p>
+      <p className="mt-8 text-[12px] leading-snug text-ink-faint">Only the page you sent is read, once. OneMass keeps the job postings, not the page.</p>
     </main>
   );
 }

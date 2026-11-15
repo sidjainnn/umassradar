@@ -1,4 +1,4 @@
-"""Onboarding questions, the student's job preferences, and the log of what UMass Radar learned."""
+"""Onboarding questions, the student's job preferences, and the log of what OneMass learned."""
 
 from typing import Literal
 
@@ -103,7 +103,7 @@ LABEL = {"onboarding": "Preferences", "applied": "Applied", "interview": "Interv
 
 @router.get("/log")
 async def get_log(user: dict = Depends(current_user)):
-    """Everything UMass Radar has learned about your interests, newest first, and where it came from."""
+    """Everything OneMass has learned about your interests, newest first, and where it came from."""
     docs = await get_db().pref_events.find({"user_id": user["_id"]}).sort("at", -1).to_list(300)
     return [{"id": d["_id"], "kind": d["kind"], "label": LABEL.get(d["kind"], d["kind"]), "title": d.get("title", ""),
              "company": d.get("company"), "source": d.get("source"), "at": d["at"], "terms": d.get("terms", [])[:8]}

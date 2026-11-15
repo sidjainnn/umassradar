@@ -25,7 +25,7 @@ from app.models import now_utc
 from parsers.common import DEPT_ALIASES
 
 BASE = "https://www.fivecolleges.edu"
-USER_AGENT = "Mozilla/5.0 (compatible; UMassRadar course schedule reader; student project)"
+USER_AGENT = "Mozilla/5.0 (compatible; OneMass course schedule reader; student project)"
 PAUSE = 1.0  # seconds between requests
 TERMS = [("F", 2026), ("S", 2027)]
 SEASON = {"F": "Fall", "S": "Spring"}

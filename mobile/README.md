@@ -1,4 +1,4 @@
-# UMass Radar mobile
+# OneMass mobile
 
 One app for iOS and Android with three tabs: **Home**, **To do** and **Map**. The Map is the main feature. Search a room
 like `ILC S220`, or tap one of your classes, and it shows the building, the door to use, the floor plan and

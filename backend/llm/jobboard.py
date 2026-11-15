@@ -1,4 +1,4 @@
-"""Job postings from a job board page the student chose to send (the "Send to UMass Radar" button).
+"""Job postings from a job board page the student chose to send (the "Send to OneMass" button).
 
 UMass's Student Employment board (yes.umass.edu) blocks crawlers, so the app never fetches it. Instead the
 student searches it in their own browser and clicks the button; the page text they're looking at is sent

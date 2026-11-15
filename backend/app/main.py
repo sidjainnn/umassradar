@@ -22,7 +22,7 @@ async def lifespan(app: FastAPI):
         scheduler.shutdown(wait=False)
 
 
-app = FastAPI(title="UMass Radar API", lifespan=lifespan)
+app = FastAPI(title="OneMass API", lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[get_settings().frontend_url],

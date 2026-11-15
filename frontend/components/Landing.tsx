@@ -74,7 +74,7 @@ export function Landing({ notice, onDemo, onLogin, demoLoading }: Props) {
             <span className="relative inline-block whitespace-nowrap">in one place<Swoosh /></span>
           </h1>
           <p className="rise mx-auto mt-6 max-w-[56ch] text-[18px] leading-relaxed text-ink-soft [animation-delay:120ms]">
-            UMass Radar reads your UMass email, Canvas and class schedule, then shows the deadlines, appointments,
+            OneMass reads your UMass email, Canvas and class schedule, then shows the deadlines, appointments,
             replies you owe, jobs, clubs and housing in one calm place.
           </p>
           {notice && <p role="alert" className="mx-auto mt-6 max-w-xl rounded-2xl bg-white/90 px-4 py-3 text-sm text-ink-soft ring-1 ring-line">{notice}</p>}
@@ -121,7 +121,7 @@ export function Landing({ notice, onDemo, onLogin, demoLoading }: Props) {
       </section>
 
       <footer className="border-t border-line-soft px-6 py-8 text-center text-[13px] text-ink-muted">
-        UMass Radar is a student project from HackUMass XIV. It isn&apos;t run by the University of Massachusetts.
+        OneMass is a student project from HackUMass XIV. It isn&apos;t run by the University of Massachusetts.
       </footer>
     </div>
   );

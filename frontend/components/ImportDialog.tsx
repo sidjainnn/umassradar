@@ -88,7 +88,7 @@ export function ImportDialog({
       <div role="dialog" aria-modal="true" aria-labelledby="add-title"
         className="w-full max-w-md rounded-t-2xl bg-surface p-6 shadow-2xl sm:rounded-2xl" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between">
-          <h2 id="add-title" className="font-display text-xl font-extrabold tracking-[-0.03em]">{only === "syllabus" ? "Add your syllabus" : "Add to UMass Radar"}</h2>
+          <h2 id="add-title" className="font-display text-xl font-extrabold tracking-[-0.03em]">{only === "syllabus" ? "Add your syllabus" : "Add to OneMass"}</h2>
           <button onClick={onClose} className="rounded-lg p-1 text-ink-faint hover:bg-paper hover:text-ink" aria-label="Close">
             <X className="h-5 w-5" />
           </button>

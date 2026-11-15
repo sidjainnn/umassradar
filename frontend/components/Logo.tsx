@@ -11,7 +11,7 @@ export function Logo({ size = 32, withText = true }: { size?: number; withText?:
       </svg>
       {withText && (
         <span className="hidden text-[17px] font-semibold tracking-tight text-ink sm:inline">
-          UMass <span className="text-maroon-600">Radar</span>
+          One<span className="text-maroon-600">Mass</span>
         </span>
       )}
     </div>

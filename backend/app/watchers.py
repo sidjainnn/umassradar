@@ -34,7 +34,7 @@ PAGES = [
     {"id": "jobs-cmass", "name": "CMASS", "url": "https://www.umass.edu/cmass/working-cmass"},
     {"id": "jobs-hr", "name": "UMass HR student jobs", "url": "https://www.umass.edu/hr/careers/jobs-students"},
 ]
-USER_AGENT = "Mozilla/5.0 (compatible; UMassRadar page watcher; student project)"
+USER_AGENT = "Mozilla/5.0 (compatible; OneMass page watcher; student project)"
 MAX_CHARS = 12_000
 
 SYSTEM = """You read a public UMass Amherst web page and list items useful to an undergraduate:

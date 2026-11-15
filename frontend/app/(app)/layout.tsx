@@ -31,7 +31,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     try {
       setMe(await api<Me>("/me"));
     } catch (e) {
-      if (!(e instanceof ApiError && e.status === 401)) setNotice("UMass Radar's server isn't responding. Try again in a minute.");
+      if (!(e instanceof ApiError && e.status === 401)) setNotice("OneMass's server isn't responding. Try again in a minute.");
       setMe(null);
     }
   }, []);

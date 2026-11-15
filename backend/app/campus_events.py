@@ -18,7 +18,7 @@ from app.db import get_db
 from app.models import EASTERN, Item, now_utc
 
 API = "https://events.umass.edu/api/2/events"
-USER_AGENT = "Mozilla/5.0 (compatible; UMassRadar campus events; student project)"
+USER_AGENT = "Mozilla/5.0 (compatible; OneMass campus events; student project)"
 DAYS_AHEAD = 30
 
 

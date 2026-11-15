@@ -273,7 +273,7 @@ function Roommates({ onPost }: { onPost: (k: Kind) => void }) {
       ))}
       {roommate.length === 0 && (
         <p className="rounded-[22px] border border-line-soft bg-surface shadow-[0_18px_40px_-30px_rgba(60,0,20,0.4)] px-5 py-4 text-[15px] text-ink-soft">
-          Make a roommate profile and UMass Radar ranks other students by budget, dates, area, sleep schedule, tidiness,
+          Make a roommate profile and OneMass ranks other students by budget, dates, area, sleep schedule, tidiness,
           guests and smoking, and tells you why each one fits.
         </p>
       )}

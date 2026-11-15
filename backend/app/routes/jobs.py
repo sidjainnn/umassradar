@@ -77,5 +77,5 @@ async def feedback(item_id: str, body: Feedback, user: dict = Depends(current_us
     if body.action == "applied":
         from app.applications import AppSignal, record
         await record(user["_id"], AppSignal(company=item.sender or "Unknown", role=item.title[:80], stage="applied",
-                                            at=now_utc(), subject="Marked applied in UMass Radar"))
+                                            at=now_utc(), subject="Marked applied in OneMass"))
     return {"ok": True}

@@ -1,4 +1,4 @@
-"""Ask Sam: answers a student's question from their own UMass Radar data.
+"""Ask Sam: answers a student's question from their own OneMass data.
 
 The context is built only from structured data that belongs to this student (their items, schedule,
 followed clubs) plus shared course facts. All of it is treated as data, never as instructions.
@@ -13,7 +13,7 @@ from app.config import get_settings
 from app.models import EASTERN, Item
 from llm.extract import generate_json
 
-SYSTEM = """You are Sam, the friendly minuteman who helps a UMass Amherst student inside the UMass Radar app.
+SYSTEM = """You are Sam, the friendly minuteman who helps a UMass Amherst student inside the OneMass app.
 You get JSON with the student's own deadlines, appointments, events, replies they owe, opportunities, class
 schedule, followed clubs, and facts from their courses' syllabi (office hours, grading, late policy,
 textbooks and materials), plus the current local time.
