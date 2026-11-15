@@ -267,7 +267,10 @@ function WeekGrid({ weekStart, entries, query, onOpen }: { weekStart: Date; entr
                 return (
                   <button key={e.id} onClick={() => onOpen(e)}
                     className={`absolute overflow-hidden rounded-xl px-2 py-1 text-left text-[12px] leading-tight transition hover:z-30 hover:shadow-lg ${KIND[e.kind].block} ${e.kind === "office_hours" && e.can_make === false ? "line-through opacity-60" : ""} ${dim(e)}`}
-                    style={{ top, height, left: `calc(${(lane / n) * 100}% + 3px)`, width: `calc(${100 / n}% - 6px)` }}>
+                    // overlapping events cascade like Google Calendar: each later one is indented a little and sits on top,
+                    // so every event keeps most of the column's width instead of becoming a sliver
+                    style={{ top, height, left: `calc(${n > 1 ? lane * Math.min(22, 60 / (n - 1)) : 0}% + 3px)`, right: "3px",
+                      zIndex: 10 + lane, boxShadow: lane ? "0 0 0 2px #fff" : undefined }}>
                     <span className="block truncate font-semibold">{e.title}</span>
                     {height > 38 && <span className="block truncate opacity-85">{[e.subtitle, e.location].filter(Boolean).join(", ")}</span>}
                   </button>
@@ -493,8 +496,9 @@ export default function SchedulePage() {
         </div>
       </div>
 
-      <div className="mt-4 hidden gap-5 lg:grid lg:grid-cols-[250px_1fr]">
-        <aside className="space-y-4">
+      <div className="mt-4 hidden gap-5 lg:grid 2xl:grid-cols-[250px_1fr]">
+        {/* the month and "Coming up" panel only on wide screens, so the week grid gets the room */}
+        <aside className="hidden space-y-4 2xl:block">
           <MiniMonth weekStart={weekStart} onPick={(d) => { setWeekStart(mondayOf(d)); setDay(dayIndex(d)); }} />
           <div className="rounded-[22px] bg-white p-4 ring-1 ring-line-soft">
             <p className="font-display text-[15px] font-extrabold tracking-[-0.02em]">Coming up</p>
