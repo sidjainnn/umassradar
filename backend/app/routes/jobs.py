@@ -17,6 +17,10 @@ router = APIRouter(prefix="/jobs")
 
 @router.get("")
 async def jobs(sort: Literal["match", "deadline"] = "match", include_hidden: bool = False, user: dict = Depends(current_user)):
+    return await ranked_jobs(user, sort, include_hidden)
+
+
+async def ranked_jobs(user: dict, sort: str = "match", include_hidden: bool = False) -> dict:
     db, now = get_db(), now_utc()
     prefs = user.get("prefs") or {}
     profile = user.get("interest_profile") or {}

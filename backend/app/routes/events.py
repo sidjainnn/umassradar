@@ -131,6 +131,10 @@ async def week(start: date | None = None, user: dict = Depends(current_user)):
     if start is None:
         today = now_utc().astimezone(EASTERN).date()
         start = today - timedelta(days=today.weekday())
+    return await week_data(user, start)
+
+
+async def week_data(user: dict, start: date) -> dict:
     begin, end = week_bounds(start)
     db = get_db()
     docs = await db.items.find({
