@@ -167,3 +167,77 @@ UMass doesn't publish classroom floor plans, so the floor comes from the room nu
 
 Student tips (`GET /rooms/{building}`, `POST /rooms/tips`, etc.) still work as before. Use the `building.id` from
 `/rooms/locate` as the tip's `building` from now on.
+
+## Indoor maps and directions to a classroom
+
+Every general-assignment classroom on the University Registrar's list is covered: 244 rooms in 44 buildings.
+- **ILC floor 1** is traced from the floor plan posted in the building (`"source": "traced"`).
+- **Other floors** are laid out from the official room list and the building outline (`"source": "generated"`).
+  Rooms are on the right floor and side and in number order, but their exact positions are approximate.
+  Show a small "approximate layout" note on generated floors.
+
+`GET /indoor/buildings` lists buildings with indoor maps: `[{"building", "id", "center", "classrooms", "floors": [1, 2, 3], "traced": true}]`.
+
+`GET /indoor/{building or room}` (e.g. `/indoor/ILC`, `/indoor/ILC S220`) returns every floor:
+
+```json
+{"building": "Integrative Learning Center", "center": [42.3911, -72.5259], "ground_floor": 1,
+ "entrances": [{"id": "t0", "level": 1, "at": [42.391, -72.526]}],
+ "floors": [{"level": 1, "source": "traced",
+             "rooms": [{"code": "ILC N151", "room": "N151", "capacity": 340, "features": ["ECHO", "FL", "AUD"], "polygon": [[lat, lon], "…"], "door": [lat, lon]}],
+             "corridors": [[[lat, lon], "…"]], "stairs": [[lat, lon]], "elevators": [[lat, lon]],
+             "other": [{"label": "Lobby", "polygon": ["…"]}]}]}
+```
+
+`GET /indoor/route?to=ILC S220&accessible=false&entrance=<id>` gives directions from a door to the room:
+
+```json
+{"building": "Integrative Learning Center", "room": "S220", "code": "ILC S220", "floor": 2, "source": "generated",
+ "minutes": 1, "meters": 61, "entrance": {"id": "t1", "at": [lat, lon], "level": 1},
+ "legs": [{"level": 1, "line": [[lat, lon], "…"]}, {"level": 2, "line": ["…"]}],
+ "steps": ["Enter Integrative Learning Center by the east doors (floor 1).", "Take the elevator up to floor 2.",
+           "Follow the hallway; S220 is on your left."],
+ "room_polygon": [[lat, lon], "…"]}
+```
+
+- Draw the selected floor's `rooms` (label each with `room`), highlight `room_polygon`, and draw the `legs` line for that floor.
+- Switch floors with a floor picker.
+- `accessible=true` routes through elevators only. Routes that climb more than three floors use the elevator anyway.
+
+## Where are my classes
+
+`GET /schedule/where` returns every class with where it meets, today's first:
+
+```json
+{"term": "Fall 2026", "classes": [
+  {"course": "STAT 315", "component": "LEC", "day_names": ["Mon", "Wed", "Fri"], "start": "11:15", "end": "12:05", "today": true,
+   "location": {"found": true, "raw": "Hasbrouck 20", "building": "Hasbrouck Laboratory", "room": "20", "floor": 0,
+                "floor_label": "lower level", "side": null, "summary": "Hasbrouck Laboratory, room 20, lower level",
+                "door": {"side": "east"}, "steps": ["…"], "indoor": true, "navigate": {"to": "Hasbrouck 20", "label": "Take me to 20"}},
+   "walk_from_previous": {"from": "COMPSCI 311", "day": "Fri", "minutes": 7, "gap_minutes": 15, "tight": false}}]}
+```
+
+- `location.found: false` comes with a `reason` ("online or to be announced", "unknown building").
+- `navigate.to` goes straight into `/indoor/route?to=`.
+
+`GET /courses/{code}` now includes `your_section_where`, the same location fields for the sections you're in, so the
+course page can say "Lecture: ILC S120, 1st floor, south side".
+
+`POST /ask` now also returns `"navigate": [{"to": "Marcus 131", "course": "ECE 122", "label": "Take me to ECE 122", "summary": "Marcus Hall, room 131, 1st floor"}]`
+when Sam answers a "where is my class" question. Show these as "Take me there" buttons.
+
+## Mobile sign-in (used by `mobile/`)
+
+- Every endpoint also accepts `Authorization: Bearer <token>` instead of the cookie.
+- `POST /auth/mobile/demo` → `{"token": "…"}`: a demo account.
+- `GET /auth/mobile/start` runs Google sign-in in the phone's browser and ends at `umassradar://auth?code=…`.
+  `POST /auth/mobile/exchange {"code": "…"}` then returns `{"token": "…"}`. Codes work once, for 5 minutes.
+
+## Requests for the web frontend (Shaurya)
+
+- **Map:** replace the emoji pins with plain dots and one accent color (maroon in study mode, forest in work mode).
+  Simpler and calmer is the goal, and it should match the mobile app.
+- **Map and Courses:** use `/schedule/where` and `/indoor/route` for "where is my class" and directions. The web map can
+  draw the same indoor floors from `/indoor/{building}`.
+- **Ask Sam:** show `navigate` buttons that open the map with directions.
+- **Credits:** show "© OpenStreetMap contributors" on any map.
