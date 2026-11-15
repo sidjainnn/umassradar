@@ -2,6 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { api, ApiError, type Item, type Me, type OfficeHourSlot } from "./api";
+import { type Mode, ModeContext } from "./mode";
 
 export type BriefData = {
   sentences: { text: string; item_ids: string[] }[];
@@ -37,6 +38,8 @@ type Store = {
   refresh: () => Promise<void>;
   reload: () => Promise<void>;
   reloadMe: () => Promise<void>;
+  mode: Mode;
+  setMode: (m: Mode) => void;
   setStatus: (id: string, status: Item["status"]) => Promise<void>;
   signOut: () => Promise<void>;
 };
@@ -128,6 +131,16 @@ export function StoreProvider({
     [loadBrief],
   );
 
+  const mode: Mode = me.mode ?? "study";
+  const setMode = useCallback((m: Mode) => {
+    setMe((prev) => ({ ...prev, mode: m }));
+    api("/settings/mode", { method: "PUT", body: JSON.stringify({ mode: m }) }).catch(() => {});
+  }, []);
+  useEffect(() => {
+    document.documentElement.dataset.mode = mode;
+    return () => { delete document.documentElement.dataset.mode; };
+  }, [mode]);
+
   const signOut = useCallback(async () => {
     await api("/auth/logout", { method: "POST" }).catch(() => {});
     onSignedOut();
@@ -145,9 +158,9 @@ export function StoreProvider({
 
   return (
     <Ctx.Provider
-      value={{ me, items, noise, officeHours, schedule, brief, syncing, notice, setNotice, refresh, reload, reloadMe, setStatus, signOut }}
+      value={{ me, items, noise, officeHours, schedule, brief, syncing, notice, setNotice, refresh, reload, reloadMe, setStatus, signOut, mode, setMode }}
     >
-      {children}
+      <ModeContext.Provider value={mode}>{children}</ModeContext.Provider>
     </Ctx.Provider>
   );
 }
