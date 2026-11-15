@@ -50,6 +50,7 @@ def _block(sid, kind, title, why, gap, item_ids=(), course=None):
 
 
 def work_suggestions(items: list[Item], apps: list[dict], jobs: list[dict], busy, now: datetime) -> list[dict]:
+    busy = list(busy)  # each suggested block takes its time, so the next one goes elsewhere
     out = []
     for a in apps:
         last = a["last_at"] if a["last_at"].tzinfo else a["last_at"].replace(tzinfo=now.tzinfo)
@@ -66,6 +67,7 @@ def work_suggestions(items: list[Item], apps: list[dict], jobs: list[dict], busy
         if a["stage"] == "interview" and quiet <= 5:
             gap = find_gap(busy, now, now + timedelta(days=3), 60)
             if gap:
+                busy.append(gap)
                 out.append(_block(f"interview_prep:{a['_id']}", "interview_prep", f"Prep for your {a['company']} interview",
                                   f"{a['company']} moved you to interviews for {role}. An hour to review the role and "
                                   f"practice your stories helps.", gap))
@@ -74,6 +76,7 @@ def work_suggestions(items: list[Item], apps: list[dict], jobs: list[dict], busy
         if when and i.category == "appointment" and INTERVIEW.search(i.title) and now < when <= now + timedelta(days=3):
             gap = find_gap(busy, now, when - timedelta(hours=2), 60)
             if gap:
+                busy.append(gap)
                 out.append(_block(f"interview_prep:{i.id}", "interview_prep", f"Prep for {i.title}",
                                   f"It's {_when(when)}.", gap, [i.id]))
     for j in jobs[:3]:
@@ -97,6 +100,7 @@ def work_suggestions(items: list[Item], apps: list[dict], jobs: list[dict], busy
 
 
 def study_suggestions(items: list[Item], slots: list[dict], countdowns: list[dict], busy, now: datetime) -> list[dict]:
+    busy = list(busy)  # each suggested block takes its time, so the next one goes elsewhere
     out = []
     deadlines = [i for i in items if i.category == "deadline" and i.due_at and now < i.due_at and classify(i) != "work"]
     for d in deadlines:
@@ -117,6 +121,7 @@ def study_suggestions(items: list[Item], slots: list[dict], countdowns: list[dic
         if d.due_at <= now + timedelta(hours=48):
             gap = find_gap(busy, now, d.due_at - timedelta(minutes=30), 90)
             if gap:
+                busy.append(gap)
                 out.append(_block(f"start:{d.id}", "start_work", f"Work on {d.title}",
                                   f"Due {_when(d.due_at)}. You have a free 90 minutes before then.", gap, [d.id], d.course))
     for c in countdowns:
@@ -124,6 +129,7 @@ def study_suggestions(items: list[Item], slots: list[dict], countdowns: list[dic
             exam = datetime.fromisoformat(c["when"])
             gap = find_gap(busy, now, exam - timedelta(hours=12), 120)
             if gap:
+                busy.append(gap)
                 name = f"{c['course']} {c['title']}" if c.get("course") else c["title"]
                 out.append(_block(f"study:{c['course']}:{c['when']}", "study_block", f"Study for {name}",
                                   f"It's in {c['days']} day{'s' if c['days'] != 1 else ''}.", gap, (), c.get("course")))

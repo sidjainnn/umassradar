@@ -54,3 +54,14 @@ def test_modes_give_different_suggestions_and_dismissed_ones_stay_gone():
     assert {s["kind"] for s in study} == {"start_work"}
     assert {s["kind"] for s in work} == {"follow_up"}
     assert suggestions("work", [lab], apps, [], [], [], [], {"follow_up:a1"}, NOW) == []
+
+
+def test_suggested_blocks_never_overlap():
+    lab = Item(id="lab6", category="deadline", title="Lab 6", course="ECE 122", due_at=at(1, 17))
+    quiz = [{"course": "STAT 315", "title": "Quiz 6", "when": at(2, 10).isoformat(), "days": 2}]
+    out = study_suggestions([lab], [], quiz, [], NOW)
+    blocks = [(datetime.fromisoformat(s["action"]["starts_at"]), datetime.fromisoformat(s["action"]["ends_at"]))
+              for s in out if s["action"]["type"] == "block_time"]
+    assert len(blocks) == 2
+    (a0, a1), (b0, b1) = sorted(blocks)
+    assert a1 <= b0
