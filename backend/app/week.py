@@ -54,7 +54,9 @@ def item_entries(items: list[Item], begin: datetime, end: datetime) -> list[dict
             kind = "appointment" if i.category == "appointment" else "event"
         stop = i.ends_at or (None if kind == "deadline" else when + timedelta(hours=1))
         local = when.astimezone(EASTERN)
-        all_day = bool(i.ends_at) and local.hour == 0 and local.minute == 0 and i.ends_at - when >= timedelta(hours=23)
+        at_midnight = local.hour == 0 and local.minute == 0
+        # a whole-day event, or a date with no time (stored at midnight): show it in the all-day row, not at 12 AM
+        all_day = at_midnight and kind != "deadline" and (not i.ends_at or i.ends_at - when >= timedelta(hours=23))
         out.append({
             "kind": kind, "id": i.id, "title": i.title, "subtitle": i.sender if kind != "deadline" else "Due",
             "start": _iso(when), "end": _iso(stop), "all_day": all_day, "location": i.location, "course": i.course,
@@ -88,10 +90,55 @@ def google_entries(events: list[dict] | None, taken: list[dict]) -> list[dict]:
     return out
 
 
+import re as _re
+
+_PRIORITY = {"class": 0, "section": 0, "office_hours": 1, "deadline": 1, "appointment": 2, "google": 3, "club": 4, "event": 5}
+
+
+def _norm_title(t: str) -> str:
+    return _re.sub(r"[^a-z0-9]+", " ", (t or "").lower()).strip()
+
+
+def _same_thing(a: dict, b: dict) -> bool:
+    """Two entries that are really one event: same day, starts within an hour, and one title contains the other
+    (or they share most of their words). Emails and Google Calendar often describe the same meeting."""
+    if a["all_day"] != b["all_day"] or (a["start"] or "")[:10] != (b["start"] or "")[:10]:
+        return False
+    if a["kind"] == "deadline" or b["kind"] == "deadline":
+        return a["kind"] == b["kind"] and _norm_title(a["title"]) == _norm_title(b["title"])
+    from datetime import datetime as _dt
+    if not a["all_day"] and abs((_dt.fromisoformat(a["start"]) - _dt.fromisoformat(b["start"])).total_seconds()) > 3600:
+        return False
+    ta, tb = _norm_title(a["title"]), _norm_title(b["title"])
+    if not ta or not tb:
+        return False
+    if ta in tb or tb in ta:
+        return True
+    close = a["all_day"] or abs((_dt.fromisoformat(a["start"]) - _dt.fromisoformat(b["start"])).total_seconds()) <= 1800
+    sa, sb = _norm_title(a.get("subtitle") or ""), _norm_title(b.get("subtitle") or "")
+    # the same sender (a person or office) announcing something at the same time is one event
+    if close and sa and sa == sb and sa not in ("google calendar", "you"):
+        return True
+    wa, wb = set(ta.split()) - {"vs", "the", "a", "s", "of"}, set(tb.split()) - {"vs", "the", "a", "s", "of"}
+    shared = len(wa & wb)
+    return shared >= 2 and shared / max(1, min(len(wa), len(wb))) >= 0.5
+
+
+def dedupe(entries: list[dict]) -> list[dict]:
+    """Keep one entry per real event, preferring classes, then your own items, then Google, then email events."""
+    kept: list[dict] = []
+    for e in sorted(entries, key=lambda e: (_PRIORITY.get(e["kind"], 9), not e.get("editable"))):
+        if any(_same_thing(e, k) for k in kept):
+            continue
+        kept.append(e)
+    return kept
+
+
 def build_week(start: date, schedule: dict | None, items: list[Item], slots: list[dict],
                google: list[dict] | None) -> list[dict]:
     begin, end = week_bounds(start)
     entries = class_entries(schedule, start) + item_entries(items, begin, end) + office_entries(slots)
     entries += google_entries(google, entries)
+    entries = dedupe(entries)
     entries.sort(key=lambda e: (not e["all_day"], e["start"] or "", e["kind"]))
     return entries

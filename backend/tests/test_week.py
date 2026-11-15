@@ -78,3 +78,42 @@ def test_midnight_to_midnight_event_is_all_day():
                 ends_at=at(MON + timedelta(days=1), 0))
     (entry,) = build_week(MON, None, [item], [], None)
     assert entry["all_day"] is True
+
+
+def test_date_only_items_go_to_the_all_day_row():
+    item = Item(category="event", title="Midterm Exam", starts_at=at(MON, 0))
+    (entry,) = build_week(MON, None, [item], [], None)
+    assert entry["all_day"] is True
+
+
+def test_the_same_event_from_email_and_calendar_shows_once():
+    items = [
+        Item(category="appointment", title="No Limit: A Bot Building Tournament (Boston Regionals)", starts_at=at(MON, 17)),
+        Item(category="event", title="No Limit: Boston Regionals", starts_at=at(MON, 17)),
+        Item(category="event", title="No Limit: A Bot Building Tournament (Boston Regionals)", starts_at=at(MON, 17)),
+        Item(category="event", title="Hockey vs. Boston College", starts_at=at(MON, 19)),
+        Item(category="event", title="Friday Night Hockey vs. BC", starts_at=at(MON, 19)),
+        Item(category="event", title="Thesis Tuesday", starts_at=at(MON, 14)),
+    ]
+    google = [{"id": "g", "title": "No Limit: A Bot Building Tournament (Boston Regionals)", "start": at(MON, 17),
+               "end": at(MON, 21), "all_day": False}]
+    out = build_week(MON, None, items, [], google)
+    titles = [e["title"] for e in out]
+    assert sum("No Limit" in t for t in titles) == 1
+    assert next(e for e in out if "No Limit" in e["title"])["kind"] == "appointment"
+    assert "Thesis Tuesday" in titles
+
+
+def test_same_sender_same_time_is_one_event_but_parallel_workshops_stay():
+    items = [
+        Item(category="appointment", title="Advising meeting", sender="Goldstein, Isaac", starts_at=at(MON, 13, 5)),
+        Item(category="appointment", title="Academic Advising", sender="Goldstein, Isaac", starts_at=at(MON, 13, 15)),
+        Item(category="event", title="Men's Basketball vs. UMass Lowell", sender="Massachusetts Athletics", starts_at=at(MON, 19)),
+        Item(category="event", title="Men's Basketball Home Opener", sender="Massachusetts Men's Basketball", starts_at=at(MON, 19)),
+        Item(category="event", title="MLH Intro to Google AI Studio", sender="HackUMass", starts_at=at(MON, 11, 15)),
+        Item(category="event", title="Intro to Open-Source Intelligence", sender="HackUMass Workshops", starts_at=at(MON, 11, 15)),
+    ]
+    titles = [e["title"] for e in build_week(MON, None, items, [], None)]
+    assert sum("dvising" in t for t in titles) == 1
+    assert sum("Basketball" in t for t in titles) == 1
+    assert "MLH Intro to Google AI Studio" in titles and "Intro to Open-Source Intelligence" in titles
