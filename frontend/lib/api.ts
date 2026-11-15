@@ -45,6 +45,7 @@ export type Me = {
   followed_groups: string[];
   has_schedule: boolean;
   member_since: string | null;
+  mode?: "study" | "work";
 };
 
 export function displayName(me: Me): string {
@@ -135,6 +136,7 @@ export type CourseProfile = CourseSummary & {
     dates: { title: string; category: string; when: string; location: string | null }[];
     grading: string | null;
     late_policy: string | null;
+    materials?: import("@/components/Materials").Material[];
     updated_at: string | null;
     term?: string | null;
     source_url?: string | null;

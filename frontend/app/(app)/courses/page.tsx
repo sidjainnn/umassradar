@@ -4,7 +4,9 @@ import { FileCheck2, Search } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { ImportDialog } from "@/components/ImportDialog";
-import { PageHeader } from "@/components/Page";
+import { GROUP_LABEL, groupOf, type Material, type MaterialGroup, MaterialRow } from "@/components/Materials";
+import { PageHeader, Tabs } from "@/components/Page";
+import { Minuteman } from "@/components/mascot/Minuteman";
 import { api, type CourseSummary } from "@/lib/api";
 import { useStore } from "@/lib/store";
 
@@ -41,10 +43,49 @@ function Group({ title, hint, courses, onAddSyllabus }: { title: string; hint?: 
         <h2 className="text-[15px] font-semibold text-ink-soft">{title}</h2>
         {hint && <span className="text-[13px] text-ink-faint">{hint}</span>}
       </div>
-      <ul className="divide-y divide-line-soft rounded-xl border border-line bg-surface">
+      <ul className="divide-y divide-line-soft rounded-[22px] border border-line-soft bg-surface shadow-[0_18px_40px_-30px_rgba(60,0,20,0.4)]">
         {courses.map((c) => <CourseRow key={c.code} c={c} onAddSyllabus={onAddSyllabus} />)}
       </ul>
     </section>
+  );
+}
+
+type TextbookCourse = CourseSummary & { materials: Material[]; syllabus_term: string | null; source_url: string | null };
+
+function Textbooks() {
+  const [rows, setRows] = useState<TextbookCourse[] | null>(null);
+  useEffect(() => { api<TextbookCourse[]>("/textbooks").then(setRows).catch(() => setRows([])); }, []);
+  if (rows === null) return <div className="h-40 animate-pulse rounded-[22px] bg-line-soft" />;
+  const order: MaterialGroup[] = ["code", "buy", "optional", "none"];
+  const grouped = Object.fromEntries(order.map((g) => [g, [] as { m: Material; course: string }[]])) as Record<MaterialGroup, { m: Material; course: string }[]>;
+  for (const r of rows) for (const m of r.materials) grouped[groupOf(m)].push({ m, course: r.code });
+  const missing = rows.filter((r) => r.materials.length === 0);
+  const total = order.reduce((n, g) => n + grouped[g].length, 0);
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center gap-4 rounded-[24px] bg-white p-5 ring-1 ring-line-soft">
+        <Minuteman size={56} />
+        <p className="text-[15px] text-ink-soft">
+          {total === 0
+            ? "None of your courses' syllabi list textbooks yet. Add a syllabus and its books and access codes show up here."
+            : <>From your syllabi: <b className="text-ink">{grouped.code.length}</b> access code{grouped.code.length === 1 ? "" : "s"}, <b className="text-ink">{grouped.buy.length}</b> required book{grouped.buy.length === 1 ? "" : "s"} and <b className="text-ink">{grouped.optional.length + grouped.none.length}</b> you can skip or get free. Check before you buy.</>}
+        </p>
+      </div>
+      {order.filter((g) => grouped[g].length).map((g) => (
+        <section key={g} className="rounded-[26px] p-5 sm:p-6" style={{ background: GROUP_LABEL[g].tint }}>
+          <h2 className="font-display text-[20px] font-extrabold tracking-[-0.03em]" style={{ color: GROUP_LABEL[g].ink }}>{GROUP_LABEL[g].title}</h2>
+          <p className="text-sm text-ink-muted">{GROUP_LABEL[g].hint}</p>
+          <ul className="mt-3 divide-y divide-line-soft rounded-[20px] bg-white px-4">
+            {grouped[g].map(({ m, course }) => <MaterialRow key={course + m.title} m={m} course={course} />)}
+          </ul>
+        </section>
+      ))}
+      {missing.length > 0 && (
+        <p className="text-sm text-ink-muted">
+          No syllabus with materials yet for {missing.map((r) => r.code).join(", ")}. Open a course and add its syllabus to fill this in.
+        </p>
+      )}
+    </div>
   );
 }
 
@@ -54,6 +95,7 @@ export default function CoursesPage() {
   const [q, setQ] = useState("");
   const [total, setTotal] = useState<number | null>(null);
   const [syllabusFor, setSyllabusFor] = useState<string | null>(null);
+  const [tab, setTab] = useState("mine");
 
   const load = (query: string) =>
     api<CourseSummary[]>(`/courses?q=${encodeURIComponent(query)}`).then(setList).catch(() => setList([]));
@@ -81,11 +123,15 @@ export default function CoursesPage() {
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder={total ? `Search ${total.toLocaleString()} courses by code, title or instructor` : "Search courses by code, title or instructor"}
-          className="w-full rounded-xl border border-line bg-surface py-3 pl-10 pr-4 text-[15px] outline-none placeholder:text-ink-faint focus:border-maroon-600"
+          className="w-full rounded-[22px] border border-line-soft bg-surface shadow-[0_18px_40px_-30px_rgba(60,0,20,0.4)] py-3 pl-10 pr-4 text-[15px] outline-none placeholder:text-ink-faint focus:border-maroon-600"
         />
       </label>
 
-      {list === null ? (
+      {!q && <Tabs tabs={[{ id: "mine", label: "My courses" }, { id: "books", label: "Textbooks" }]} active={tab} onChange={setTab} />}
+
+      {!q && tab === "books" ? (
+        <Textbooks />
+      ) : list === null ? (
         <div className="h-40 animate-pulse rounded-xl bg-line-soft" />
       ) : q ? (
         list.length === 0 ? (

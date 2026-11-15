@@ -8,6 +8,7 @@ import { ItemList } from "@/components/ItemRow";
 import { api, ApiError, type CourseProfile, type Item, type Section } from "@/lib/api";
 import { useStore } from "@/lib/store";
 import { formatWhen } from "@/lib/time";
+import { MaterialRow } from "@/components/Materials";
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
@@ -81,7 +82,7 @@ export default function CoursePage({ params }: { params: Promise<{ code: string 
             {course.code}
             {course.mine && <span className="ml-3 font-normal text-ink-muted">You&apos;re taking this</span>}
           </p>
-          <h1 className="mt-1 font-serif text-[30px] font-semibold leading-tight text-ink">{course.title}</h1>
+          <h1 className="mt-1 font-display text-[30px] font-extrabold tracking-[-0.03em] leading-tight text-ink">{course.title}</h1>
           <p className="mt-1 text-[15px] text-ink-muted">
             {[course.instructors.join(", ") || "Instructor not listed", course.credits && `${course.credits} credits`].filter(Boolean).join(", ")}
           </p>
@@ -116,7 +117,7 @@ export default function CoursePage({ params }: { params: Promise<{ code: string 
             {course.sections.length === 0 ? (
               <p className="rounded-xl border border-dashed border-line px-5 py-5 text-sm text-ink-muted">No sections listed for this term.</p>
             ) : (
-              <ul className="divide-y divide-line-soft rounded-xl border border-line bg-surface">
+              <ul className="divide-y divide-line-soft rounded-[22px] border border-line-soft bg-surface shadow-[0_18px_40px_-30px_rgba(60,0,20,0.4)]">
                 {[...yours, ...course.sections.filter((s) => !s.yours)].map((s) => (
                   <li key={s.class_number} className={`flex items-center gap-4 px-5 py-3 ${s.yours ? "bg-maroon-50" : ""}`}>
                     <div className="min-w-0 flex-1">
@@ -161,13 +162,13 @@ export default function CoursePage({ params }: { params: Promise<{ code: string 
               <p className="mt-2 text-[15px] text-ink-soft">No recent syllabus for this course yet.</p>
               <p className="mt-1 text-sm text-ink-muted">Add yours and classmates get its office hours, exam dates and grading. The file itself isn&apos;t kept.</p>
               {!me.demo && (
-                <button onClick={() => setAddingSyllabus(true)} className="mt-3 rounded-lg bg-maroon-600 px-3 py-2 text-sm font-semibold text-white hover:bg-maroon-700">
+                <button onClick={() => setAddingSyllabus(true)} className="mt-3 rounded-full bg-maroon-600 px-3 py-2 text-sm font-semibold text-white hover:bg-maroon-700">
                   Add your syllabus
                 </button>
               )}
             </div>
           ) : (
-            <div className="rounded-xl border border-line bg-surface px-5 py-5 text-[15px]">
+            <div className="rounded-[22px] border border-line-soft bg-surface shadow-[0_18px_40px_-30px_rgba(60,0,20,0.4)] px-5 py-5 text-[15px]">
               <p className="text-[13px] text-ink-muted">
                 From the {shared.term ?? "most recent"} syllabus
                 {shared.source === "public" && shared.source_url ? (
@@ -177,6 +178,11 @@ export default function CoursePage({ params }: { params: Promise<{ code: string 
               <dl className="mt-4 space-y-4">
                 {shared.grading && <Fact label="Grading">{shared.grading}</Fact>}
                 {shared.late_policy && <Fact label="Late work">{shared.late_policy}</Fact>}
+                {!!shared.materials?.length && (
+                  <Fact label="Textbooks and materials">
+                    <ul className="divide-y divide-line-soft">{shared.materials.map((m) => <MaterialRow key={m.title} m={m} />)}</ul>
+                  </Fact>
+                )}
                 {shared.office_hours.length > 0 && (
                   <Fact label="Office hours">
                     <ul className="space-y-1">
