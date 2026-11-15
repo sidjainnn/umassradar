@@ -1,0 +1,2386 @@
+{
+ "source": "https://www.umass.edu/registrar/book",
+ "rooms": [
+  {
+   "code": "AEBC 308",
+   "building_code": "AEBC",
+   "room": "308",
+   "capacity": 38,
+   "name": "Ag. Engin Central Room 308",
+   "features": []
+  },
+  {
+   "code": "AEBN 119",
+   "building_code": "AEBN",
+   "room": "119",
+   "capacity": 109,
+   "name": "Ag. Engineering Bldg Room 119 ECHO tables/chairs",
+   "features": []
+  },
+  {
+   "code": "ARND 101",
+   "building_code": "ARND",
+   "room": "101",
+   "capacity": 43,
+   "name": "Arnold Room 101",
+   "features": [
+    "ECHO",
+    "FL"
+   ]
+  },
+  {
+   "code": "ARND 104",
+   "building_code": "ARND",
+   "room": "104",
+   "capacity": 17,
+   "name": "Arnold Room 104",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "ARND 108",
+   "building_code": "ARND",
+   "room": "108",
+   "capacity": 19,
+   "name": "Arnold Room 108",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "ARND 140",
+   "building_code": "ARND",
+   "room": "140",
+   "capacity": 45,
+   "name": "Arnold Room 140",
+   "features": [
+    "ECHO",
+    "FL"
+   ]
+  },
+  {
+   "code": "BART 109",
+   "building_code": "BART",
+   "room": "109",
+   "capacity": 30,
+   "name": "Bartlett Hall Room 109",
+   "features": []
+  },
+  {
+   "code": "BART 119",
+   "building_code": "BART",
+   "room": "119",
+   "capacity": 41,
+   "name": "Bartlett Hall Room 119",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "BART 121",
+   "building_code": "BART",
+   "room": "121",
+   "capacity": 28,
+   "name": "Bartlett Hall Room 121",
+   "features": []
+  },
+  {
+   "code": "BART 125",
+   "building_code": "BART",
+   "room": "125",
+   "capacity": 41,
+   "name": "Bartlett Hall Room 125",
+   "features": []
+  },
+  {
+   "code": "BART 127",
+   "building_code": "BART",
+   "room": "127",
+   "capacity": 30,
+   "name": "Bartlett Hall Room 127",
+   "features": []
+  },
+  {
+   "code": "BART 131",
+   "building_code": "BART",
+   "room": "131",
+   "capacity": 27,
+   "name": "Bartlett Hall Room 131",
+   "features": []
+  },
+  {
+   "code": "BART 206",
+   "building_code": "BART",
+   "room": "206",
+   "capacity": 55,
+   "name": "Bartlett Hall Room 206",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "BART 3",
+   "building_code": "BART",
+   "room": "3",
+   "capacity": 30,
+   "name": "Bartlett Hall Room 3",
+   "features": []
+  },
+  {
+   "code": "BART 35",
+   "building_code": "BART",
+   "room": "35",
+   "capacity": 26,
+   "name": "Bartlett Hall Room 35",
+   "features": []
+  },
+  {
+   "code": "BART 456",
+   "building_code": "BART",
+   "room": "456",
+   "capacity": 15,
+   "name": "Bartlett Hall Room 456 N/A until Fall 26",
+   "features": []
+  },
+  {
+   "code": "BART 474",
+   "building_code": "BART",
+   "room": "474",
+   "capacity": 16,
+   "name": "Bartlett Room 474 N/A until Fall 26",
+   "features": []
+  },
+  {
+   "code": "BART 61",
+   "building_code": "BART",
+   "room": "61",
+   "capacity": 62,
+   "name": "Bartlett Hall Room 61",
+   "features": [
+    "ECHO",
+    "FL"
+   ]
+  },
+  {
+   "code": "BART 65",
+   "building_code": "BART",
+   "room": "65",
+   "capacity": 295,
+   "name": "+ 6 Bartlett Hall Room 65",
+   "features": [
+    "ECHO",
+    "FL",
+    "AUD",
+    "T"
+   ]
+  },
+  {
+   "code": "BOWD 209",
+   "building_code": "BOWD",
+   "room": "209",
+   "capacity": 21,
+   "name": "Bowditch Hall Room 209",
+   "features": []
+  },
+  {
+   "code": "BOYD 51",
+   "building_code": "BOYD",
+   "room": "51",
+   "capacity": 49,
+   "name": "Boyden Room 51",
+   "features": []
+  },
+  {
+   "code": "CHEN 329",
+   "building_code": "CHEN",
+   "room": "329",
+   "capacity": 32,
+   "name": "Chenoweth Lab Addition Room 329",
+   "features": [
+    "ECHO",
+    "FL"
+   ]
+  },
+  {
+   "code": "CHNW 108",
+   "building_code": "CHNW",
+   "room": "108",
+   "capacity": 32,
+   "name": "Chenoweth Lab Room 108",
+   "features": [
+    "FL"
+   ]
+  },
+  {
+   "code": "CHNW 113",
+   "building_code": "CHNW",
+   "room": "113",
+   "capacity": 41,
+   "name": "Chenoweth Lab Room 113",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "CMPLAB E110",
+   "building_code": "CMPLAB",
+   "room": "E110",
+   "capacity": 200,
+   "name": "Computer Science Labs E110",
+   "features": [
+    "ECHO",
+    "FL",
+    "AUD",
+    "T"
+   ]
+  },
+  {
+   "code": "DKSN 109",
+   "building_code": "DKSN",
+   "room": "109",
+   "capacity": 45,
+   "name": "Dickinson Hall Room 109",
+   "features": [
+    "ECHO",
+    "FL"
+   ]
+  },
+  {
+   "code": "DKSN 110",
+   "building_code": "DKSN",
+   "room": "110",
+   "capacity": 48,
+   "name": "Dickinson Hall Room 110",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "DKSN 112",
+   "building_code": "DKSN",
+   "room": "112",
+   "capacity": 43,
+   "name": "Dickinson Hall Room 112",
+   "features": [
+    "ECHO",
+    "FL"
+   ]
+  },
+  {
+   "code": "DKSN 114",
+   "building_code": "DKSN",
+   "room": "114",
+   "capacity": 46,
+   "name": "Dickinson Hall Room 114",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "DKSN 206",
+   "building_code": "DKSN",
+   "room": "206",
+   "capacity": 25,
+   "name": "Dickinson Hall Room 206",
+   "features": []
+  },
+  {
+   "code": "DKSN 209",
+   "building_code": "DKSN",
+   "room": "209",
+   "capacity": 43,
+   "name": "Dickinson Hall Room 209",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "DKSN 212",
+   "building_code": "DKSN",
+   "room": "212",
+   "capacity": 48,
+   "name": "Dickinson Hall Room 212",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "DKSN 214",
+   "building_code": "DKSN",
+   "room": "214",
+   "capacity": 44,
+   "name": "Dickinson Hall Room 214",
+   "features": []
+  },
+  {
+   "code": "DKSN 216",
+   "building_code": "DKSN",
+   "room": "216",
+   "capacity": 46,
+   "name": "Dickinson Hall Room 216",
+   "features": []
+  },
+  {
+   "code": "DRA 124",
+   "building_code": "DRA",
+   "room": "124",
+   "capacity": 41,
+   "name": "Draper Hall Room 124",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "ELAB 303",
+   "building_code": "ELAB",
+   "room": "303",
+   "capacity": 81,
+   "name": "Engineering Laboratory Room 303",
+   "features": [
+    "ECHO",
+    "FL"
+   ]
+  },
+  {
+   "code": "ELAB 304",
+   "building_code": "ELAB",
+   "room": "304",
+   "capacity": 64,
+   "name": "Engineering Laboratory Room 304",
+   "features": [
+    "ECHO",
+    "FL"
+   ]
+  },
+  {
+   "code": "ELAB 305",
+   "building_code": "ELAB",
+   "room": "305",
+   "capacity": 33,
+   "name": "Engineering Laboratory Room 305 ECHO tables/chairs",
+   "features": []
+  },
+  {
+   "code": "ELAB 306",
+   "building_code": "ELAB",
+   "room": "306",
+   "capacity": 52,
+   "name": "Engineering Laboratory Room 306",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "ELAB 323",
+   "building_code": "ELAB",
+   "room": "323",
+   "capacity": 62,
+   "name": "Engineering Laboratory Room 323",
+   "features": [
+    "ECHO",
+    "FL"
+   ]
+  },
+  {
+   "code": "ELAB 325",
+   "building_code": "ELAB",
+   "room": "325",
+   "capacity": 35,
+   "name": "Engineering Laboratory Room 325",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "ELAB 327",
+   "building_code": "ELAB",
+   "room": "327",
+   "capacity": 29,
+   "name": "Engineering Laboratory Room 327",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "ELABII 119",
+   "building_code": "ELABII",
+   "room": "119",
+   "capacity": 193,
+   "name": "Engineering Lab II Room 119",
+   "features": [
+    "ECHO",
+    "FL",
+    "AUD"
+   ]
+  },
+  {
+   "code": "ELM 210",
+   "building_code": "ELM",
+   "room": "210",
+   "capacity": 24,
+   "name": "Elm Room 210",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "ELM 212",
+   "building_code": "ELM",
+   "room": "212",
+   "capacity": 24,
+   "name": "Elm Room 212",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "ELM 214",
+   "building_code": "ELM",
+   "room": "214",
+   "capacity": 24,
+   "name": "Elm Room 214",
+   "features": []
+  },
+  {
+   "code": "ELM 224",
+   "building_code": "ELM",
+   "room": "224",
+   "capacity": 24,
+   "name": "Elm Room 224",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "ELM 226",
+   "building_code": "ELM",
+   "room": "226",
+   "capacity": 24,
+   "name": "Elm Room 226",
+   "features": []
+  },
+  {
+   "code": "ELM 227",
+   "building_code": "ELM",
+   "room": "227",
+   "capacity": 24,
+   "name": "Elm Room 227",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "ELM 228",
+   "building_code": "ELM",
+   "room": "228",
+   "capacity": 24,
+   "name": "Elm Room 228",
+   "features": []
+  },
+  {
+   "code": "ELM 230",
+   "building_code": "ELM",
+   "room": "230",
+   "capacity": 24,
+   "name": "Elm Room 230",
+   "features": []
+  },
+  {
+   "code": "ELM 301",
+   "building_code": "ELM",
+   "room": "301",
+   "capacity": 24,
+   "name": "Elm Room 301",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "FERN 11",
+   "building_code": "FERN",
+   "room": "11",
+   "capacity": 110,
+   "name": "Fernald Hall Room 11",
+   "features": [
+    "AUD"
+   ]
+  },
+  {
+   "code": "FLIN 103",
+   "building_code": "FLIN",
+   "room": "103",
+   "capacity": 41,
+   "name": "Flint Laboratory Room 103 N/A from Jan. 2025",
+   "features": []
+  },
+  {
+   "code": "FLIN 105",
+   "building_code": "FLIN",
+   "room": "105",
+   "capacity": 65,
+   "name": "Flint Laboratory Room 105 N/A from Jan. 2025",
+   "features": []
+  },
+  {
+   "code": "FLIN 201",
+   "building_code": "FLIN",
+   "room": "201",
+   "capacity": 65,
+   "name": "Flint Lab Room 201 ECHO N/A from Jan. 2025",
+   "features": []
+  },
+  {
+   "code": "FREN 102",
+   "building_code": "FREN",
+   "room": "102",
+   "capacity": 56,
+   "name": "French Hall Room 102",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "FREN 106",
+   "building_code": "FREN",
+   "room": "106",
+   "capacity": 27,
+   "name": "French Hall Room 106",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "FURC 101",
+   "building_code": "FURC",
+   "room": "101",
+   "capacity": 40,
+   "name": "Furcolo Hall 101",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "FURC 102",
+   "building_code": "FURC",
+   "room": "102",
+   "capacity": 48,
+   "name": "Furcolo Hall 102",
+   "features": [
+    "ECHO",
+    "FL"
+   ]
+  },
+  {
+   "code": "FURC 125",
+   "building_code": "FURC",
+   "room": "125",
+   "capacity": 195,
+   "name": "Furcolo Carney Fam Auditorium",
+   "features": [
+    "ECHO",
+    "FL",
+    "AUD"
+   ]
+  },
+  {
+   "code": "FURC W107",
+   "building_code": "FURC",
+   "room": "W107",
+   "capacity": 42,
+   "name": "Furcolo W Room 107 tables/chairs",
+   "features": []
+  },
+  {
+   "code": "GOES 20",
+   "building_code": "GOES",
+   "room": "20",
+   "capacity": 159,
+   "name": "Goessmann Laboratory Room 20 ECHO T N/A from Jan. 2026",
+   "features": []
+  },
+  {
+   "code": "GSMN 151",
+   "building_code": "GSMN",
+   "room": "151",
+   "capacity": 60,
+   "name": "Goessmann Lab Addition Room 151",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "GSMN 152",
+   "building_code": "GSMN",
+   "room": "152",
+   "capacity": 60,
+   "name": "Goessmann lab Addition 152",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "GSMN 51",
+   "building_code": "GSMN",
+   "room": "51",
+   "capacity": 65,
+   "name": "Goessmann Lab. Addtn Room 51",
+   "features": [
+    "ECHO",
+    "FL"
+   ]
+  },
+  {
+   "code": "GSMN 64",
+   "building_code": "GSMN",
+   "room": "64",
+   "capacity": 145,
+   "name": "Goessmann Lab. Add Room 64",
+   "features": [
+    "ECHO",
+    "FL",
+    "AUD",
+    "T"
+   ]
+  },
+  {
+   "code": "HAS 130",
+   "building_code": "HAS",
+   "room": "130",
+   "capacity": 31,
+   "name": "Hasbrouck Laboratory Room 130",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "HAS 134",
+   "building_code": "HAS",
+   "room": "134",
+   "capacity": 120,
+   "name": "Hasbrouck Laboratory Room 134",
+   "features": [
+    "ECHO",
+    "FL",
+    "AUD"
+   ]
+  },
+  {
+   "code": "HAS 136",
+   "building_code": "HAS",
+   "room": "136",
+   "capacity": 24,
+   "name": "Hasbrouck Laboratory Room 136",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "HAS 137",
+   "building_code": "HAS",
+   "room": "137",
+   "capacity": 42,
+   "name": "Hasbrouck Laboratory Room 137",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "HAS 138",
+   "building_code": "HAS",
+   "room": "138",
+   "capacity": 56,
+   "name": "Hasbrouck Laboratory Room 138",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "HAS 228",
+   "building_code": "HAS",
+   "room": "228",
+   "capacity": 35,
+   "name": "Hasbrouck Laboratory Room 228",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "HAS 230",
+   "building_code": "HAS",
+   "room": "230",
+   "capacity": 30,
+   "name": "Hasbrouck Laboratory Room 230",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "HAS 242",
+   "building_code": "HAS",
+   "room": "242",
+   "capacity": 33,
+   "name": "Hasbrouck Laboratory Room 242",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "HASA 104A",
+   "building_code": "HASA",
+   "room": "104A",
+   "capacity": 26,
+   "name": "Hasbrouck Lab Add Room 104A",
+   "features": []
+  },
+  {
+   "code": "HASA 104B",
+   "building_code": "HASA",
+   "room": "104B",
+   "capacity": 24,
+   "name": "Hasbrouck Lab Add Room 104B",
+   "features": []
+  },
+  {
+   "code": "HASA 106",
+   "building_code": "HASA",
+   "room": "106",
+   "capacity": 20,
+   "name": "Hasbrouck Lab Add Room 106",
+   "features": []
+  },
+  {
+   "code": "HASA 107",
+   "building_code": "HASA",
+   "room": "107",
+   "capacity": 28,
+   "name": "Hasbrouck Lab Add Room 107",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "HASA 109",
+   "building_code": "HASA",
+   "room": "109",
+   "capacity": 37,
+   "name": "Hasbrouck Lab Add Room 109 ECHO/FL tables/chairs",
+   "features": []
+  },
+  {
+   "code": "HASA 111",
+   "building_code": "HASA",
+   "room": "111",
+   "capacity": 37,
+   "name": "Hasbrouck Lab Add Room 111",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "HASA 113",
+   "building_code": "HASA",
+   "room": "113",
+   "capacity": 52,
+   "name": "Hasbrouck Lab Add Room 113",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "HASA 124",
+   "building_code": "HASA",
+   "room": "124",
+   "capacity": 120,
+   "name": "Hasbrouck Lab Add Room 124",
+   "features": [
+    "ECHO",
+    "FL",
+    "AUD"
+   ]
+  },
+  {
+   "code": "HASA 126",
+   "building_code": "HASA",
+   "room": "126",
+   "capacity": 120,
+   "name": "Hasbrouck Lab Add Room 126",
+   "features": [
+    "ECHO",
+    "FL",
+    "AUD"
+   ]
+  },
+  {
+   "code": "HASA 20",
+   "building_code": "HASA",
+   "room": "20",
+   "capacity": 305,
+   "name": "Hasbrouck Lab Add Room 20",
+   "features": [
+    "ECHO",
+    "AUD",
+    "T"
+   ]
+  },
+  {
+   "code": "HERT 102",
+   "building_code": "HERT",
+   "room": "102",
+   "capacity": 30,
+   "name": "Herter Hall Room 102",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "HERT 106",
+   "building_code": "HERT",
+   "room": "106",
+   "capacity": 18,
+   "name": "Herter Hall Room 106",
+   "features": []
+  },
+  {
+   "code": "HERT 107",
+   "building_code": "HERT",
+   "room": "107",
+   "capacity": 29,
+   "name": "Herter Hall Room 107 ECHO tables/chairs",
+   "features": []
+  },
+  {
+   "code": "HERT 108",
+   "building_code": "HERT",
+   "room": "108",
+   "capacity": 21,
+   "name": "Herter Hall Room 108",
+   "features": []
+  },
+  {
+   "code": "HERT 110",
+   "building_code": "HERT",
+   "room": "110",
+   "capacity": 22,
+   "name": "Herter Hall Room 110",
+   "features": []
+  },
+  {
+   "code": "HERT 111",
+   "building_code": "HERT",
+   "room": "111",
+   "capacity": 36,
+   "name": "Herter Hall Room 111",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "HERT 112",
+   "building_code": "HERT",
+   "room": "112",
+   "capacity": 18,
+   "name": "Herter Hall Room 112",
+   "features": []
+  },
+  {
+   "code": "HERT 113",
+   "building_code": "HERT",
+   "room": "113",
+   "capacity": 35,
+   "name": "Herter Hall Room 113",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "HERT 114",
+   "building_code": "HERT",
+   "room": "114",
+   "capacity": 22,
+   "name": "Herter Hall Room 114",
+   "features": []
+  },
+  {
+   "code": "HERT 116",
+   "building_code": "HERT",
+   "room": "116",
+   "capacity": 42,
+   "name": "Herter Hall Room 116",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "HERT 117",
+   "building_code": "HERT",
+   "room": "117",
+   "capacity": 34,
+   "name": "Herter Hall Room 117",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "HERT 118",
+   "building_code": "HERT",
+   "room": "118",
+   "capacity": 34,
+   "name": "Herter Hall Room 118",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "HERT 119",
+   "building_code": "HERT",
+   "room": "119",
+   "capacity": 36,
+   "name": "Herter Hall Room 119",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "HERT 201",
+   "building_code": "HERT",
+   "room": "201",
+   "capacity": 44,
+   "name": "Herter Hall Room 201",
+   "features": [
+    "FL"
+   ]
+  },
+  {
+   "code": "HERT 202",
+   "building_code": "HERT",
+   "room": "202",
+   "capacity": 22,
+   "name": "Herter Hall Room 202",
+   "features": []
+  },
+  {
+   "code": "HERT 204",
+   "building_code": "HERT",
+   "room": "204",
+   "capacity": 18,
+   "name": "Herter Hall Room 204",
+   "features": []
+  },
+  {
+   "code": "HERT 205",
+   "building_code": "HERT",
+   "room": "205",
+   "capacity": 50,
+   "name": "Herter Hall Room 205",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "HERT 206",
+   "building_code": "HERT",
+   "room": "206",
+   "capacity": 35,
+   "name": "Herter Hall Room 206",
+   "features": []
+  },
+  {
+   "code": "HERT 207",
+   "building_code": "HERT",
+   "room": "207",
+   "capacity": 32,
+   "name": "Herter Hall Room 207",
+   "features": []
+  },
+  {
+   "code": "HERT 208",
+   "building_code": "HERT",
+   "room": "208",
+   "capacity": 15,
+   "name": "Herter Hall Room 208",
+   "features": []
+  },
+  {
+   "code": "HERT 209",
+   "building_code": "HERT",
+   "room": "209",
+   "capacity": 35,
+   "name": "Herter Hall Room 209",
+   "features": []
+  },
+  {
+   "code": "HERT 210",
+   "building_code": "HERT",
+   "room": "210",
+   "capacity": 30,
+   "name": "Herter Hall Room 210 ECHO /FL tables/chairs",
+   "features": []
+  },
+  {
+   "code": "HERT 211",
+   "building_code": "HERT",
+   "room": "211",
+   "capacity": 32,
+   "name": "Herter Hall Room 211",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "HERT 212",
+   "building_code": "HERT",
+   "room": "212",
+   "capacity": 29,
+   "name": "Herter Hall Room 212",
+   "features": []
+  },
+  {
+   "code": "HERT 214",
+   "building_code": "HERT",
+   "room": "214",
+   "capacity": 14,
+   "name": "Herter Hall Room 214",
+   "features": []
+  },
+  {
+   "code": "HERT 217",
+   "building_code": "HERT",
+   "room": "217",
+   "capacity": 50,
+   "name": "Herter Hall Room 217",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "HERT 222",
+   "building_code": "HERT",
+   "room": "222",
+   "capacity": 23,
+   "name": "Herter Hall Room 222",
+   "features": []
+  },
+  {
+   "code": "HERT 224",
+   "building_code": "HERT",
+   "room": "224",
+   "capacity": 25,
+   "name": "Herter Hall Room 224",
+   "features": []
+  },
+  {
+   "code": "HERT 225",
+   "building_code": "HERT",
+   "room": "225",
+   "capacity": 44,
+   "name": "Herter Hall Room 225",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "HERT 227",
+   "building_code": "HERT",
+   "room": "227",
+   "capacity": 150,
+   "name": "Herter Hall Room 227",
+   "features": [
+    "ECHO",
+    "FL",
+    "AUD",
+    "T"
+   ]
+  },
+  {
+   "code": "HERT 231",
+   "building_code": "HERT",
+   "room": "231",
+   "capacity": 150,
+   "name": "Herter Hall Room 231",
+   "features": [
+    "ECHO",
+    "FL",
+    "AUD"
+   ]
+  },
+  {
+   "code": "HERT 342",
+   "building_code": "HERT",
+   "room": "342",
+   "capacity": 16,
+   "name": "Herter Hall Room 342",
+   "features": []
+  },
+  {
+   "code": "HERT 400",
+   "building_code": "HERT",
+   "room": "400",
+   "capacity": 16,
+   "name": "Herter Hall Room 400",
+   "features": []
+  },
+  {
+   "code": "HERT 444",
+   "building_code": "HERT",
+   "room": "444",
+   "capacity": 15,
+   "name": "Herter Hall Room 444",
+   "features": []
+  },
+  {
+   "code": "HERT 546",
+   "building_code": "HERT",
+   "room": "546",
+   "capacity": 16,
+   "name": "Herter Hall Room 546",
+   "features": []
+  },
+  {
+   "code": "HERT 640",
+   "building_code": "HERT",
+   "room": "640",
+   "capacity": 16,
+   "name": "Herter Hall Room 640",
+   "features": []
+  },
+  {
+   "code": "HERT 746",
+   "building_code": "HERT",
+   "room": "746",
+   "capacity": 16,
+   "name": "Herter Hall Room 746",
+   "features": []
+  },
+  {
+   "code": "HOLD 202",
+   "building_code": "HOLD",
+   "room": "202",
+   "capacity": 58,
+   "name": "Holdsworth Hall Room 202",
+   "features": [
+    "ECHO",
+    "FL"
+   ]
+  },
+  {
+   "code": "HOLD 203",
+   "building_code": "HOLD",
+   "room": "203",
+   "capacity": 80,
+   "name": "Holdsworth Hall Room 203",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "HOLD 305",
+   "building_code": "HOLD",
+   "room": "305",
+   "capacity": 51,
+   "name": "Holdsworth Hall Room 305",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "ILC N101",
+   "building_code": "ILC",
+   "room": "N101",
+   "capacity": 62,
+   "name": "Integ. Learning Center N101",
+   "features": [
+    "ECHO",
+    "FL"
+   ]
+  },
+  {
+   "code": "ILC N111",
+   "building_code": "ILC",
+   "room": "N111",
+   "capacity": 63,
+   "name": "Integ. Learning Center N 111",
+   "features": [
+    "ECHO",
+    "TBL"
+   ]
+  },
+  {
+   "code": "ILC N151",
+   "building_code": "ILC",
+   "room": "N151",
+   "capacity": 340,
+   "name": "Integ. Learning Center N151",
+   "features": [
+    "ECHO",
+    "FL",
+    "AUD"
+   ]
+  },
+  {
+   "code": "ILC N155",
+   "building_code": "ILC",
+   "room": "N155",
+   "capacity": 33,
+   "name": "Integ. Learning Center N155",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "ILC N211",
+   "building_code": "ILC",
+   "room": "N211",
+   "capacity": 52,
+   "name": "Integr. Learning Center N211",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "ILC N255",
+   "building_code": "ILC",
+   "room": "N255",
+   "capacity": 40,
+   "name": "Integ. Learning Center N255",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "ILC S110",
+   "building_code": "ILC",
+   "room": "S110",
+   "capacity": 99,
+   "name": "Integ.learning Center S110",
+   "features": [
+    "ECHO",
+    "TBL"
+   ]
+  },
+  {
+   "code": "ILC S120",
+   "building_code": "ILC",
+   "room": "S120",
+   "capacity": 99,
+   "name": "Integ. Learning Center S120",
+   "features": [
+    "ECHO",
+    "TBL"
+   ]
+  },
+  {
+   "code": "ILC S131",
+   "building_code": "ILC",
+   "room": "S131",
+   "capacity": 115,
+   "name": "Integ. Learning Center S131",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "ILC S140",
+   "building_code": "ILC",
+   "room": "S140",
+   "capacity": 102,
+   "name": "Integ. Learning Center S140",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "ILC S211",
+   "building_code": "ILC",
+   "room": "S211",
+   "capacity": 102,
+   "name": "Integ. Learning Center S211",
+   "features": [
+    "ECHO",
+    "FL"
+   ]
+  },
+  {
+   "code": "ILC S220",
+   "building_code": "ILC",
+   "room": "S220",
+   "capacity": 99,
+   "name": "Integ. Learning Center S220",
+   "features": [
+    "ECHO",
+    "FL",
+    "TBL"
+   ]
+  },
+  {
+   "code": "ILC S231",
+   "building_code": "ILC",
+   "room": "S231",
+   "capacity": 60,
+   "name": "Integ. Learning Center S231",
+   "features": [
+    "ECHO",
+    "TBLLITE"
+   ]
+  },
+  {
+   "code": "ILC S240",
+   "building_code": "ILC",
+   "room": "S240",
+   "capacity": 125,
+   "name": "Integ. Learning Center S240",
+   "features": [
+    "ECHO",
+    "Multimedia"
+   ]
+  },
+  {
+   "code": "ILC S311",
+   "building_code": "ILC",
+   "room": "S311",
+   "capacity": 81,
+   "name": "Integ. Learning Center S311",
+   "features": [
+    "ECHO",
+    "TBL"
+   ]
+  },
+  {
+   "code": "ILC S331",
+   "building_code": "ILC",
+   "room": "S331",
+   "capacity": 150,
+   "name": "Integ. Learning Center S331",
+   "features": [
+    "ECHO",
+    "AUD"
+   ]
+  },
+  {
+   "code": "ISB 135",
+   "building_code": "ISB",
+   "room": "135",
+   "capacity": 300,
+   "name": "Integrated Sciences Bldg 135",
+   "features": [
+    "ECHO",
+    "AUD"
+   ]
+  },
+  {
+   "code": "LGRC A201",
+   "building_code": "LGRC",
+   "room": "A201",
+   "capacity": 42,
+   "name": "Lederle Grad Res. Ctr rm A201",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "LGRC A203",
+   "building_code": "LGRC",
+   "room": "A203",
+   "capacity": 38,
+   "name": "Lederle Grad Res Ctr rm A203",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "LGRC A301",
+   "building_code": "LGRC",
+   "room": "A301",
+   "capacity": 66,
+   "name": "Lederle Grad Res Ctr rm A301",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "LGRT 1114",
+   "building_code": "LGRT",
+   "room": "1114",
+   "capacity": 18,
+   "name": "Lederle Grad Res Tower Room 1114",
+   "features": []
+  },
+  {
+   "code": "LGRT 121",
+   "building_code": "LGRT",
+   "room": "121",
+   "capacity": 72,
+   "name": "Lederle Grad Res Tower Room 121",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "LGRT 123",
+   "building_code": "LGRT",
+   "room": "123",
+   "capacity": 77,
+   "name": "Lederle Grad Res Tower Room 123",
+   "features": [
+    "ECHO",
+    "FL"
+   ]
+  },
+  {
+   "code": "LGRT 1234",
+   "building_code": "LGRT",
+   "room": "1234",
+   "capacity": 21,
+   "name": "Lederle Grad Res Tower Room 1234",
+   "features": [
+    "FL"
+   ]
+  },
+  {
+   "code": "LGRT 1322",
+   "building_code": "LGRT",
+   "room": "1322",
+   "capacity": 18,
+   "name": "Lederle Grad Res Tower Room 1322",
+   "features": []
+  },
+  {
+   "code": "LGRT 1334",
+   "building_code": "LGRT",
+   "room": "1334",
+   "capacity": 21,
+   "name": "Lederle Grad Res Tower Room 1334",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "LGRT 141",
+   "building_code": "LGRT",
+   "room": "141",
+   "capacity": 35,
+   "name": "Lederle Grad Res Tower Room 141",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "LGRT 143",
+   "building_code": "LGRT",
+   "room": "143",
+   "capacity": 33,
+   "name": "Lederle Grad Res Tower Room 143",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "LGRT 145",
+   "building_code": "LGRT",
+   "room": "145",
+   "capacity": 33,
+   "name": "Lederle Grad Res Tower Room 145",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "LGRT 147",
+   "building_code": "LGRT",
+   "room": "147",
+   "capacity": 31,
+   "name": "Lederle Grad Res Tower Room 147",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "LGRT 171",
+   "building_code": "LGRT",
+   "room": "171",
+   "capacity": 34,
+   "name": "Lederle Grad Res Tower Room 171",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "LGRT 173",
+   "building_code": "LGRT",
+   "room": "173",
+   "capacity": 34,
+   "name": "Lederle Grad Res Tower Room 173",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "LGRT 177",
+   "building_code": "LGRT",
+   "room": "177",
+   "capacity": 33,
+   "name": "Lederle Grad Res Tower Room 177",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "LGRT 202",
+   "building_code": "LGRT",
+   "room": "202",
+   "capacity": 36,
+   "name": "Lederle Grad Res Tower Room 202",
+   "features": [
+    "ECHO",
+    "FL"
+   ]
+  },
+  {
+   "code": "LGRT 204",
+   "building_code": "LGRT",
+   "room": "204",
+   "capacity": 36,
+   "name": "Lederle Grad Res Tower Room 204",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "LGRT 206",
+   "building_code": "LGRT",
+   "room": "206",
+   "capacity": 34,
+   "name": "Lederle Grad Res Tower Room 206",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "LGRT 431",
+   "building_code": "LGRT",
+   "room": "431",
+   "capacity": 40,
+   "name": "Lederle Grad Res Tower Room 431 ECHO/FL tables/chairs",
+   "features": []
+  },
+  {
+   "code": "MACH E-10",
+   "building_code": "MACH",
+   "room": "E-10",
+   "capacity": 35,
+   "name": "Machmer Hall Room E-10",
+   "features": []
+  },
+  {
+   "code": "MACH E-33",
+   "building_code": "MACH",
+   "room": "E-33",
+   "capacity": 36,
+   "name": "Machmer Hall Room E-33",
+   "features": []
+  },
+  {
+   "code": "MACH E-35",
+   "building_code": "MACH",
+   "room": "E-35",
+   "capacity": 43,
+   "name": "Machmer Hall Room E-35",
+   "features": []
+  },
+  {
+   "code": "MACH E-37",
+   "building_code": "MACH",
+   "room": "E-37",
+   "capacity": 53,
+   "name": "Machmer Hall Room E-37",
+   "features": []
+  },
+  {
+   "code": "MACH W-11",
+   "building_code": "MACH",
+   "room": "W-11",
+   "capacity": 34,
+   "name": "Machmer Hall Room W-11",
+   "features": [
+    "ECHO",
+    "FL"
+   ]
+  },
+  {
+   "code": "MACH W-15",
+   "building_code": "MACH",
+   "room": "W-15",
+   "capacity": 42,
+   "name": "Machmer Hall Room W-15",
+   "features": []
+  },
+  {
+   "code": "MACH W-21",
+   "building_code": "MACH",
+   "room": "W-21",
+   "capacity": 34,
+   "name": "Machmer Hall Room W-21",
+   "features": [
+    "FL"
+   ]
+  },
+  {
+   "code": "MACH W-22",
+   "building_code": "MACH",
+   "room": "W-22",
+   "capacity": 36,
+   "name": "Machmer Hall Room W-22",
+   "features": []
+  },
+  {
+   "code": "MACH W-23",
+   "building_code": "MACH",
+   "room": "W-23",
+   "capacity": 42,
+   "name": "Machmer Hall Room W-23",
+   "features": []
+  },
+  {
+   "code": "MACH W-24",
+   "building_code": "MACH",
+   "room": "W-24",
+   "capacity": 42,
+   "name": "Machmer Hall Room W-24",
+   "features": []
+  },
+  {
+   "code": "MACH W-25",
+   "building_code": "MACH",
+   "room": "W-25",
+   "capacity": 42,
+   "name": "Machmer Hall Room W-25",
+   "features": []
+  },
+  {
+   "code": "MACH W-26",
+   "building_code": "MACH",
+   "room": "W-26",
+   "capacity": 52,
+   "name": "Machmer Hall Room W-26",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "MACH W-27",
+   "building_code": "MACH",
+   "room": "W-27",
+   "capacity": 37,
+   "name": "Machmer Hall Room W-27",
+   "features": []
+  },
+  {
+   "code": "MAH 108",
+   "building_code": "MAH",
+   "room": "108",
+   "capacity": 469,
+   "name": "Mahar Room 108",
+   "features": [
+    "ECHO",
+    "FL",
+    "AUD",
+    "T"
+   ]
+  },
+  {
+   "code": "MARC 131",
+   "building_code": "MARC",
+   "room": "131",
+   "capacity": 325,
+   "name": "Marcus Hall Room 131",
+   "features": [
+    "ECHO",
+    "FL",
+    "AUD"
+   ]
+  },
+  {
+   "code": "MOR1 N326",
+   "building_code": "MOR1",
+   "room": "N326",
+   "capacity": 70,
+   "name": "Morrill Sci. Ctr.1 Room N326",
+   "features": [
+    "ECHO",
+    "FL"
+   ]
+  },
+  {
+   "code": "MOR1 444",
+   "building_code": "MOR1",
+   "room": "444",
+   "capacity": 24,
+   "name": "Morrill I Room 444",
+   "features": []
+  },
+  {
+   "code": "MOR1 N336",
+   "building_code": "MOR1",
+   "room": "N336",
+   "capacity": 20,
+   "name": "Morrill Sci. Ctr. I Room N336",
+   "features": []
+  },
+  {
+   "code": "MOR1 N338",
+   "building_code": "MOR1",
+   "room": "N338",
+   "capacity": 17,
+   "name": "Morrill Sci. Ctr. I Room N338",
+   "features": []
+  },
+  {
+   "code": "MOR1 N345",
+   "building_code": "MOR1",
+   "room": "N345",
+   "capacity": 30,
+   "name": "Morrill Sc Ctr 1 Room N345",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "MOR1 N347",
+   "building_code": "MOR1",
+   "room": "N347",
+   "capacity": 32,
+   "name": "Morrill Sci Ctr 1 Room N 347",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "MOR1 N349",
+   "building_code": "MOR1",
+   "room": "N349",
+   "capacity": 22,
+   "name": "Morrill Sci Ctr I Room N349",
+   "features": []
+  },
+  {
+   "code": "MOR1 N375",
+   "building_code": "MOR1",
+   "room": "N375",
+   "capacity": 235,
+   "name": "Morrill Sci Ctr 1 Room N375",
+   "features": [
+    "ECHO",
+    "FL",
+    "AUD"
+   ]
+  },
+  {
+   "code": "MOR2 131",
+   "building_code": "MOR2",
+   "room": "131",
+   "capacity": 208,
+   "name": "Morrill Sci. Ctr. II Room 131",
+   "features": [
+    "ECHO",
+    "AUD"
+   ]
+  },
+  {
+   "code": "MOR2 222",
+   "building_code": "MOR2",
+   "room": "222",
+   "capacity": 92,
+   "name": "Morrill Sci Ctr II Room 222",
+   "features": [
+    "ECHO",
+    "FL"
+   ]
+  },
+  {
+   "code": "MOR2 319",
+   "building_code": "MOR2",
+   "room": "319",
+   "capacity": 50,
+   "name": "Morrill Sci Ctr II Room 319 ECHO/FL tables/chairs",
+   "features": []
+  },
+  {
+   "code": "MOR3 203",
+   "building_code": "MOR3",
+   "room": "203",
+   "capacity": 63,
+   "name": "Morrill Sci. Ctr. III Room 203",
+   "features": [
+    "ECHO",
+    "FL"
+   ]
+  },
+  {
+   "code": "MOR3 317",
+   "building_code": "MOR3",
+   "room": "317",
+   "capacity": 28,
+   "name": "Morrill Sci. Ctr. III Room 317",
+   "features": []
+  },
+  {
+   "code": "MRST 132",
+   "building_code": "MRST",
+   "room": "132",
+   "capacity": 80,
+   "name": "Marston Hall Room 132",
+   "features": [
+    "ECHO",
+    "FL"
+   ]
+  },
+  {
+   "code": "MRST 15",
+   "building_code": "MRST",
+   "room": "15",
+   "capacity": 31,
+   "name": "Marston Hall Room 15",
+   "features": [
+    "ECHO",
+    "FL"
+   ]
+  },
+  {
+   "code": "MRST 211",
+   "building_code": "MRST",
+   "room": "211",
+   "capacity": 50,
+   "name": "Marston Hall Room 211",
+   "features": [
+    "ECHO",
+    "FL"
+   ]
+  },
+  {
+   "code": "MRST 220",
+   "building_code": "MRST",
+   "room": "220",
+   "capacity": 44,
+   "name": "Marston Hall Room 220",
+   "features": [
+    "ECHO",
+    "FL"
+   ]
+  },
+  {
+   "code": "NAH 21",
+   "building_code": "NAH",
+   "room": "21",
+   "capacity": 40,
+   "name": "New Africa House Room 21",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "NAH 26",
+   "building_code": "NAH",
+   "room": "26",
+   "capacity": 20,
+   "name": "New Africa House Room 26",
+   "features": []
+  },
+  {
+   "code": "NAH 311",
+   "building_code": "NAH",
+   "room": "311",
+   "capacity": 45,
+   "name": "New Africa House Room 311",
+   "features": [
+    "ECHO",
+    "FL"
+   ]
+  },
+  {
+   "code": "PHUB 103",
+   "building_code": "PHUB",
+   "room": "103",
+   "capacity": 30,
+   "name": "SPHHS HUB Room 103",
+   "features": [
+    "ECHO",
+    "FL"
+   ]
+  },
+  {
+   "code": "PHUB 113",
+   "building_code": "PHUB",
+   "room": "113",
+   "capacity": 32,
+   "name": "SPHHS HUB Room 113",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "PHUB 115",
+   "building_code": "PHUB",
+   "room": "115",
+   "capacity": 36,
+   "name": "SPHHS HUB Room 115",
+   "features": [
+    "ECHO",
+    "T"
+   ]
+  },
+  {
+   "code": "PHUB 117",
+   "building_code": "PHUB",
+   "room": "117",
+   "capacity": 32,
+   "name": "SPHHS HUB Room 117",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "PHUB 215",
+   "building_code": "PHUB",
+   "room": "215",
+   "capacity": 80,
+   "name": "SPHHS HUB Room 215",
+   "features": [
+    "ECHO",
+    "TBL"
+   ]
+  },
+  {
+   "code": "PHUB 230",
+   "building_code": "PHUB",
+   "room": "230",
+   "capacity": 32,
+   "name": "SPHHS HUB Room 230",
+   "features": [
+    "ECHO",
+    "FL"
+   ]
+  },
+  {
+   "code": "PHUB 240",
+   "building_code": "PHUB",
+   "room": "240",
+   "capacity": 70,
+   "name": "SPHHS HUB Room 240",
+   "features": [
+    "ECHO",
+    "TBL"
+   ]
+  },
+  {
+   "code": "SC E241",
+   "building_code": "SC",
+   "room": "E241",
+   "capacity": 40,
+   "name": "South College Room E241",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "SC E245",
+   "building_code": "SC",
+   "room": "E245",
+   "capacity": 40,
+   "name": "South College Room E245",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "SC E470",
+   "building_code": "SC",
+   "room": "E470",
+   "capacity": 55,
+   "name": "South College Room E470",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "SC E480",
+   "building_code": "SC",
+   "room": "E480",
+   "capacity": 30,
+   "name": "South College Room E480",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "SC W101",
+   "building_code": "SC",
+   "room": "W101",
+   "capacity": 36,
+   "name": "South College Room W101",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "SC W201",
+   "building_code": "SC",
+   "room": "W201",
+   "capacity": 36,
+   "name": "South College Room W201",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "SC W205",
+   "building_code": "SC",
+   "room": "W205",
+   "capacity": 30,
+   "name": "South College Room W205",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "SC W211",
+   "building_code": "SC",
+   "room": "W211",
+   "capacity": 30,
+   "name": "South College Room W211",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "SC W219",
+   "building_code": "SC",
+   "room": "W219",
+   "capacity": 30,
+   "name": "South College Room W219",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "SC W245",
+   "building_code": "SC",
+   "room": "W245",
+   "capacity": 106,
+   "name": "South College Room W245",
+   "features": [
+    "ECHO",
+    "FL"
+   ]
+  },
+  {
+   "code": "SKIN 106",
+   "building_code": "SKIN",
+   "room": "106",
+   "capacity": 36,
+   "name": "Skinner Room 106",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "SKIN 112",
+   "building_code": "SKIN",
+   "room": "112",
+   "capacity": 90,
+   "name": "Skinner Room 112",
+   "features": [
+    "ECHO",
+    "FL"
+   ]
+  },
+  {
+   "code": "SKIN 12",
+   "building_code": "SKIN",
+   "room": "12",
+   "capacity": 72,
+   "name": "Skinner Room 12",
+   "features": [
+    "ECHO",
+    "FL"
+   ]
+  },
+  {
+   "code": "SKIN 201",
+   "building_code": "SKIN",
+   "room": "201",
+   "capacity": 52,
+   "name": "Skinner Room 201",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "SOM 117",
+   "building_code": "SOM",
+   "room": "117",
+   "capacity": 36,
+   "name": "Isenberg School of Management 117",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "SOM 118",
+   "building_code": "SOM",
+   "room": "118",
+   "capacity": 44,
+   "name": "Isenberg School of Management 118",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "SOM 119",
+   "building_code": "SOM",
+   "room": "119",
+   "capacity": 46,
+   "name": "Isenberg School of Management 119",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "SOM 120",
+   "building_code": "SOM",
+   "room": "120",
+   "capacity": 25,
+   "name": "Isenberg School of Management 120",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "SOM 122",
+   "building_code": "SOM",
+   "room": "122",
+   "capacity": 34,
+   "name": "Isenberg School of Management 122",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "SOM 123",
+   "building_code": "SOM",
+   "room": "123",
+   "capacity": 35,
+   "name": "Isenberg School of Management 123",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "SOM 124",
+   "building_code": "SOM",
+   "room": "124",
+   "capacity": 44,
+   "name": "Isenberg School of Management 124",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "SOM 125",
+   "building_code": "SOM",
+   "room": "125",
+   "capacity": 34,
+   "name": "Isenberg School of Management 125",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "SOM 127",
+   "building_code": "SOM",
+   "room": "127",
+   "capacity": 44,
+   "name": "Isenberg School of Management 127",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "SOM 129",
+   "building_code": "SOM",
+   "room": "129",
+   "capacity": 35,
+   "name": "Isenberg School of Management 129",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "SOM 137",
+   "building_code": "SOM",
+   "room": "137",
+   "capacity": 220,
+   "name": "Isenberg School of Management 137",
+   "features": [
+    "ECHO",
+    "FL",
+    "AUD"
+   ]
+  },
+  {
+   "code": "SOM G26",
+   "building_code": "SOM",
+   "room": "G26",
+   "capacity": 42,
+   "name": "Isenberg School of Management G26",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "SOM G31",
+   "building_code": "SOM",
+   "room": "G31",
+   "capacity": 32,
+   "name": "Isenberg School of Management G31",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "SOM G35",
+   "building_code": "SOM",
+   "room": "G35",
+   "capacity": 31,
+   "name": "Isenberg School of Management G35",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "SOM N390",
+   "building_code": "SOM",
+   "room": "N390",
+   "capacity": 10,
+   "name": "Isenberg School of Management N390 ISOM priority",
+   "features": []
+  },
+  {
+   "code": "STK 301",
+   "building_code": "STK",
+   "room": "301",
+   "capacity": 46,
+   "name": "Stockbridge Hall Room 301",
+   "features": [
+    "ECHO",
+    "FL"
+   ]
+  },
+  {
+   "code": "THOM 102",
+   "building_code": "THOM",
+   "room": "102",
+   "capacity": 229,
+   "name": "Thompson Hall Room 102",
+   "features": [
+    "ECHO",
+    "FL",
+    "AUD"
+   ]
+  },
+  {
+   "code": "THOM 104",
+   "building_code": "THOM",
+   "room": "104",
+   "capacity": 301,
+   "name": "Thompson Hall Room 104",
+   "features": [
+    "ECHO",
+    "FL",
+    "AUD"
+   ]
+  },
+  {
+   "code": "THOM 106",
+   "building_code": "THOM",
+   "room": "106",
+   "capacity": 229,
+   "name": "Thompson Hall Room 106",
+   "features": [
+    "ECHO",
+    "FL",
+    "AUD"
+   ]
+  },
+  {
+   "code": "TOBN 204",
+   "building_code": "TOBN",
+   "room": "204",
+   "capacity": 64,
+   "name": "Tobin Hall Room 204",
+   "features": [
+    "ECHO",
+    "FL"
+   ]
+  },
+  {
+   "code": "TOBN 304",
+   "building_code": "TOBN",
+   "room": "304",
+   "capacity": 68,
+   "name": "Tobin Hall Room 304",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "TOBN 307",
+   "building_code": "TOBN",
+   "room": "307",
+   "capacity": 38,
+   "name": "Tobin Hall Room 307",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "TOBN 504",
+   "building_code": "TOBN",
+   "room": "504",
+   "capacity": 16,
+   "name": "Tobin Hall Room 504",
+   "features": []
+  },
+  {
+   "code": "TOBN 520",
+   "building_code": "TOBN",
+   "room": "520",
+   "capacity": 30,
+   "name": "Tobin Hall Room 520",
+   "features": [
+    "ECHO",
+    "",
+    "FL"
+   ]
+  },
+  {
+   "code": "TOTM 153",
+   "building_code": "TOTM",
+   "room": "153",
+   "capacity": 50,
+   "name": "Totman Phys. Ed. Bldg. Room 153",
+   "features": [
+    "ECHO"
+   ]
+  },
+  {
+   "code": "TOTM 156",
+   "building_code": "TOTM",
+   "room": "156",
+   "capacity": 35,
+   "name": "Totman Phys. Ed. Bldg. Room 156",
+   "features": [
+    "ECHO"
+   ]
+  }
+ ]
+}
