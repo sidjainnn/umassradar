@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { Minuteman } from "./mascot/Minuteman";
+import { useMode } from "@/lib/mode";
 
 // each section gets its own soft UMass-accent panel, like the landing page's feature tabs
 const TINT: [string, string, string][] = [
@@ -18,13 +19,14 @@ const TINT: [string, string, string][] = [
 
 export function PageHeader({ title, subtitle, action }: { title: string; subtitle?: string; action?: React.ReactNode }) {
   const path = usePathname();
+  const work = useMode() === "work";
   const [, bg, ink] = TINT.find(([p]) => path.startsWith(p)) ?? ["", "#fbe9ee", "#6a0020"];
   return (
-    <div className="relative mb-8 mt-10 rounded-[28px] px-6 pb-6 pt-7 sm:px-8" style={{ background: bg }}>
+    <div className="relative mb-8 mt-10 rounded-[28px] px-6 pb-6 pt-7 sm:px-8" style={{ background: work ? "var(--color-maroon-100)" : bg }}>
       <Minuteman size={84} className="absolute -top-[60px] right-5 sm:right-8" />
       <div className="flex flex-wrap items-end justify-between gap-4 pr-16 sm:pr-24">
         <div className="min-w-0">
-          <h1 className="font-display text-[32px] font-extrabold leading-[1.05] tracking-[-0.04em] sm:text-[38px]" style={{ color: ink }}>{title}</h1>
+          <h1 className="font-display text-[32px] font-extrabold leading-[1.05] tracking-[-0.04em] sm:text-[38px]" style={{ color: work ? "var(--color-maroon-800)" : ink }}>{title}</h1>
           {subtitle && <p className="mt-2 max-w-[60ch] text-[15px] text-ink-soft">{subtitle}</p>}
         </div>
         {action}

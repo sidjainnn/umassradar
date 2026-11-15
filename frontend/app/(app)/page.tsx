@@ -108,7 +108,7 @@ export default function Home() {
           {glance.map((g) => (
             <Link key={g.href} href={g.href}
               className="group rounded-[24px] bg-white p-4 ring-1 ring-line-soft transition hover:-translate-y-1 hover:shadow-[0_24px_40px_-24px_rgba(60,0,20,0.45)]">
-              <GlossyIcon icon={g.icon} from={g.from} to={g.to} size={40} />
+              <GlossyIcon icon={g.icon} from={work ? "#6f9368" : g.from} to={work ? "#254e3b" : g.to} size={40} />
               <span className="mt-3 block font-display text-3xl font-extrabold tracking-[-0.03em] tabular-nums text-ink">{g.n}</span>
               <span className="mt-0.5 block text-[13px] leading-snug text-ink-muted">{g.label}</span>
             </Link>

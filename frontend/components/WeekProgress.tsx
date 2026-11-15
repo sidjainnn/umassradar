@@ -15,10 +15,10 @@ function Ring({ value }: { value: number }) {
   const r = 26, c = 2 * Math.PI * r;
   return (
     <svg viewBox="0 0 64 64" className="h-16 w-16 -rotate-90">
-      <circle cx="32" cy="32" r={r} fill="none" stroke="#f6dde4" strokeWidth="8" />
+      <circle cx="32" cy="32" r={r} fill="none" stroke="var(--color-maroon-100)" strokeWidth="8" />
       <circle cx="32" cy="32" r={r} fill="none" stroke="url(#ring)" strokeWidth="8" strokeLinecap="round"
         strokeDasharray={c} strokeDashoffset={c * (1 - value)} style={{ transition: "stroke-dashoffset 700ms cubic-bezier(.2,.8,.2,1)" }} />
-      <defs><linearGradient id="ring" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#c23a5f" /><stop offset="100%" stopColor="#840028" /></linearGradient></defs>
+      <defs><linearGradient id="ring" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="var(--progress-start, #c23a5f)" /><stop offset="100%" stopColor="var(--color-maroon-600)" /></linearGradient></defs>
     </svg>
   );
 }

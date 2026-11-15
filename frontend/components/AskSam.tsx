@@ -50,7 +50,7 @@ export function AskSam() {
     <>
       <button onClick={() => setOpen(true)} aria-label="Ask Sam"
         className={`fixed bottom-[84px] right-3 z-40 flex items-center gap-1 rounded-full bg-white py-1 pl-1 pr-4 shadow-[0_18px_40px_-16px_rgba(60,0,20,0.55)] ring-1 ring-maroon-100 transition hover:-translate-y-0.5 lg:bottom-6 lg:right-6 ${open ? "pointer-events-none opacity-0" : ""}`}>
-        <span className="grid h-12 w-12 place-items-center overflow-hidden rounded-full bg-[linear-gradient(160deg,#fbeef2,#ffffff)]">
+        <span className="mode-soft-panel grid h-12 w-12 place-items-center overflow-hidden rounded-full">
           <Minuteman size={40} watch={false} className="mt-3" />
         </span>
         <span className="font-display text-[15px] font-extrabold tracking-[-0.02em] text-maroon-700">Ask Sam</span>
@@ -60,7 +60,7 @@ export function AskSam() {
         <div className="fixed inset-0 z-50 flex items-end justify-end bg-ink/20 p-0 sm:p-6" onClick={() => setOpen(false)}>
           <section role="dialog" aria-label="Ask Sam" onClick={(e) => e.stopPropagation()}
             className="rise flex h-[85vh] w-full flex-col overflow-hidden rounded-t-[28px] bg-white shadow-2xl sm:h-[640px] sm:max-w-[420px] sm:rounded-[28px]">
-            <header className="relative flex items-center gap-3 bg-[linear-gradient(160deg,#fbeef2,#ffffff)] px-5 pb-3 pt-4">
+            <header className="mode-soft-panel relative flex items-center gap-3 px-5 pb-3 pt-4">
               <Minuteman size={52} greet />
               <div className="flex-1">
                 <p className="font-display text-[19px] font-extrabold tracking-[-0.03em]">Ask Sam</p>

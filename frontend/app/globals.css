@@ -109,20 +109,33 @@ body {
 :root { --sky-1: #fbeef2; --sky-2: #fdf6f8; }
 .app-sky { background: linear-gradient(180deg, var(--sky-1) 0px, var(--sky-2) 260px, #ffffff 520px); }
 
-/* work mode: UMass navy leads instead of maroon, with gold as the accent */
+/* Work mode: forest green, warm ivory and muted gold. */
 [data-mode="work"] {
-  --color-maroon-50: #eef3fa;
-  --color-maroon-100: #dbe6f5;
-  --color-maroon-200: #b4c8e6;
-  --color-maroon-400: #4f74a8;
-  --color-maroon-500: #1d4f8f;
-  --color-maroon-600: #002554;
-  --color-maroon-700: #001a3d;
-  --color-maroon-800: #00122b;
-  --sky-1: #e8eef7;
-  --sky-2: #f4f7fb;
+  --color-maroon-50: #f0f5ed;
+  --color-maroon-100: #e0ead9;
+  --color-maroon-200: #bfd1b5;
+  --color-maroon-400: #6f9368;
+  --color-maroon-500: #426c49;
+  --color-maroon-600: #254e3b;
+  --color-maroon-700: #1b3c2c;
+  --color-maroon-800: #142e22;
+  --color-navy: #4b5735;
+  --color-teal: #6f7b45;
+  --color-gold: #c5a45d;
+  --color-paper: #f5f3eb;
+  --color-line: #dcded2;
+  --color-line-soft: #ecece3;
+  --sky-1: #eaf0e3;
+  --sky-2: #f8f6ee;
+  --progress-start: #6f9368;
 }
 [data-mode="work"] .app-sky { transition: background 400ms; }
+[data-mode="work"] aside nav a[aria-current="page"] { box-shadow: 0 10px 20px -12px #254e3bcc; }
+.mode-soft-panel { background: linear-gradient(160deg, var(--sky-1), #fff); }
+[data-mode="work"] .campus-map { background: #eef1e5; }
+[data-mode="work"] .map-pin { background: linear-gradient(160deg, #fff, #e0ead9); }
+[data-mode="work"] .map-pin b { background: var(--color-maroon-600); }
+[data-mode="work"] .map-pin:hover, [data-mode="work"] .map-pin.is-on { background: linear-gradient(160deg, #6f9368, #254e3b); }
 
 /* ---------- map ---------- */
 .campus-map { background: #f6eef0; font-family: inherit; }

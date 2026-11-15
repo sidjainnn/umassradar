@@ -86,7 +86,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             );
           })}
         </nav>
-        <div className="relative mt-auto rounded-[22px] bg-[linear-gradient(160deg,#fbeef2,#ffffff)] px-1 pb-3 pt-4 ring-1 ring-maroon-100">
+        <div className="mode-soft-panel relative mt-auto rounded-[22px] px-1 pb-3 pt-4 ring-1 ring-maroon-100">
           <Minuteman size={58} className="absolute -top-[64px] right-3" />
           <p className="truncate px-3 text-sm font-semibold text-ink">{me.demo ? "Demo student" : displayName(me) || me.email.split("@")[0]}</p>
           <p className="truncate px-3 text-xs text-ink-muted">{me.demo ? "Sample UMass inbox" : me.email}</p>
