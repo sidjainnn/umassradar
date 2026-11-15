@@ -1,14 +1,14 @@
 "use client";
 
 import { ShieldCheck } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type MouseEvent } from "react";
 import { CampusScene } from "./landing/CampusScene";
 import { CardFan } from "./landing/CardFan";
 import { FeatureTabs } from "./landing/FeatureTabs";
 import { Logo } from "./Logo";
 import { Minuteman } from "./mascot/Minuteman";
 
-type Props = { notice: string | null; onDemo?: () => void; demoLoading?: boolean };
+type Props = { notice: string | null; onDemo?: () => void; onLogin?: () => void; demoLoading?: boolean };
 
 /** Hand-drawn underline under the key phrase of the headline. */
 function Swoosh() {
@@ -19,9 +19,15 @@ function Swoosh() {
   );
 }
 
-export function Landing({ notice, onDemo, demoLoading }: Props) {
+export function Landing({ notice, onDemo, onLogin, demoLoading }: Props) {
   const hero = useRef<HTMLElement>(null);
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
+
+  function login(e: MouseEvent<HTMLAnchorElement>) {
+    if (!onLogin || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    e.preventDefault();
+    onLogin();
+  }
 
   // the hero scene and card fan lean toward the pointer (skipped with reduced motion)
   useEffect(() => {
@@ -52,7 +58,7 @@ export function Landing({ notice, onDemo, demoLoading }: Props) {
           </nav>
           <div className="ml-auto flex items-center gap-2">
             {onDemo && <button onClick={onDemo} disabled={demoLoading} className="hidden rounded-full px-4 py-2 text-[15px] font-semibold text-ink-soft hover:bg-paper sm:block">Try the demo</button>}
-            <a href="/api/auth/login" className="rounded-full bg-maroon-600 px-4 py-2 text-[15px] font-semibold text-white hover:bg-maroon-700">Sign in</a>
+            <a href="/api/auth/login" onClick={login} className="rounded-full bg-maroon-600 px-4 py-2 text-[15px] font-semibold text-white hover:bg-maroon-700">Sign in</a>
           </div>
         </div>
       </header>
@@ -73,7 +79,7 @@ export function Landing({ notice, onDemo, demoLoading }: Props) {
           </p>
           {notice && <p role="alert" className="mx-auto mt-6 max-w-xl rounded-2xl bg-white/90 px-4 py-3 text-sm text-ink-soft ring-1 ring-line">{notice}</p>}
           <div className="rise mt-8 flex flex-col items-center gap-3 [animation-delay:180ms]">
-            <a href="/api/auth/login" className={`${primary} w-full max-w-sm`}>Sign in with your UMass Google account</a>
+            <a href="/api/auth/login" onClick={login} className={`${primary} w-full max-w-sm`}>Sign in with your UMass Google account</a>
             {onDemo && (
               <button onClick={onDemo} disabled={demoLoading} className={secondary}>
                 {demoLoading ? "Loading the demo…" : "Try it with a demo inbox"}
@@ -111,7 +117,7 @@ export function Landing({ notice, onDemo, demoLoading }: Props) {
         <Minuteman size={120} />
         <h2 className="mt-4 font-display text-[36px] font-extrabold tracking-[-0.035em] text-ink">Stop digging through your inbox</h2>
         <p className="mx-auto mt-3 max-w-[48ch] text-[17px] text-ink-soft">Sign in once. You stay signed in all semester.</p>
-        <a href="/api/auth/login" className={`${primary} mt-7`}>Sign in with your UMass Google account</a>
+        <a href="/api/auth/login" onClick={login} className={`${primary} mt-7`}>Sign in with your UMass Google account</a>
       </section>
 
       <footer className="border-t border-line-soft px-6 py-8 text-center text-[13px] text-ink-muted">

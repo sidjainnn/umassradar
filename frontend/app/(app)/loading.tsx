@@ -1,5 +1,3 @@
-import { RadarLoader } from "@/components/RadarLoader";
-
 export default function Loading() {
-  return <RadarLoader compact />;
+  return <div role="status" className="p-6 text-sm text-ink-muted">Loading…</div>;
 }
