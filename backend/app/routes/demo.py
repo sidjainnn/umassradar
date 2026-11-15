@@ -8,6 +8,7 @@ from datetime import timedelta
 from fastapi import APIRouter, Response
 
 from app.db import get_db
+from app.applications import AppSignal, learn_from_emails, record
 from app.models import now_utc
 from app.pipeline import process_emails
 from app.security import create_session
@@ -37,6 +38,11 @@ async def load_demo(response: Response):
         item.source = "demo"
         item.url = None
     await save_items(user_id, items)
+    await learn_from_emails(user_id, load_demo_emails())
+    # two sample applications so the tracker and work-mode suggestions have something to show
+    now = now_utc()
+    await record(user_id, AppSignal("HubSpot", "Product Design Intern", "applied", now - timedelta(days=12), "Sample"))
+    await record(user_id, AppSignal("Wayfair", "Data Science Intern", "interview", now - timedelta(days=1), "Sample"))
     await ensure_samples()  # example housing posts, shown only in demo mode
     await create_session(response, user_id)
     return {"ok": True, "items": len(items)}

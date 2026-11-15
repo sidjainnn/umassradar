@@ -8,6 +8,7 @@ from app.config import get_settings
 from app.db import get_db
 from app.email_parse import parse_gmail_message
 from app.models import now_utc
+from app.applications import learn_from_emails
 from app.pipeline import process_emails
 from app.security import decrypt_token
 from app.store import already_processed, mark_processed, save_items
@@ -68,6 +69,7 @@ async def sync_user(user_id: str, full: bool = False) -> dict:
             failed: list = []
             items = await process_emails(msgs, user_id, failed=failed)
             await save_items(user_id, items)
+            await learn_from_emails(user_id, msgs)  # internship/job applications -> tracker and interests
             failed_ids = {m.id for m in failed}
             await mark_processed(user_id, [m.id for m in msgs if m.id not in failed_ids])
             pending.extend(failed_ids)
