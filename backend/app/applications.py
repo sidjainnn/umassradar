@@ -9,7 +9,7 @@ from dataclasses import dataclass
 from datetime import datetime
 
 from app.db import get_db
-from app.interests import log_event
+from app.interests import log_event, terms_from
 from app.models import EmailMsg, now_utc
 
 ATS = re.compile(r"(greenhouse|lever\.co|myworkday|workday|icims|ashbyhq|smartrecruiters|jobvite|taleo|successfactors|"
@@ -136,7 +136,8 @@ async def record(user_id: str, sig: AppSignal) -> bool:
         upsert=True,
     )
     if changed:
-        await log_event(user_id, stage, title=f"{sig.role or 'Application'} at {sig.company}", company=sig.company, source="email")
+        await log_event(user_id, stage, title=f"{sig.role or 'Application'} at {sig.company}", company=sig.company,
+                        source="email", terms=terms_from(sig.role)[:15] + [sig.company.lower()])
     return changed
 
 

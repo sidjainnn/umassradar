@@ -12,7 +12,7 @@ TYPE_RULES = [
     ("work_study", re.compile(r"work[- ]study", re.I)),
     ("internship", re.compile(r"\bintern(ship)?s?\b", re.I)),
     ("co_op", re.compile(r"\bco-?op\b", re.I)),
-    ("research", re.compile(r"\b(research|lab assistant|REU|undergraduate research)\b", re.I)),
+    ("research", re.compile(r"\b(research\w*|lab|labs|REU)\b", re.I)),
     ("full_time", re.compile(r"\b(full[- ]time|new grad|entry[- ]level)\b", re.I)),
     ("part_time", re.compile(r"\bpart[- ]time\b", re.I)),
 ]
@@ -85,7 +85,7 @@ def score(i: Item, profile: dict[str, float], prefs: dict, now: datetime,
         days = (when - now).total_seconds() / 86400
         urgency = 0.0 if days < 0 else max(0.0, 1 - days / 21)
         if 0 <= days <= 7:
-            reasons.append(f"apply by {when:%b %-d}")
+            reasons.append(f"apply by {when:%b %-d}" if i.due_at else f"happening {when:%b %-d}")
     else:
         urgency = 0.3
 
