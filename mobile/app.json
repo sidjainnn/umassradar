@@ -1,0 +1,38 @@
+{
+  "expo": {
+    "name": "UMass Radar",
+    "slug": "umass-radar",
+    "scheme": "umassradar",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "edu.hackumass.umassradar",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Shows where you are on the campus map so it can guide you to your classroom."
+      }
+    },
+    "android": {
+      "package": "edu.hackumass.umassradar",
+      "adaptiveIcon": {
+        "backgroundColor": "#840028",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "permissions": ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"],
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-secure-store",
+      "expo-web-browser",
+      "expo-font",
+      ["expo-location", {"locationWhenInUsePermission": "Shows where you are on the campus map so it can guide you to your classroom."}]
+    ]
+  }
+}
