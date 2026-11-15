@@ -5,6 +5,7 @@ import { useState } from "react";
 import type { Category, Item } from "@/lib/api";
 import { isOverdue } from "@/lib/sections";
 import { formatWhen, relative } from "@/lib/time";
+import { SamSays } from "./mascot/SamSays";
 
 export const CATEGORY_DOT: Record<Category, string> = {
   deadline: "bg-maroon-600",
@@ -143,9 +144,9 @@ export function ItemList({
     <section>
       {title && <h2 className="mb-2 text-[15px] font-semibold text-ink-soft">{title}</h2>}
       {items.length === 0 ? (
-        empty ? <p className="rounded-xl border border-dashed border-line px-5 py-6 text-sm text-ink-muted">{empty}</p> : null
+        empty ? <SamSays size={44}>{empty}</SamSays> : null
       ) : (
-        <ul className="divide-y divide-line-soft overflow-hidden rounded-xl border border-line bg-surface">
+        <ul className="divide-y divide-line-soft overflow-hidden rounded-[22px] border border-line-soft bg-surface shadow-[0_18px_40px_-30px_rgba(60,0,20,0.4)]">
           {items.map((i) => (
             <ItemRow key={i.id} item={i} onStatus={onStatus} showDate={showDate} />
           ))}

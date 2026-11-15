@@ -36,7 +36,7 @@ export default function UpdatesPage() {
         byCourse.map(([course, list]) => <ItemList key={course} title={course} items={list} onStatus={setStatus} showDate={false} />)
       )}
 
-      <section className="rounded-xl border border-line bg-surface">
+      <section className="rounded-[22px] border border-line-soft bg-surface shadow-[0_18px_40px_-30px_rgba(60,0,20,0.4)]">
         <button onClick={() => setShowNoise((s) => !s)} aria-expanded={showNoise}
           className="flex w-full items-center justify-between px-5 py-3.5 text-left text-[15px] text-ink-soft">
           <span><span className="font-semibold text-ink">{noise.length}</span> promotions and newsletters filtered out</span>

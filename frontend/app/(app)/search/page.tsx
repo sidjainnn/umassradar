@@ -37,7 +37,7 @@ function SearchResults() {
       {courses.length > 0 && (
         <section>
           <h2 className="mb-2 text-[15px] font-semibold text-ink-soft">Courses</h2>
-          <ul className="divide-y divide-line-soft rounded-xl border border-line bg-surface">
+          <ul className="divide-y divide-line-soft rounded-[22px] border border-line-soft bg-surface shadow-[0_18px_40px_-30px_rgba(60,0,20,0.4)]">
             {courses.map((c) => (
               <li key={c.code}>
                 <Link href={`/courses/${encodeURIComponent(c.code)}`} className="flex items-baseline gap-3 px-5 py-3 hover:bg-paper">

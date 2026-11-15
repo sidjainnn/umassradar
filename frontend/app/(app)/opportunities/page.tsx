@@ -3,6 +3,7 @@
 import { ExternalLink, Search } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { ImportDialog } from "@/components/ImportDialog";
+import { SendButton } from "@/components/SendButton";
 import { ItemList } from "@/components/ItemRow";
 import { PageHeader, Tabs } from "@/components/Page";
 import { api, type Item } from "@/lib/api";
@@ -27,7 +28,7 @@ function byDeadline(items: Item[]): Item[] {
 
 function JobBoardLinks() {
   return (
-    <section className="rounded-xl border border-line bg-surface px-5 py-4">
+    <section className="rounded-[22px] border border-line-soft bg-surface shadow-[0_18px_40px_-30px_rgba(60,0,20,0.4)] px-5 py-4">
       <h2 className="font-semibold text-ink">More jobs on and off campus</h2>
       <p className="mt-1 text-sm text-ink-muted">
         The Student Employment Office lists on-campus and nearby off-campus jobs, including work-study. UMass doesn&apos;t
@@ -136,7 +137,7 @@ function ClubsTab() {
             {byDay.map(([day, list]) => (
               <div key={day}>
                 <h3 className="mb-2 text-[15px] font-semibold text-ink-soft">{day}</h3>
-                <ul className="divide-y divide-line-soft rounded-xl border border-line bg-surface">
+                <ul className="divide-y divide-line-soft rounded-[22px] border border-line-soft bg-surface shadow-[0_18px_40px_-30px_rgba(60,0,20,0.4)]">
                   {list.map((e) => (
                     <li key={e.id} className="flex flex-wrap items-baseline gap-x-4 gap-y-1 px-5 py-3">
                       <time className="w-16 shrink-0 text-sm tabular-nums text-ink-muted">{e.all_day ? "All day" : clock(new Date(e.starts_at))}</time>
@@ -196,6 +197,7 @@ export default function OpportunitiesPage() {
         <div className="space-y-6">
           <ItemList items={jobs} onStatus={setStatus} showDate
             empty="No open jobs found yet. Postings from UMass Dining, RecWell, Res Life and your email show up here." />
+          {!me.demo && <SendButton />}
           <JobBoardLinks />
         </div>
       )}

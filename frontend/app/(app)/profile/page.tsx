@@ -9,8 +9,8 @@ import { relative } from "@/lib/time";
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className="rounded-xl border border-line bg-surface px-5 py-5 sm:px-6">
-      <h2 className="font-serif text-lg font-semibold text-ink">{title}</h2>
+    <section className="rounded-[22px] border border-line-soft bg-surface shadow-[0_18px_40px_-30px_rgba(60,0,20,0.4)] px-5 py-5 sm:px-6">
+      <h2 className="font-display text-lg font-extrabold tracking-[-0.03em] text-ink">{title}</h2>
       <div className="mt-3 text-[15px] text-ink-soft">{children}</div>
     </section>
   );
@@ -77,7 +77,7 @@ export default function ProfilePage() {
           </label>
         </div>
         <button onClick={saveProfile} disabled={busy !== null || me.demo}
-          className="mt-4 rounded-lg bg-maroon-600 px-4 py-2 text-sm font-semibold text-white hover:bg-maroon-700 disabled:opacity-40">
+          className="mt-4 rounded-full bg-maroon-600 px-4 py-2 text-sm font-semibold text-white hover:bg-maroon-700 disabled:opacity-40">
           {busy === "profile" ? "Saving…" : "Save"}
         </button>
       </Section>
