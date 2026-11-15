@@ -40,6 +40,22 @@ class Question(BaseModel):
     history: list[Turn] = []
 
 
+def _navigate(rooms: list[str], schedule: dict | None) -> list[dict]:
+    """Directions buttons, only for rooms that are really on the student's schedule."""
+    from app.buildings import norm
+    from app.where import class_location
+    mine = {norm(c.get("location") or ""): c for c in (schedule or {}).get("classes", [])}
+    out = []
+    for r in rooms[:3]:
+        c = mine.get(norm(r))
+        if c:
+            w = class_location(c["location"])
+            if w.get("found"):
+                out.append({"to": c["location"], "course": c["course"], "label": f"Take me to {c['course']}",
+                            "summary": w["summary"]})
+    return out
+
+
 @router.post("/ask")
 async def ask_sam(body: Question, user: dict = Depends(current_user)):
     if not get_settings().gemini_api_key:
@@ -62,4 +78,5 @@ async def ask_sam(body: Question, user: dict = Depends(current_user)):
         "answer": answer.answer.strip(),
         "items": [{"id": i.id, "title": i.title, "course": i.course, "when": i.when, "category": i.category} for i in cited],
         "courses": [c for c in answer.courses if c in courses][:4],
+        "navigate": _navigate(answer.rooms, user.get("schedule")),
     }

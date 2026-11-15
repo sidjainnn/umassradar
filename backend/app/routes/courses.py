@@ -84,6 +84,9 @@ async def course_profile(code: str, term: str | None = None, user: dict = Depend
 
     shared = course.get("shared", {})
     items = await get_db().items.find({"user_id": user["_id"], "course": code, "status": "open"}).to_list(50)
+    from app.where import class_location
+    your_where = [{"component": c.get("component"), "days": c.get("days", []), "start": c["start"], "end": c["end"],
+                   **class_location(c.get("location"))} for c in schedule.get("classes", []) if c["course"] == code]
     return {
         **summary(course),
         "term": term,
@@ -92,6 +95,7 @@ async def course_profile(code: str, term: str | None = None, user: dict = Depend
         "prerequisites": info.get("prerequisites"),
         "catalog_url": info.get("catalog_url") or info.get("detail_url"),
         "sections": sections,
+        "your_section_where": your_where,
         "shared": {
             "syllabus_uploads": shared.get("syllabus_uploads", 0),
             "office_hours": shared.get("office_hours", []),

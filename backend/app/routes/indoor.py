@@ -7,6 +7,14 @@ from app.indoor import building_floors, classrooms, route, to_geojsonish
 from app.security import current_user
 
 router = APIRouter(prefix="/indoor")
+where_router = APIRouter()
+
+
+@where_router.get("/schedule/where")
+async def where_are_my_classes(user: dict = Depends(current_user)):
+    """Each class on your schedule: building, floor, side, door and walking time from the class before."""
+    from app.where import schedule_where
+    return {"term": (user.get("schedule") or {}).get("term"), "classes": schedule_where(user.get("schedule"))}
 
 
 @router.get("/buildings")

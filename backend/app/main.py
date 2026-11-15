@@ -50,6 +50,7 @@ app.include_router(preferences.router)
 app.include_router(applications.router)
 app.include_router(jobs.router)
 app.include_router(todo.router)
+app.include_router(indoor.where_router)
 app.include_router(indoor.router)
 
 
