@@ -3,14 +3,16 @@
 import { BedDouble, BookOpen, Briefcase, CalendarDays, GraduationCap, House, Inbox, ListChecks, LogOut, Map as MapIcon, Plus, RefreshCw, Search, UserRound } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { displayName } from "@/lib/api";
 import { useStore } from "@/lib/store";
 import { relative } from "@/lib/time";
+import { MIN_LOADING_MS } from "@/lib/loading";
 import { AskSam } from "./AskSam";
 import { ImportDialog } from "./ImportDialog";
 import { Logo } from "./Logo";
 import { Minuteman } from "./mascot/Minuteman";
+import { RadarLoader } from "./RadarLoader";
 
 const NAV = [
   { href: "/", label: "Home", icon: House },
@@ -38,6 +40,24 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const [q, setQ] = useState("");
   const [importing, setImporting] = useState(false);
   const search = useRef<HTMLInputElement>(null);
+  const main = useRef<HTMLElement>(null);
+  const previousView = useRef(`${path}:${mode}`);
+  const [switching, setSwitching] = useState(false);
+
+  useLayoutEffect(() => {
+    const view = `${path}:${mode}`;
+    if (previousView.current === view) return;
+    previousView.current = view;
+    const focused = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    setSwitching(true);
+    const timer = setTimeout(() => {
+      setSwitching(false);
+      requestAnimationFrame(() => {
+        (focused?.isConnected && focused !== document.body ? focused : main.current)?.focus({ preventScroll: true });
+      });
+    }, MIN_LOADING_MS);
+    return () => clearTimeout(timer);
+  }, [path, mode]);
 
   // "/" focuses search from anywhere
   useEffect(() => {
@@ -61,7 +81,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   }).length;
 
   return (
-    <div className="app-sky min-h-screen lg:grid lg:grid-cols-[236px_1fr]">
+    <>
+    <div inert={switching} aria-busy={switching} className="app-sky min-h-screen lg:grid lg:grid-cols-[236px_1fr]">
       {/* sidebar (desktop) */}
       <aside className="sticky top-0 hidden h-screen flex-col border-r border-line-soft bg-white/70 px-4 py-5 backdrop-blur-md lg:flex">
         <Link href="/" className="px-2"><Logo /></Link>
@@ -168,7 +189,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <button onClick={() => setNotice(null)} className="font-semibold text-ink-muted hover:text-ink">Dismiss</button>
             </div>
           )}
-          <main>{children}</main>
+          <main ref={main} tabIndex={-1}>{children}</main>
         </div>
       </div>
 
@@ -189,5 +210,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <AskSam />
       {importing && <ImportDialog onClose={() => setImporting(false)} onImported={(m) => { setNotice(m); reload(); }} />}
     </div>
+    {switching && (
+      <div className="fixed inset-0 z-50 overflow-y-auto">
+        <RadarLoader message="Getting your next view ready" />
+      </div>
+    )}
+    </>
   );
 }

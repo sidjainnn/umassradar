@@ -6,8 +6,7 @@ import { Landing } from "@/components/Landing";
 import { RadarLoader } from "@/components/RadarLoader";
 import { api, ApiError, type Me } from "@/lib/api";
 import { StoreProvider } from "@/lib/store";
-
-const MIN_LOADING_MS = 1600;
+import { MIN_LOADING_MS } from "@/lib/loading";
 
 async function withMinimumLoading<T>(load: () => Promise<T>): Promise<T> {
   const minimum = new Promise<void>((resolve) => setTimeout(resolve, MIN_LOADING_MS));
