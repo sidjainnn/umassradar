@@ -57,26 +57,41 @@ function matches(e: Entry, q: string) {
 }
 
 /** Side-by-side lanes for overlapping blocks in one day column. */
+const RANK: Record<Kind, number> = { class: 0, section: 1, appointment: 2, office_hours: 3, google: 4, club: 5, event: 6, deadline: 7 };
+
+/**
+ * Lay out one day's timed events. Events only share width with events they overlap, at most two side by side;
+ * when more overlap, the most important ones show (classes, then your appointments, Google, then email events)
+ * and the rest are listed in a small "+N" button.
+ */
 function lanes(entries: Entry[]) {
-  // events only share width with events they actually overlap (a "cluster"), not with the whole day
-  const sorted = [...entries].sort((a, b) => +new Date(a.start) - +new Date(b.start));
   const endOf = (e: Entry) => +new Date(e.end ?? e.start) || +new Date(e.start) + 3_600_000;
-  const out: { e: Entry; lane: number; lanes: number }[] = [];
-  let cluster: { e: Entry; lane: number; lanes: number }[] = [];
-  let ends: number[] = [];
-  let clusterEnd = -Infinity;
-  const flush = () => { const n = ends.length || 1; cluster.forEach((c) => { c.lanes = n; out.push(c); }); cluster = []; ends = []; };
+  const sorted = [...entries].sort((a, b) => +new Date(a.start) - +new Date(b.start));
+  // group into clusters of overlapping events
+  const clusters: Entry[][] = [];
+  let end = -Infinity;
   for (const e of sorted) {
-    const s = +new Date(e.start);
-    if (s >= clusterEnd) { flush(); clusterEnd = -Infinity; }
-    let lane = ends.findIndex((end) => end <= s);
-    if (lane === -1) { lane = ends.length; ends.push(0); }
-    ends[lane] = endOf(e);
-    clusterEnd = Math.max(clusterEnd, endOf(e));
-    cluster.push({ e, lane, lanes: 1 });
+    if (+new Date(e.start) >= end) clusters.push([]);
+    clusters[clusters.length - 1].push(e);
+    end = Math.max(end, endOf(e));
   }
-  flush();
-  return out;
+  const shown: { e: Entry; lane: number; lanes: number }[] = [];
+  const more: { at: Entry; hidden: Entry[] }[] = [];
+  for (const c of clusters) {
+    const byRank = [...c].sort((a, b) => (RANK[a.kind] - RANK[b.kind]) || (+new Date(a.start) - +new Date(b.start)));
+    const placed: { e: Entry; lane: number }[] = [];
+    const hidden: Entry[] = [];
+    for (const e of byRank) {
+      const s = +new Date(e.start), en = endOf(e);
+      const lane = [0, 1].find((l) => !placed.some((p) => p.lane === l && +new Date(p.e.start) < en && endOf(p.e) > s));
+      if (lane === undefined) { hidden.push(e); continue; }
+      placed.push({ e, lane });
+    }
+    const n = placed.some((p) => p.lane === 1) ? 2 : 1;
+    placed.forEach((p) => shown.push({ ...p, lanes: n }));
+    if (hidden.length) more.push({ at: hidden.reduce((a, b) => (+new Date(a.start) <= +new Date(b.start) ? a : b)), hidden });
+  }
+  return { shown, more };
 }
 
 // ---------- command bar ----------
@@ -260,22 +275,26 @@ function WeekGrid({ weekStart, entries, query, onOpen }: { weekStart: Date; entr
                   <span className="absolute -left-1 -top-1 h-2.5 w-2.5 rounded-full bg-maroon-600" />
                 </span>
               )}
-              {col.map(({ e, lane, lanes: n }) => {
+              {col.shown.map(({ e, lane, lanes: n }) => {
                 const s = new Date(e.start), en = new Date(e.end ?? +s + 3_600_000);
                 const top = ((minutesOf(s) - startHour * 60) / 60) * HOUR_PX;
                 const height = Math.max(((+en - +s) / 3_600_000) * HOUR_PX - 2, 22);
                 return (
                   <button key={e.id} onClick={() => onOpen(e)}
                     className={`absolute overflow-hidden rounded-xl px-2 py-1 text-left text-[12px] leading-tight transition hover:z-30 hover:shadow-lg ${KIND[e.kind].block} ${e.kind === "office_hours" && e.can_make === false ? "line-through opacity-60" : ""} ${dim(e)}`}
-                    // overlapping events cascade like Google Calendar: each later one is indented a little and sits on top,
-                    // so every event keeps most of the column's width instead of becoming a sliver
-                    style={{ top, height, left: `calc(${n > 1 ? lane * Math.min(22, 60 / (n - 1)) : 0}% + 3px)`, right: "3px",
-                      zIndex: 10 + lane, boxShadow: lane ? "0 0 0 2px #fff" : undefined }}>
+                    style={{ top, height, left: `calc(${(lane / n) * 100}% + 3px)`, width: `calc(${100 / n}% - 6px)` }}>
                     <span className="block truncate font-semibold">{e.title}</span>
                     {height > 38 && <span className="block truncate opacity-85">{[e.subtitle, e.location].filter(Boolean).join(", ")}</span>}
                   </button>
                 );
               })}
+              {col.more.map(({ at, hidden }) => (
+                <button key={`more-${at.id}`} onClick={() => onOpen(hidden[0])} title={hidden.map((h) => h.title).join("\n")}
+                  className="absolute right-1 z-20 rounded-full bg-white px-2 py-0.5 text-[11px] font-semibold text-ink-soft shadow ring-1 ring-line hover:bg-paper"
+                  style={{ top: ((minutesOf(new Date(at.start)) - startHour * 60) / 60) * HOUR_PX - 9 }}>
+                  +{hidden.length}
+                </button>
+              ))}
             </div>
           );
         })}
@@ -496,9 +515,9 @@ export default function SchedulePage() {
         </div>
       </div>
 
-      <div className="mt-4 hidden gap-5 lg:grid 2xl:grid-cols-[250px_1fr]">
+      <div className="mt-4 hidden gap-5 lg:grid xl:grid-cols-[250px_1fr]">
         {/* the month and "Coming up" panel only on wide screens, so the week grid gets the room */}
-        <aside className="hidden space-y-4 2xl:block">
+        <aside className="hidden space-y-4 xl:block">
           <MiniMonth weekStart={weekStart} onPick={(d) => { setWeekStart(mondayOf(d)); setDay(dayIndex(d)); }} />
           <div className="rounded-[22px] bg-white p-4 ring-1 ring-line-soft">
             <p className="font-display text-[15px] font-extrabold tracking-[-0.02em]">Coming up</p>
