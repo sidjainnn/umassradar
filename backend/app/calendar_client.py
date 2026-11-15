@@ -35,6 +35,42 @@ async def busy_intervals(user: dict, start: datetime, end: datetime) -> list[tup
         return None
 
 
+def _events(refresh_token: str, start: datetime, end: datetime) -> list[dict]:
+    service = gc.build_service(refresh_token, "calendar", "v3", gc.CALENDAR_SCOPE)
+    req = service.events().list(
+        calendarId="primary", timeMin=start.isoformat(), timeMax=end.isoformat(), singleEvents=True,
+        orderBy="startTime", maxResults=250,
+        fields="items(id,summary,location,start,end,status,htmlLink,transparency)",
+    )
+    out = []
+    for ev in gc._call(req).get("items", []):
+        if ev.get("status") == "cancelled":
+            continue
+        s, e = ev.get("start", {}), ev.get("end", {})
+        all_day = "date" in s and "dateTime" not in s
+        if all_day:
+            st = datetime.combine(datetime.fromisoformat(s["date"]).date(), time(0), tzinfo=EASTERN)
+            en = datetime.combine(datetime.fromisoformat(e.get("date", s["date"])).date(), time(0), tzinfo=EASTERN)
+        else:
+            st, en = datetime.fromisoformat(s["dateTime"]), datetime.fromisoformat(e.get("dateTime", s["dateTime"]))
+        out.append({"id": ev["id"], "title": (ev.get("summary") or "Busy")[:200], "location": ev.get("location"),
+                    "start": st, "end": en, "all_day": all_day, "url": ev.get("htmlLink")})
+    return out
+
+
+async def events_between(user: dict, start: datetime, end: datetime) -> list[dict] | None:
+    """Events on the user's primary Google Calendar, read live and never stored. None if not connected."""
+    if not user.get("calendar_granted") or not user.get("refresh_token_enc"):
+        return None
+    token = decrypt_token(user["refresh_token_enc"])
+    if not token:
+        return None
+    try:
+        return await asyncio.to_thread(_events, token, start, end)
+    except (gc.ReconnectRequired, HttpError, OSError, KeyError, ValueError):
+        return None
+
+
 def can_make(slot_start: datetime, slot_end: datetime, busy: list[tuple[datetime, datetime]]) -> bool:
     """True if at least 20 minutes of the slot are free (with a walking buffer around other events)."""
     free = [(slot_start, slot_end)]

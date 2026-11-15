@@ -17,7 +17,7 @@ Category = Literal[
     "course_info",
     "noise",
 ]
-Source = Literal["gmail", "canvas", "calendar", "syllabus", "screenshot", "web", "demo", "campus"]
+Source = Literal["gmail", "canvas", "calendar", "syllabus", "screenshot", "web", "demo", "campus", "manual"]
 Status = Literal["open", "done", "dismissed"]
 
 
@@ -67,6 +67,10 @@ class Item(BaseModel):
     sender_type: Literal["person", "automated", "newsletter", "unknown"] = "unknown"
     received_at: datetime | None = None
     url: str | None = None
+    # set on events you add yourself
+    ends_at: datetime | None = None
+    series_id: str | None = None
+    done_at: datetime | None = None
 
     @property
     def when(self) -> datetime | None:
