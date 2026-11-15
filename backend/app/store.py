@@ -96,5 +96,7 @@ async def delete_user_data(user_id: str) -> None:
         await db[coll].delete_many({"user_id": user_id})
     await db.briefs.delete_one({"_id": user_id})
     await db.housing_posts.delete_many({"user_id": user_id})
+    for coll in ("pref_events", "applications", "room_tips", "room_confirmations", "dismissed_suggestions"):
+        await db[coll].delete_many({"user_id": user_id})
     await db.housing_requests.delete_many({"$or": [{"from_user": user_id}, {"to_user": user_id}]})
     await db.users.delete_one({"_id": user_id})
