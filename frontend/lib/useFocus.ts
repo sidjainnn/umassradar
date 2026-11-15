@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 
 /** When the URL has ?focus=<item id>, scroll that row into view and highlight it briefly. */
-export function useFocusItem(ready: boolean) {
+export function useFocusItem(ready: boolean, watchKey?: string) {
   useEffect(() => {
     if (!ready) return;
     const id = new URLSearchParams(window.location.search).get("focus");
@@ -14,5 +14,5 @@ export function useFocusItem(ready: boolean) {
     el.classList.add("bg-maroon-50");
     const t = setTimeout(() => el.classList.remove("bg-maroon-50"), 2500);
     return () => clearTimeout(t);
-  }, [ready]);
+  }, [ready, watchKey]);
 }

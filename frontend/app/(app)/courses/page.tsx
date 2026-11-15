@@ -9,6 +9,7 @@ import { PageHeader, Tabs } from "@/components/Page";
 import { Minuteman } from "@/components/mascot/Minuteman";
 import { api, type CourseSummary } from "@/lib/api";
 import { useStore } from "@/lib/store";
+import { ClassLocations } from "@/components/ClassLocations";
 
 function CourseRow({ c, onAddSyllabus }: { c: CourseSummary; onAddSyllabus?: (code: string) => void }) {
   return (
@@ -116,6 +117,7 @@ export default function CoursesPage() {
   return (
     <div className="max-w-3xl space-y-8 pb-16">
       <PageHeader title="Courses" subtitle="Every UMass course with its sections, plus office hours, exams and grading from recent syllabi." />
+      {!q && tab === "mine" && <ClassLocations />}
 
       <label className="relative block">
         <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-faint" />

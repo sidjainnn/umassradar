@@ -102,6 +102,14 @@ export default function CoursePage({ params }: { params: Promise<{ code: string 
         </div>
       </header>
 
+      {!!course.your_section_where?.length && <section className="mt-5 rounded-[24px] border border-maroon-100 bg-maroon-50 p-5">
+        <h2 className="font-semibold">Where your class meets</h2>
+        <ul className="mt-3 space-y-3">{course.your_section_where.map((w, i) => <li key={i} className="flex flex-wrap items-start justify-between gap-3 text-sm">
+          <div><p className="font-semibold">{w.component ?? "Class"} · {w.start}–{w.end}</p><p className="mt-1 text-ink-soft">{w.found ? w.summary : w.reason}</p></div>
+          {w.navigate && <Link href={`/map?room=${encodeURIComponent(w.navigate.to)}`} className="font-semibold text-maroon-700 underline">Directions ↗</Link>}
+        </li>)}</ul>
+      </section>}
+
       {course.description && <p className="mt-5 max-w-[68ch] text-[15px] leading-relaxed text-ink-soft">{course.description}</p>}
       {course.prerequisites && <p className="mt-3 max-w-[68ch] text-sm text-ink-muted">{course.prerequisites}</p>}
       {course.catalog_url && (

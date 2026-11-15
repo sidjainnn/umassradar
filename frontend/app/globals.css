@@ -138,6 +138,8 @@ body {
 [data-mode="work"] .map-pin:hover, [data-mode="work"] .map-pin.is-on { background: linear-gradient(160deg, #6f9368, #254e3b); }
 
 /* ---------- map ---------- */
+.campus-dot { display: grid; place-items: center; width: 18px; height: 18px; border: 3px solid #fff; border-radius: 50%; background: var(--color-maroon-600); color: #fff; font: 700 9px/1 sans-serif; box-shadow: 0 1px 5px #0003; }
+.campus-dot-selected { outline: 3px solid var(--color-maroon-200); outline-offset: 2px; }
 .campus-map { background: #f6eef0; font-family: inherit; }
 .campus-map .leaflet-tile-pane { filter: saturate(0.55) sepia(0.18) hue-rotate(-14deg) brightness(1.04); }
 .campus-map .leaflet-top.leaflet-right { top: 56px; }

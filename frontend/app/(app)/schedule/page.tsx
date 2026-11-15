@@ -10,12 +10,14 @@ import { api } from "@/lib/api";
 import { placeForRoom } from "@/lib/places";
 import { parseQuickAdd, type QuickEvent } from "@/lib/quickadd";
 import { useStore } from "@/lib/store";
+import { useMode } from "@/lib/mode";
 
 type Kind = "class" | "section" | "appointment" | "event" | "club" | "deadline" | "office_hours" | "google";
 type Entry = {
   kind: Kind; id: string; title: string; subtitle?: string | null; start: string; end: string | null; all_day: boolean;
   location: string | null; course: string | null; href: string | null; editable: boolean; series_id?: string | null;
   can_make?: boolean | null; evidence?: string;
+  mode?: "study" | "work" | "both";
 };
 type Week = { start: string; calendar_connected: boolean; entries: Entry[] };
 
@@ -183,13 +185,14 @@ function MiniMonth({ weekStart, onPick }: { weekStart: Date; onPick: (d: Date) =
 
 // ---------- week grid ----------
 function WeekGrid({ weekStart, entries, query, onOpen }: { weekStart: Date; entries: Entry[]; query: string; onOpen: (e: Entry) => void }) {
+  const mode = useMode();
   const timed = entries.filter((e) => !e.all_day && e.kind !== "deadline");
   const allDay = entries.filter((e) => e.all_day || e.kind === "deadline");
   const days = entries.some((e) => dayIndex(new Date(e.start)) >= 5) ? 7 : 5;
   const startHour = Math.min(8, ...timed.map((e) => new Date(e.start).getHours()));
   const endHour = Math.max(18, ...timed.map((e) => Math.ceil(minutesOf(new Date(e.end ?? e.start)) / 60)));
   const now = new Date();
-  const dim = (e: Entry) => (query.trim().length > 1 ? (matches(e, query.trim()) ? "ring-2 ring-gold ring-offset-1" : "opacity-25") : "");
+  const dim = (e: Entry) => query.trim().length > 1 ? (matches(e, query.trim()) ? "ring-2 ring-gold ring-offset-1" : "opacity-25") : e.mode && e.mode !== "both" && e.mode !== mode ? "opacity-40" : "";
 
   return (
     <div className="overflow-x-auto rounded-[24px] border border-line-soft bg-white shadow-[0_24px_50px_-34px_rgba(60,0,20,0.45)]">
@@ -259,6 +262,7 @@ function WeekGrid({ weekStart, entries, query, onOpen }: { weekStart: Date; entr
 function DayAgenda({ weekStart, entries, day, setDay, query, onOpen }: {
   weekStart: Date; entries: Entry[]; day: number; setDay: (d: number) => void; query: string; onOpen: (e: Entry) => void;
 }) {
+  const mode = useMode();
   const d = addDays(weekStart, day);
   const list = entries.filter((e) => sameDay(new Date(e.start), d) && (query.trim().length < 2 || matches(e, query.trim())));
   return (
@@ -280,7 +284,7 @@ function DayAgenda({ weekStart, entries, day, setDay, query, onOpen }: {
       <ul className="mt-4 space-y-2">
         {list.length === 0 && <li className="rounded-[20px] bg-white px-4 py-6 text-center text-sm text-ink-muted ring-1 ring-line-soft">Nothing on {dateLabel(d)}. Type above to add something.</li>}
         {list.map((e) => (
-          <li key={e.id}>
+          <li key={e.id} className={e.mode && e.mode !== "both" && e.mode !== mode ? "opacity-40" : ""}>
             <button onClick={() => onOpen(e)} className="flex w-full items-stretch gap-3 rounded-[20px] bg-white p-3 text-left ring-1 ring-line-soft">
               <span className="w-1.5 shrink-0 rounded-full" style={{ background: KIND[e.kind].dot }} />
               <span className="w-16 shrink-0 text-sm tabular-nums text-ink-muted">{e.all_day ? "All day" : timeLabel(new Date(e.start))}</span>

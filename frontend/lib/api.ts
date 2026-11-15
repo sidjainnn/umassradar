@@ -9,6 +9,7 @@ export type Category =
   | "noise";
 
 export type Item = {
+  mode?: "study" | "work" | "both";
   id: string;
   category: Category;
   title: string;
@@ -32,6 +33,7 @@ export type Item = {
 };
 
 export type Me = {
+  needs_onboarding?: boolean;
   id: string;
   email: string;
   name: string;
@@ -125,6 +127,7 @@ export type Section = {
 };
 
 export type CourseProfile = CourseSummary & {
+  your_section_where?: (import("./features").ClassLocation & { component?: string; start: string; end: string })[];
   terms: string[];
   description: string | null;
   prerequisites: string | null;

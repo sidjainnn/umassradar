@@ -11,6 +11,7 @@ import { AskSam } from "./AskSam";
 import { ImportDialog } from "./ImportDialog";
 import { Logo } from "./Logo";
 import { Minuteman } from "./mascot/Minuteman";
+import { PreferencesPanel } from "./PreferencesPanel";
 
 const NAV = [
   { href: "/", label: "Home", icon: House },
@@ -28,7 +29,7 @@ function isActive(path: string, href: string) {
 }
 
 export function AppShell({ children }: { children: React.ReactNode }) {
-  const { me, items, syncing, refresh, notice, setNotice, signOut, reload, mode, setMode } = useStore();
+  const { me, items, syncing, refresh, notice, setNotice, signOut, reload, reloadMe, mode, setMode } = useStore();
   // work mode: jobs move up right after Home
   const nav = mode === "work"
     ? [NAV[0], { ...NAV[3], label: "Jobs", short: "Jobs" }, ...NAV.filter((_, i) => i !== 0 && i !== 3)]
@@ -168,7 +169,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <button onClick={() => setNotice(null)} className="font-semibold text-ink-muted hover:text-ink">Dismiss</button>
             </div>
           )}
-          <main>{children}</main>
+          <main>{me.needs_onboarding && !me.demo ? <div className="max-w-3xl pb-12"><PreferencesPanel onboarding onSaved={() => { void reloadMe(); }} /></div> : children}</main>
         </div>
       </div>
 

@@ -6,6 +6,7 @@ import { PageHeader } from "@/components/Page";
 import { api } from "@/lib/api";
 import { useStore } from "@/lib/store";
 import { relative } from "@/lib/time";
+import { LearningLog } from "@/components/PreferencesPanel";
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -60,6 +61,14 @@ export default function ProfilePage() {
       <PageHeader title="Profile" subtitle={me.demo ? "This is the demo student. Sign in to save your own." :
         `Signed in as ${me.email}${me.member_since ? `, using UMass Radar since ${new Date(me.member_since).toLocaleDateString("en-US", { month: "long", year: "numeric" })}` : ""}.`} />
       {error && <p role="alert" className="rounded-lg bg-maroon-50 px-4 py-3 text-sm text-maroon-800">{error}</p>}
+
+      <Section title="Job matches and applications">
+        <p>Set your work interests, review what shaped your matches, and track your applications.</p>
+        <div className="mt-3 flex flex-wrap gap-4 text-sm font-semibold text-maroon-700">
+          <Link href="/preferences" className="underline">Preferences and learning history</Link>
+          <Link href="/applications" className="underline">Application tracker</Link>
+        </div>
+      </Section>
 
       <Section title="About you">
         <div className="grid gap-4 sm:grid-cols-[1fr_1fr_8rem]">
@@ -131,6 +140,7 @@ export default function ProfilePage() {
         )}
       </Section>
 
+      <LearningLog />
       <Section title="Privacy">
         <ul className="list-disc space-y-1.5 pl-5 text-[15px]">
           <li>Gmail and Calendar access are read-only. Nothing is sent, changed or deleted.</li>

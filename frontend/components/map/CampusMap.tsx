@@ -2,53 +2,34 @@
 
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-import { Dices, DoorOpen, LocateFixed, Navigation, X } from "lucide-react";
+import { Dices, LocateFixed, Navigation, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { createRoot, type Root } from "react-dom/client";
-import { Minuteman } from "@/components/mascot/Minuteman";
 import { KINDS, PLACES, type Place, type PlaceKind, placeForRoom } from "@/lib/places";
 import type { ScheduleClass } from "@/lib/store";
-import { RoomPanel } from "./RoomPanel";
+import { listData, type Building, type LocatedRoom } from "@/lib/features";
+import { useResource } from "@/lib/useResource";
+import { useMode } from "@/lib/mode";
 
 const CENTER: [number, number] = [42.3895, -72.5265];
 
-function pinHtml(p: Place, n?: number, selected = false) {
-  return `<div class="map-pin${selected ? " is-on" : ""}"><span>${p.emoji}</span>${n ? `<b>${n}</b>` : ""}</div>`;
+function pinHtml(n?: number, selected = false) {
+  return `<span class="campus-dot${selected ? " campus-dot-selected" : ""}">${n ?? ""}</span>`;
 }
 
-type Props = { classesToday: ScheduleClass[] };
+type Props = { classesToday: ScheduleClass[]; locatedRoom: LocatedRoom | null; onRoomQuery: (q: string) => void };
 
-export default function CampusMap({ classesToday }: Props) {
+export default function CampusMap({ classesToday, locatedRoom, onRoomQuery }: Props) {
   const box = useRef<HTMLDivElement>(null);
   const map = useRef<L.Map | null>(null);
   const layer = useRef<L.LayerGroup | null>(null);
-  const you = useRef<{ marker: L.Marker; root: Root } | null>(null);
+  const buildingLayer = useRef<L.LayerGroup | null>(null);
+  const roomLayer = useRef<L.LayerGroup | null>(null);
+  const buildings = useResource<Building[]>("/rooms/buildings", listData<Building>);
+  const mode = useMode();
+  const you = useRef<L.Marker | null>(null);
   const [kinds, setKinds] = useState<Set<PlaceKind | "today">>(new Set(["class", "study", "food", "fun", "outdoors"]));
   const [picked, setPicked] = useState<Place | null>(null);
   const [locating, setLocating] = useState(false);
-  const [room, setRoom] = useState<string | null>(null);
-  const [roomQuery, setRoomQuery] = useState("");
-  const [roomMiss, setRoomMiss] = useState(false);
-
-  // "HAS 134", "ILC S240", "Hasbrouck 20": find the building, keep the room number
-  function findRoom(text: string) {
-    const q = text.trim();
-    if (!q) return;
-    const m = q.match(/^(.*?)[\s-]*([A-Za-z]?-?\d{1,4}[A-Za-z]?)$/);
-    const place = placeForRoom(q) ?? PLACES.find((p) => p.name.toLowerCase().includes((m?.[1] || q).toLowerCase().trim()) && (m?.[1] || q).trim().length > 2);
-    if (!place) { setRoomMiss(true); return; }
-    setRoomMiss(false);
-    setKinds((prev) => new Set([...prev, place.kind]));
-    setPicked(place);
-    setRoom(m && m[2] && /\d/.test(m[2]) ? m[2].toUpperCase() : null);
-  }
-
-  // /map?room=HAS%20134 (from the Schedule)
-  useEffect(() => {
-    const r = new URLSearchParams(window.location.search).get("room");
-    if (r) { setRoomQuery(r); findRoom(r); }
-     
-  }, []);
 
   // today's classes, in order, with the building each one is in
   const route = useMemo(
@@ -67,9 +48,36 @@ export default function CampusMap({ classesToday }: Props) {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     }).addTo(m);
     layer.current = L.layerGroup().addTo(m);
+    buildingLayer.current = L.layerGroup().addTo(m);
+    roomLayer.current = L.layerGroup().addTo(m);
     map.current = m;
     return () => { m.remove(); map.current = null; };
   }, []);
+
+  useEffect(() => {
+    const g = buildingLayer.current;
+    if (!g) return;
+    g.clearLayers();
+    for (const b of buildings.data ?? []) {
+      if (b.outline?.length >= 3) L.polygon(b.outline, { color: mode === "work" ? "#426c49" : "#840028", weight: 1, fillOpacity: 0.08 })
+        .on("click", () => onRoomQuery(b.name)).addTo(g);
+    }
+  }, [buildings.data, mode, onRoomQuery]);
+
+  useEffect(() => {
+    const g = roomLayer.current, m = map.current;
+    if (!g || !m) return;
+    g.clearLayers();
+    if (!locatedRoom) return;
+    setPicked(null);
+    const color = mode === "work" ? "#254e3b" : "#840028";
+    if (locatedRoom.building.outline.length >= 3) L.polygon(locatedRoom.building.outline, { color, weight: 3, fillOpacity: 0.18 }).addTo(g);
+    for (const [i, door] of locatedRoom.entrances.entries()) {
+      const label = document.createElement("span"); label.textContent = `Door ${i + 1}: ${door.side ?? "side unknown"}${i === 0 ? " · suggested entrance" : ""}`;
+      L.circleMarker(door.at, { radius: i === 0 ? 9 : 6, color: "#fff", weight: 2, fillColor: color, fillOpacity: 1 }).bindTooltip(label).addTo(g);
+    }
+    m.flyTo(locatedRoom.building.center, 18, { duration: 0.6 });
+  }, [locatedRoom, mode]);
 
   // redraw pins when filters or the selection change
   useEffect(() => {
@@ -81,13 +89,13 @@ export default function CampusMap({ classesToday }: Props) {
     for (const p of PLACES) {
       const n = showToday ? todayIds.get(p.id) : undefined;
       if (!kinds.has(p.kind) && !n) continue;
-      const icon = L.divIcon({ html: pinHtml(p, n, picked?.id === p.id), className: "", iconSize: [44, 44], iconAnchor: [22, 40] });
+      const icon = L.divIcon({ html: pinHtml(n, picked?.id === p.id), className: "", iconSize: [18, 18], iconAnchor: [9, 9] });
       L.marker(p.at, { icon, title: p.name, riseOnHover: true }).on("click", () => setPicked(p)).addTo(g);
     }
     if (showToday && route.length > 1) {
-      L.polyline(route.map((r) => r.place.at), { color: "#840028", weight: 4, dashArray: "2 10", lineCap: "round", opacity: 0.8 }).addTo(g);
+      L.polyline(route.map((r) => r.place.at), { color: mode === "work" ? "#254e3b" : "#840028", weight: 3, dashArray: "2 10", lineCap: "round", opacity: 0.8 }).addTo(g);
     }
-  }, [kinds, picked, route]);
+  }, [kinds, picked, route, mode]);
 
   useEffect(() => {
     if (picked) map.current?.flyTo(picked.at, Math.max(map.current.getZoom(), 16), { duration: 0.8 });
@@ -120,13 +128,9 @@ export default function CampusMap({ classesToday }: Props) {
       const m = map.current;
       if (!m) return;
       if (!you.current) {
-        const el = document.createElement("div");
-        const root = createRoot(el);
-        root.render(<Minuteman size={44} watch={false} label="You are here" />);
-        const marker = L.marker(at, { icon: L.divIcon({ html: el, className: "", iconSize: [44, 53], iconAnchor: [22, 50] }) }).addTo(m);
-        you.current = { marker, root };
+        you.current = L.marker(at, { title: "You are here", icon: L.divIcon({ html: '<span class="campus-dot campus-dot-selected"></span>', className: "", iconSize: [18, 18], iconAnchor: [9, 9] }) }).addTo(m);
       } else {
-        you.current.marker.setLatLng(at);
+        you.current.setLatLng(at);
       }
       m.flyTo(at, 17, { duration: 0.8 });
     }, () => setLocating(false), { enableHighAccuracy: true, timeout: 10_000 });
@@ -139,14 +143,7 @@ export default function CampusMap({ classesToday }: Props) {
       <div ref={box} className="campus-map h-[calc(100vh-260px)] min-h-[440px] w-full" />
 
       <div className="pointer-events-none absolute inset-x-0 top-0 z-[500] space-y-2 p-3">
-        <form onSubmit={(e) => { e.preventDefault(); findRoom(roomQuery); }}
-          className="pointer-events-auto flex max-w-md items-center gap-2 rounded-full bg-white py-1.5 pl-4 pr-1.5 shadow-[0_14px_30px_-16px_rgba(60,0,20,0.5)] ring-1 ring-line-soft">
-          <DoorOpen className="h-4 w-4 shrink-0 text-maroon-600" />
-          <input value={roomQuery} onChange={(e) => { setRoomQuery(e.target.value); setRoomMiss(false); }} aria-label="Find a room"
-            placeholder="Find a room, like HAS 134 or ILC S240" className="min-w-0 flex-1 bg-transparent text-[15px] outline-none focus-visible:outline-none" />
-          <button type="submit" className="rounded-full bg-maroon-600 px-3.5 py-1.5 text-sm font-semibold text-white">Find</button>
-        </form>
-        {roomMiss && <p className="pointer-events-auto w-fit rounded-full bg-white px-3 py-1 text-sm text-ink-muted shadow">That building isn&apos;t on the map yet. Try its name, like “Hasbrouck 134”.</p>}
+        {buildings.error && <p className="pointer-events-auto w-fit rounded-xl bg-white p-2 text-xs text-ink-muted">Building outlines unavailable. <button onClick={buildings.reload} className="underline">Retry</button></p>}
         <div className="pointer-events-auto flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none]">
           {route.length > 0 && (
             <button onClick={() => toggle("today")} className={chip(kinds.has("today"))}>🎒 My classes today</button>
@@ -174,7 +171,7 @@ export default function CampusMap({ classesToday }: Props) {
               <p className="font-display text-[18px] font-extrabold leading-tight tracking-[-0.02em]">{picked.name}</p>
               <p className="text-[13px] text-ink-muted">{KINDS.find((k) => k.id === picked.kind)?.label}</p>
             </div>
-            <button onClick={() => { setPicked(null); setRoom(null); }} aria-label="Close" className="rounded-full p-1 text-ink-muted hover:bg-paper"><X className="h-4 w-4" /></button>
+            <button onClick={() => setPicked(null)} aria-label="Close" className="rounded-full p-1 text-ink-muted hover:bg-paper"><X className="h-4 w-4" /></button>
           </div>
           <p className="mt-2 text-[15px] leading-relaxed text-ink-soft">{picked.blurb}</p>
           {kinds.has("today") && route.some((r) => r.place.id === picked.id) && (
@@ -186,9 +183,7 @@ export default function CampusMap({ classesToday }: Props) {
             className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-paper px-3 py-1.5 text-sm font-semibold text-ink hover:bg-line-soft">
             <Navigation className="h-4 w-4" /> Walking directions
           </a>
-          {(picked.kind === "class" || picked.kind === "study" || room) && (
-            <RoomPanel building={picked.id} buildingName={picked.name} room={room} onRoom={setRoom} />
-          )}
+          {(picked.kind === "class" || picked.kind === "study") && <button onClick={() => onRoomQuery(picked.name)} className="mt-3 block text-sm font-semibold text-maroon-700 underline">Find rooms and mapped entrances</button>}
         </div>
       )}
     </div>

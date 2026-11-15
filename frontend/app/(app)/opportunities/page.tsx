@@ -11,8 +11,10 @@ import { whenOf } from "@/lib/sections";
 import { useStore } from "@/lib/store";
 import { clock, daysBetween, longDate } from "@/lib/time";
 import { useFocusItem } from "@/lib/useFocus";
+import { JobsPanel } from "@/components/JobsPanel";
+import { ApplicationsPanel } from "@/components/ApplicationsPanel";
 
-type Tab = "jobs" | "clubs" | "other";
+type Tab = "jobs" | "applications" | "clubs" | "other";
 type CampusEvent = { id: string; title: string; starts_at: string; all_day: boolean; location: string | null; url: string | null; groups: string[]; following: boolean };
 type Group = { name: string; upcoming: number; following: boolean };
 
@@ -176,7 +178,7 @@ export default function OpportunitiesPage() {
 
   useEffect(() => {
     const t = new URLSearchParams(window.location.search).get("tab");
-    if (t === "clubs" || t === "other" || t === "jobs") setTab(t);
+    if (t === "clubs" || t === "other" || t === "jobs" || t === "applications") setTab(t);
   }, []);
 
   const opps = useMemo(() => (items ?? []).filter((i) => i.category === "opportunity"), [items]);
@@ -190,17 +192,18 @@ export default function OpportunitiesPage() {
       <PageHeader title="Opportunities" subtitle="Jobs, clubs, campus events, research and programs." />
       <Tabs active={tab} onChange={(t) => setTab(t as Tab)} tabs={[
         { id: "jobs", label: "Jobs", count: jobs.length },
+        { id: "applications", label: "Applications" },
         { id: "clubs", label: "Clubs and events" },
         { id: "other", label: "Research and more", count: other.length },
       ]} />
       {tab === "jobs" && (
         <div className="space-y-6">
-          <ItemList items={jobs} onStatus={setStatus} showDate
-            empty="No open jobs found yet. Postings from UMass Dining, RecWell, Res Life and your email show up here." />
+          <JobsPanel />
           {!me.demo && <SendButton />}
           <JobBoardLinks />
         </div>
       )}
+      {tab === "applications" && <ApplicationsPanel />}
       {tab === "clubs" && (
         <div className="space-y-8">
           {clubOpps.length > 0 && <ItemList title="Club applications and sign-ups" items={byDeadline(clubOpps)} onStatus={setStatus} />}
