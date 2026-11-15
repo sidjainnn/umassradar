@@ -1,7 +1,8 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { PageHeader } from "@/components/Page";
 import { useStore } from "@/lib/store";
 import { easternWeekday } from "@/lib/time";
@@ -14,11 +15,13 @@ const CampusMap = dynamic(() => import("@/components/map/CampusMap"), {
   loading: () => <div className="h-[calc(100vh-260px)] min-h-[440px] animate-pulse rounded-[28px] bg-line-soft" />,
 });
 
-export default function MapPage() {
+function MapContent() {
   const { schedule } = useStore();
   const [requestedRoom, setRequestedRoom] = useState("");
   const [locatedRoom, setLocatedRoom] = useState<LocatedRoom | null>(null);
-  useEffect(() => { setRequestedRoom(new URLSearchParams(window.location.search).get("room") ?? ""); }, []);
+  const params = useSearchParams();
+  const target = params.get("room") ?? "";
+  useEffect(() => { setRequestedRoom(target); }, [target]);
   const today = easternWeekday();
   const classesToday = useMemo(() => (schedule?.classes ?? []).filter((c) => c.days.includes(today)), [schedule, today]);
   return (
@@ -28,4 +31,8 @@ export default function MapPage() {
       <CampusMap classesToday={classesToday} locatedRoom={locatedRoom} onRoomQuery={setRequestedRoom} />
     </div>
   );
+}
+
+export default function MapPage() {
+  return <Suspense fallback={<div role="status" className="p-6 text-sm text-ink-muted">Loading map…</div>}><MapContent /></Suspense>;
 }

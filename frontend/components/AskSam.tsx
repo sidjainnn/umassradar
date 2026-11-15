@@ -98,7 +98,7 @@ export function AskSam() {
                     {m.text}
                     {!!m.navigate?.length && <div className="mt-3 space-y-2">{m.navigate.map((n) => <div key={n.to}>
                       {n.summary && <p className="mb-1 text-xs text-ink-muted">{n.summary}</p>}
-                      <Link href={`/map?room=${encodeURIComponent(n.to)}`} onClick={() => setOpen(false)} className="inline-flex rounded-full bg-maroon-600 px-3 py-2 text-xs font-semibold text-white">{n.label || "Take me there"} ↗</Link>
+                      <a href={`/map?room=${encodeURIComponent(n.to)}`} onClick={() => setOpen(false)} className="inline-flex rounded-full bg-maroon-600 px-3 py-2 text-xs font-semibold text-white">{n.label || "Take me there"} ↗</a>
                     </div>)}</div>}
                     {(!!m.items?.length || !!m.courses?.length) && (
                       <div className="mt-2 flex flex-wrap gap-1.5">
