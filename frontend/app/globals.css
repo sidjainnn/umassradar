@@ -52,6 +52,35 @@ body {
   }
 }
 
+/* ---------- loading run cycle ---------- */
+.sam-loading { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; }
+.sam-loading-screen { min-height: 100svh; background: #fff; padding: 24px; }
+.sam-loading-compact { min-height: 300px; padding: 32px 16px; }
+.sam-run-stage { position: relative; width: clamp(160px, 42vw, 220px); aspect-ratio: 1; isolation: isolate; }
+.sam-run-sprite {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  background: url('/mascots/sam-run-cycle.png') 0 0 / 400% 200% no-repeat;
+  animation: sam-run-cycle 800ms steps(1, end) infinite;
+}
+.sam-run-ground { position: absolute; bottom: 1%; left: 24%; width: 52%; height: 3%; border-radius: 50%; background: #84002814; filter: blur(3px); }
+.sam-loading-message { color: var(--color-maroon-700); font-family: var(--font-display); font-size: 15px; font-weight: 700; text-align: center; }
+@keyframes sam-run-cycle {
+  0% { background-position: 0% 0%; }
+  12.5% { background-position: 33.333333% 0%; }
+  25% { background-position: 66.666667% 0%; }
+  37.5% { background-position: 100% 0%; }
+  50% { background-position: 0% 100%; }
+  62.5% { background-position: 33.333333% 100%; }
+  75% { background-position: 66.666667% 100%; }
+  87.5% { background-position: 100% 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sam-run-sprite { animation: none !important; }
+}
+
 /* ---------- mascot ---------- */
 @keyframes mm-bob { 0%, 100% { transform: translateY(0) } 50% { transform: translateY(-4px) } }
 @keyframes mm-shadow { 0%, 100% { transform: scaleX(1); opacity: 1 } 50% { transform: scaleX(0.9); opacity: 0.8 } }
