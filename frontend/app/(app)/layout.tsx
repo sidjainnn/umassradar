@@ -7,15 +7,27 @@ import { RadarLoader } from "@/components/RadarLoader";
 import { api, ApiError, type Me } from "@/lib/api";
 import { StoreProvider } from "@/lib/store";
 
+const MIN_LOADING_MS = 1600;
+
+async function withMinimumLoading<T>(load: () => Promise<T>): Promise<T> {
+  const minimum = new Promise<void>((resolve) => setTimeout(resolve, MIN_LOADING_MS));
+  try {
+    return await load();
+  } finally {
+    await minimum;
+  }
+}
+
 /** Signed out: the landing page. Signed in (or in the demo): the app shell around every page. */
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const [me, setMe] = useState<Me | null | undefined>(undefined);
   const [notice, setNotice] = useState<string | null>(null);
   const [demoLoading, setDemoLoading] = useState(false);
 
-  const loadMe = useCallback(async () => {
+  const loadMe = useCallback(async (initial = false) => {
     try {
-      setMe(await api<Me>("/me"));
+      const load = () => api<Me>("/me");
+      setMe(await (initial ? withMinimumLoading(load) : load()));
     } catch (e) {
       if (!(e instanceof ApiError && e.status === 401)) setNotice("UMass Radar's server isn't responding. Try again in a minute.");
       setMe(null);
@@ -26,14 +38,16 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     const params = new URLSearchParams(window.location.search);
     if (params.get("message")) setNotice(params.get("message"));
     if (params.has("error") || params.has("connected")) window.history.replaceState({}, "", window.location.pathname);
-    loadMe();
+    loadMe(true);
   }, [loadMe]);
 
   async function loadDemo() {
     setDemoLoading(true);
     try {
-      await api("/demo/load", { method: "POST" });
-      await loadMe();
+      await withMinimumLoading(async () => {
+        await api("/demo/load", { method: "POST" });
+        await loadMe();
+      });
     } catch {
       setNotice("The demo inbox didn't load. Check that the server is running and try again.");
     } finally {
