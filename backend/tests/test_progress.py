@@ -46,3 +46,8 @@ def test_progress_summary():
     p = progress([due(-1), due(1, "open"), due(0, "open")], {}, NOW)
     assert (p["done"], p["total"]) == (1, 3)
     assert p["today_cleared"] is False
+
+
+def test_today_cleared_needs_something_due_today():
+    assert progress([due(3, "open")], {}, NOW)["today_cleared"] is False
+    assert progress([due(0, "done")], {}, NOW)["today_cleared"] is True

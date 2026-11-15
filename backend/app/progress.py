@@ -73,13 +73,14 @@ def countdowns(items: list[Item], course_dates: dict[str, list[dict]], now: date
 def progress(items: list[Item], course_dates: dict[str, list[dict]], now: datetime) -> dict:
     this = _week_of(now)
     done, total = week_stats(items, this)
+    today = [i for i in items if i.category == "deadline" and i.due_at and i.status != "dismissed"
+             and i.due_at.astimezone(EASTERN).date() == now.astimezone(EASTERN).date()]
     return {
         "week_start": this.isoformat(),
         "done": done, "total": total,
         "streak": streak(items, now),
         "countdowns": countdowns(items, course_dates, now),
-        "today_cleared": not any(i.status == "open" and i.category == "deadline" and i.due_at
-                                 and i.due_at.astimezone(EASTERN).date() == now.astimezone(EASTERN).date() for i in items),
+        "today_cleared": bool(today) and all(i.status == "done" for i in today),
     }
 
 
