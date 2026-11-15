@@ -190,8 +190,7 @@ async def matches(user: dict = Depends(current_user)):
     return out
 
 
-HOUSING_WORDS = re.compile(r"\b(housing|room selection|room assignment|residence hall|res ?life|lease|sublet|move[- ]in|move[- ]out|"
-                           r"rent|landlord|roommate|dorm|apartment|security deposit)\b", re.I)
+from app.modes import HOUSING_WORDS  # noqa: E402
 
 
 @router.get("/timeline")

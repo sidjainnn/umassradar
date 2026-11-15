@@ -13,6 +13,7 @@ from fastapi import APIRouter, Depends
 from app.config import get_settings
 from app.db import get_db
 from app.models import now_utc
+from app.modes import in_mode
 from app.ranking import urgency
 from app.security import current_user
 from app.store import open_items
@@ -25,8 +26,12 @@ _running: set[str] = set()
 _tasks: set[asyncio.Task] = set()  # keep references so background tasks aren't garbage-collected
 
 
-async def _ranked_items(user_id: str, now):
-    items = await open_items(user_id)
+async def _ranked_items(user_id: str, now, mode: str | None = None):
+    """Open items worth mentioning, most urgent first, limited to the student's current mode."""
+    if mode is None:
+        user = await get_db().users.find_one({"_id": user_id}, {"mode": 1})
+        mode = (user or {}).get("mode", "study")
+    items = [i for i in await open_items(user_id) if in_mode(i, mode)]
     for item in items:
         item.urgency_score = urgency(item, now)
     return sorted((i for i in items if i.urgency_score > 0.25), key=lambda i: i.urgency_score, reverse=True)
@@ -64,7 +69,7 @@ def schedule_refresh(user_id: str) -> None:
 @router.get("/brief")
 async def get_brief(user: dict = Depends(current_user)):
     now = now_utc()
-    items = await _ranked_items(user["_id"], now)
+    items = await _ranked_items(user["_id"], now, user.get("mode", "study"))
     key = cache_key(items, now)
     cached = await get_db().briefs.find_one({"_id": user["_id"]})
     if cached and cached.get("key") == key:

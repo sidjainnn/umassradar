@@ -4,6 +4,7 @@ Google Calendar events, as a single list the Schedule page draws."""
 from datetime import date, datetime, time, timedelta
 
 from app.models import EASTERN, Item
+from app.modes import classify
 
 COMPONENT_NAMES = {"LEC": "Lecture", "DIS": "Discussion", "LAB": "Lab", "SEM": "Seminar"}
 
@@ -34,7 +35,7 @@ def class_entries(schedule: dict | None, start: date) -> list[dict]:
                 "start": _iso(datetime.combine(day, time(h1, m1), tzinfo=EASTERN)),
                 "end": _iso(datetime.combine(day, time(h2, m2), tzinfo=EASTERN)),
                 "all_day": False, "location": c.get("location"), "course": c["course"],
-                "href": f"/courses/{c['course']}", "editable": False,
+                "href": f"/courses/{c['course']}", "editable": False, "mode": "study",
             })
     return out
 
@@ -58,6 +59,7 @@ def item_entries(items: list[Item], begin: datetime, end: datetime) -> list[dict
             "kind": kind, "id": i.id, "title": i.title, "subtitle": i.sender if kind != "deadline" else "Due",
             "start": _iso(when), "end": _iso(stop), "all_day": all_day, "location": i.location, "course": i.course,
             "href": i.url, "editable": i.source == "manual", "series_id": i.series_id, "evidence": i.evidence,
+            "mode": classify(i),
         })
     return out
 
@@ -67,7 +69,7 @@ def office_entries(slots: list[dict]) -> list[dict]:
         "kind": "office_hours", "id": f"oh:{s['who']}:{s['starts_at'].isoformat()}",
         "title": f"Office hours: {s['who']}", "subtitle": s.get("course"), "start": _iso(s["starts_at"]),
         "end": _iso(s["ends_at"]), "all_day": False, "location": s.get("location"), "course": s.get("course"),
-        "href": None, "editable": False, "can_make": s.get("can_make"),
+        "href": None, "editable": False, "can_make": s.get("can_make"), "mode": "study",
     } for s in slots]
 
 
@@ -81,7 +83,7 @@ def google_entries(events: list[dict] | None, taken: list[dict]) -> list[dict]:
         out.append({
             "kind": "google", "id": f"g:{ev['id']}", "title": ev["title"], "subtitle": "Google Calendar",
             "start": _iso(ev["start"]), "end": _iso(ev["end"]), "all_day": ev["all_day"],
-            "location": ev.get("location"), "course": None, "href": ev.get("url"), "editable": False,
+            "location": ev.get("location"), "course": None, "href": ev.get("url"), "editable": False, "mode": "both",
         })
     return out
 
