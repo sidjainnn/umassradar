@@ -414,6 +414,11 @@ export default function SchedulePage() {
   const [adding, setAdding] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [day, setDay] = useState(() => dayIndex(new Date()));
+  // the day list is the default everywhere; the week grid is one click away
+  const [view, setView] = useState<"list" | "week">(() => {
+    try { return localStorage.getItem("schedule.view") === "week" ? "week" : "list"; } catch { return "list"; }
+  });
+  const pickView = (v: "list" | "week") => { setView(v); try { localStorage.setItem("schedule.view", v); } catch { /* private mode */ } };
 
   const load = useCallback(async () => {
     setWeek(await api<Week>(`/schedule/week?start=${ymd(weekStart)}`).catch(() => ({ start: ymd(weekStart), calendar_connected: false, entries: [] })));
@@ -508,14 +513,22 @@ export default function SchedulePage() {
         <button aria-label="Previous week" onClick={() => setWeekStart(addDays(weekStart, -7))} className="grid h-8 w-8 place-items-center rounded-full bg-white ring-1 ring-line hover:bg-paper"><ChevronLeft className="h-4 w-4" /></button>
         <button aria-label="Next week" onClick={() => setWeekStart(addDays(weekStart, 7))} className="grid h-8 w-8 place-items-center rounded-full bg-white ring-1 ring-line hover:bg-paper"><ChevronRight className="h-4 w-4" /></button>
         <h2 className="ml-2 font-display text-[20px] font-extrabold tracking-[-0.03em]">{label}</h2>
-        <div className="ml-auto hidden flex-wrap gap-3 text-[12px] text-ink-muted xl:flex">
+        <div role="tablist" aria-label="View" className="ml-auto hidden rounded-full bg-paper p-1 ring-1 ring-line-soft lg:flex">
+          {(["list", "week"] as const).map((v) => (
+            <button key={v} role="tab" aria-selected={view === v} onClick={() => pickView(v)}
+              className={`rounded-full px-3 py-1 text-sm font-semibold ${view === v ? "bg-ink text-white" : "text-ink-muted hover:text-ink"}`}>
+              {v === "list" ? "List" : "Week"}
+            </button>
+          ))}
+        </div>
+        <div className={`hidden flex-wrap gap-3 text-[12px] text-ink-muted ${view === "week" ? "xl:flex" : ""}`}>
           {(["class", "appointment", "club", "office_hours", "deadline", ...(week?.calendar_connected ? ["google"] : [])] as Kind[]).map((k) => (
             <span key={k} className="inline-flex items-center gap-1.5"><span className="h-2 w-2 rounded-full" style={{ background: KIND[k].dot }} />{KIND[k].label}</span>
           ))}
         </div>
       </div>
 
-      <div className="mt-4 hidden gap-5 lg:grid xl:grid-cols-[250px_1fr]">
+      <div className={`mt-4 hidden gap-5 xl:grid-cols-[250px_1fr] ${view === "week" ? "lg:grid" : ""}`}>
         {/* the month and "Coming up" panel only on wide screens, so the week grid gets the room */}
         <aside className="hidden space-y-4 xl:block">
           <MiniMonth weekStart={weekStart} onPick={(d) => { setWeekStart(mondayOf(d)); setDay(dayIndex(d)); }} />
@@ -543,7 +556,7 @@ export default function SchedulePage() {
         <WeekGrid weekStart={weekStart} entries={entries} query={parsed ? "" : query} onOpen={setOpen} />
       </div>
 
-      <div className="mt-4 lg:hidden">
+      <div className={`mt-4 ${view === "week" ? "lg:hidden" : "mx-auto max-w-3xl"}`}>
         <DayAgenda weekStart={weekStart} entries={entries} day={day} setDay={setDay} query={parsed ? "" : query} onOpen={setOpen} />
       </div>
 
