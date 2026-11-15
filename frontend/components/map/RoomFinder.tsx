@@ -85,8 +85,8 @@ export function RoomFinder({ requestedRoom, onLocated }: { requestedRoom: string
     {indoor && <div className="mt-5"><IndoorFloorPlan building={indoor} route={indoorRoute} onRoom={(code) => { setQ(code); void lookup(code, accessible); }} /></div>}
     {result && <div className="mt-5 space-y-5">
       <div className="rounded-2xl bg-maroon-50 p-4"><h3 className="font-semibold text-maroon-800">{result.building.name}{result.room ? ` · ${result.room}` : ""}</h3>
-        <p className="mt-1 text-sm text-ink-soft">{result.floor?.label ?? "No floor estimate available."}</p>
-        <p className="mt-1 text-xs text-ink-muted">{result.confirmed ? `Confirmed by ${result.confirmed.count} students.` : "Floor estimate from the room number; not a verified floor plan."}</p></div>
+        {result.floor?.floor != null && <p className="mt-1 text-sm text-ink-soft">{result.floor.floor === 0 ? "Lower level" : `Floor ${result.floor.floor}`}{result.floor.wing ? `, ${result.floor.wing} side` : ""}</p>}
+        {result.confirmed && <p className="mt-1 text-xs text-ink-muted">Confirmed by {result.confirmed.count} students.</p>}</div>
       {!indoorRoute && <ol className="list-decimal space-y-2 pl-5 text-sm text-ink-soft">{result.steps.map((step, i) => <li key={i}>{step}</li>)}</ol>}
       {accessible && <p className="text-xs text-ink-muted">Accessibility details may be incomplete. Check building signage and the mapped door details.</p>}
       {!!result.entrances.length && <p className="text-xs text-ink-muted">Mapped doors: {result.entrances.map((d, i) => `${i + 1}: ${d.side ?? "side unknown"}${d.wheelchair ? ` (wheelchair: ${d.wheelchair})` : ""}`).join(" · ")}</p>}

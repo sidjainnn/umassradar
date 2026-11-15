@@ -59,9 +59,7 @@ export function RoomPanel({ building, buildingName, room, onRoom }: { building: 
       {room && (
         <div className="rounded-2xl bg-maroon-50 px-3 py-2.5">
           <p className="font-display text-[16px] font-extrabold tracking-[-0.02em] text-maroon-700">Room {info?.guess?.room ?? room}</p>
-          <p className="text-sm text-ink-soft">
-            {info?.guess?.label ? `${info.guess.label}. ` : ""}Most UMass rooms are numbered by floor: 1xx is the first floor, 2xx the second.
-          </p>
+
         </div>
       )}
       {!!info?.room_tips.length && (

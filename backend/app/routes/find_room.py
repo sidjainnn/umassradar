@@ -80,8 +80,7 @@ async def locate(q: str, accessible: bool = False, user: dict = Depends(current_
             [f"Students say: {t}" for t in (check or {}).get("landmarks", [])]),
         "classes_here": sorted(meets, key=lambda m: (m["term"], m["course"]))[:12],
         "tips": [t["text"] for t in tips],
-        "source": "Building outlines and doors from OpenStreetMap. Floors are worked out from the room number "
-                  "unless students have confirmed them.",
+        "source": "Building outlines and doors from OpenStreetMap.",
     }
 
 
