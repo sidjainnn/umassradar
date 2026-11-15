@@ -1,86 +1,314 @@
-# OneMass
+<p align="center">
+  <img src="docs/devpost-media/01-cover.png" alt="OneMass: what's due, what's next, and how to get there" width="100%">
+</p>
 
-A dashboard for UMass Amherst students that pulls everything you need to act on out of your UMass inbox and Canvas: deadlines, appointments, replies you owe, opportunities and events. Open it any time of day and see what's next, instead of digging through Piazza digests, Gradescope receipts and newsletters.
+<h1 align="center">OneMass</h1>
 
-Built for HackUMass XIV.
+<p align="center">
+  <b>What's due, what's next, and how to get there.</b><br>
+  A campus companion for UMass Amherst students: it reads your inbox, plans your week in study or work mode,<br>
+  ranks jobs for you, and walks you to the right classroom.
+</p>
 
-> Screenshots: _coming soon_
+<p align="center">
+  <a href="https://www.onemass.us"><b>Live site: onemass.us</b></a> ·
+  Built at <b>HackUMass XIV</b> ·
+  <a href="docs/HANDOFF.md">Team handoff</a> ·
+  <a href="docs/API.md">API guide</a>
+</p>
 
-## What it does
+---
 
-- **Reads your UMass Gmail (read-only)** and turns each email into structured items: `deadline`, `appointment`, `reply_owed`, `status_update`, `opportunity`, `event`, `course_info` or `noise`.
-- **Rule parsers first** for the senders every student gets: Piazza, Campuswire, Gradescope, Canvas, Handshake, EAB Navigate and Residential Life. They're fast, free and predictable.
-- **Gemini for everything else** (a professor asking for your transcript, a club deadline, the Bursar), using structured JSON output. Every item keeps the exact sentence it came from as evidence.
-- **Filters noise**: promotions and newsletters from non-academic senders are counted and hidden.
-- **Merges duplicates** (the same assignment from a Canvas email and the Canvas calendar feed) and **ranks by urgency** (time left, type, whether you need to act, who sent it).
-- **Canvas calendar feed** import for assignment due dates.
-- **A short brief** at the top, written only from the extracted items (never raw email). It shows up instantly and is refreshed by Gemini in the background.
-- **Home is a summary**: the brief, a **Today** timeline (classes, things due and office hours around a "now" marker), the next three things to do, and counts that link to the detail pages: **To do**, **Schedule**, **Opportunities**, **Updates** and **Courses**. Global search covers email items and courses.
-- Syncs when you open it, when you hit Refresh, and in the background (6 AM, then every 30 minutes until midnight).
-- **Imports**: upload a **syllabus PDF** (office hours, exam dates, due dates, grading and late policy) or a **screenshot** of SPIRE, the housing portal or Navigate (enrollment appointments, holds, time slots). Files are read once and thrown away.
-- **Office hours you can make**: connect Google Calendar (read-only) and each office-hour slot from your syllabi says whether you're actually free, with a 10-minute walking buffer.
-- **Campus page watchers**: Residential Life jobs and events and CICS events are checked twice a day. When a page changes, new RA/PM postings and events show up for everyone.
-- **Class schedule**: upload a screenshot of your schedule from SPIRE or UMass College Scheduler (read with Gemini vision, then each class is snapped to its exact section in the course catalog, so times, sections and rooms come out right even when the picture is fuzzy), or SPIRE's calendar export (.ics, parsed exactly). It drives the Schedule week grid, the Today timeline, office-hours "you're free" checks and section clashes. UMass has no student-facing SPIRE API, so these two are the fastest ways in.
-- **Course profiles for every UMass department** (about 6,000 courses, all sections and meeting times) from the public Five College course schedule, with richer CICS descriptions and prerequisites from the CICS catalog.
-- **Syllabus library**: public syllabi from the last 12 months (collected from course sites) plus any PDFs you drop in `backend/seed/syllabi/`. Each course page shows office hours, grading, late policy and exam dates "from the Spring 2026 syllabus", with a link to the original. Students can add the syllabus for any course they take.
-- **Course profiles and search**: every CICS course from the public catalog, with sections, times, rooms, prerequisites and instructors. Student-shared syllabus facts (office hours, grading, late policy, exam dates) are added on top. Your current courses are detected from your inbox. Add courses to a plan, pick sections, and see which ones clash with the rest of your plan.
-- **Jobs**: open student jobs from UMass Dining, RecWell, Res Life, Residential Services, CMASS and HR pages, plus job emails (Handshake, Student Employment), with direct links to the official Student Employment board and Handshake.
-- **Clubs and campus events**: every upcoming event from events.umass.edu. Follow an organization and its events land on your Home and Schedule. Clubs that only post on Instagram can be added by screenshotting a post or flyer: meetings become events and sign-ups become deadlines.
-- **Accounts that remember you**: sign in with your UMass Google account once. You stay signed in for the semester on each device, later sign-ins skip the permission screen, and the Profile page shows everything saved (name, major, class year, schedule, followed clubs, connected accounts) with one-click delete.
-- **Demo mode**: "Load demo inbox" runs 40 realistic fake UMass emails through the same pipeline, with no Google login needed.
-- Installable as a PWA.
+## Contents
 
-## Architecture
+1. [Why OneMass](#why-onemass)
+2. [Tour](#tour)
+3. [Features](#features)
+4. [How it works](#how-it-works)
+5. [Finding any classroom](#finding-any-classroom)
+6. [The to-do agent](#the-to-do-agent)
+7. [Mobile app](#mobile-app)
+8. [Repository layout](#repository-layout)
+9. [Running it locally](#running-it-locally)
+10. [Google sign-in setup](#google-sign-in-setup)
+11. [Hosting](#hosting)
+12. [Tests and evaluation](#tests-and-evaluation)
+13. [Data sources and etiquette](#data-sources-and-etiquette)
+14. [Privacy design](#privacy-design)
+15. [Roadmap](#roadmap)
+
+---
+
+## Why OneMass
+
+A UMass student gets dozens of emails a day: Canvas, Gradescope, Piazza, professors, Handshake, Res Life, clubs.
+The one deadline that matters is buried in there. And every semester, freshmen get lost the same way: Google Maps gets
+you to Morrill, but not to room **N375**.
+
+OneMass reads the noise for you, tells you what to do next, and gets you to the right room.
+
+---
+
+## Tour
+
+| | |
+|:---:|:---:|
+| <img src="docs/devpost-media/02-landing.png" alt="Landing page"><br>**Landing.** Sam the minuteman and a 3D card fan | <img src="docs/devpost-media/03-home.png" alt="Home"><br>**Home.** Brief, your week, exam countdowns |
+| <img src="docs/devpost-media/04-agentic-todo.png" alt="To do"><br>**To do.** Suggested next steps that fit your free time | <img src="docs/images/schedule.png" alt="Schedule"><br>**Schedule.** Classes, meetings and deadlines in one week |
+| <img src="docs/devpost-media/06-find-any-classroom.png" alt="Room finder"><br>**Find any classroom.** Floor plan, route and steps | <img src="docs/devpost-media/07-ask-sam.png" alt="Ask Sam"><br>**Ask Sam.** "Where is my ECE 122 class?" |
+| <img src="docs/images/work-mode.png" alt="Work mode"><br>**Work mode.** Jobs, applications and housing come first | <img src="docs/devpost-media/05-jobs-for-you.png" alt="Jobs for you"><br>**Jobs for you.** Match scores with plain reasons |
+| <img src="docs/devpost-media/08-applications.png" alt="Applications"><br>**Applications.** Tracked from your email | <img src="docs/images/preferences.png" alt="Preferences"><br>**Preferences.** What you want, and what it learned |
+| <img src="docs/images/course-page.png" alt="Course page"><br>**Course pages.** Where your section meets, sections, clashes | <img src="docs/images/textbooks.png" alt="Textbooks"><br>**Textbooks.** Pulled from syllabi: buy, skip or borrow |
+| <img src="docs/images/housing.png" alt="Housing"><br>**Housing.** Your housing dates, a guide, sublets and swaps | <img src="docs/devpost-media/09-ilc-floor-trace.png" alt="ILC floor trace"><br>**ILC floor 1.** Traced from the posted floor plan |
+
+---
+
+## Features
+
+### Your inbox, turned into a plan
+- **Reads your UMass Gmail (read-only)** and turns each email into an item: deadline, appointment, reply you owe,
+  status update, opportunity, event, course info, or noise. Each item keeps the sentence it came from as evidence.
+- **Rule parsers first** for the senders every student gets (Piazza, Campuswire, Gradescope, Canvas, Handshake,
+  EAB Navigate, Residential Life). Gemini reads only what's left.
+- **Noise is filtered**, **duplicates are merged**, and everything is **ranked by urgency**.
+- **A short brief** at the top of Home, written from your items, never from raw email.
+- **Canvas calendar feed** import, and **imports** for syllabus PDFs and screenshots (SPIRE, the housing portal,
+  Navigate, club flyers).
+
+### Study mode and Work mode
+- A switch in the top bar. **Study** shows classes, coursework and the schedule. **Work** shows jobs, internships,
+  applications and housing, in its own forest-green look.
+- Everything follows the mode: the brief, the to-do list, the menu order and Ask Sam.
+
+### A to-do list that plans for you
+- Suggested next steps, each with a reason: a free 90 minutes to start Lab 6 before it's due, office hours you can
+  actually make, a study block before a quiz, prep time before an interview, or a follow-up note when an application
+  has been quiet for 10+ days.
+- **Accept** one and it lands on your calendar. **Dismiss** it and it stays gone. Suggested blocks never overlap.
+- See [The to-do agent](#the-to-do-agent).
+
+### Jobs ranked for you
+- **Ask first:** a few questions when you sign in (interests, job types, hours, pay, where you can work, work-study).
+- **Then learn:** application confirmations, interviews, offers and rejections in your inbox (Workday, Greenhouse,
+  Handshake and others) build an **applications tracker**, and what you save or hide tunes your matches.
+- Every job gets a **0–100 match** and plain reasons ("matches *software engineering*", "internship, like you asked").
+- A **"what we learned" log** shows every signal and where it came from, and you can remove any of them.
+
+### Schedule you can type into
+- Type "Coffee with Priya tue 3pm at Roots for 30 min" and it's added. Type a name and it searches instead.
+- One week view of classes, labs, meetings, office hours, club events, Google Calendar events and deadlines.
+- Duplicates from email and Google Calendar are merged. Date-only items go in the all-day row. Busy hours show the
+  two most important events side by side, with a "+N" button for the rest.
+- Classes come from a **SPIRE or College Scheduler screenshot** (read with Gemini vision, then snapped to the real
+  catalog sections) or SPIRE's **.ics export**.
+
+### Find any classroom
+- Search **ILC S220** or tap one of your classes: the building, the door to use, the floor plan, the floor, and
+  turn-by-turn steps, with a **step-free route** that uses elevators only.
+- Covers **all 244 general-purpose classrooms** on the registrar's list, in 44 buildings.
+- **Where are my classes?** Every class with building, room, floor and walking time from the class before.
+- See [Finding any classroom](#finding-any-classroom).
+
+### Ask Sam
+- Ask anything about your own week: "What's due this week?", "Who am I waiting to reply to?", "Do I need to buy the
+  textbook?", "Where is my ECE 122 class?". Answers link to the items they used.
+- When you ask where a class is, Sam adds a **Take me there** button that opens the map with directions.
+
+### Courses, textbooks and syllabi
+- **About 6,000 UMass courses** from the Five College course schedule, with sections, times and rooms, plus richer CICS
+  descriptions and prerequisites.
+- **Syllabus library**: public syllabi from the last 12 months. Each course page shows office hours, grading, late
+  policy, exam dates and **textbooks**, "from the Fall 2026 syllabus", with a link to the original.
+- **Textbooks tab**: everything your syllabi say, grouped into *access code needed*, *buy, rent or borrow*,
+  *optional* and *nothing to buy*, with links to the library and the Textbook Annex.
+- Plan next semester's courses and see section clashes.
+
+### Campus life
+- **Housing**: your housing dates from email, a guide to moving off campus, and a UMass-only board for sublets, room
+  swaps and roommates. Emails stay private until both people agree.
+- **Clubs and events**: every event from events.umass.edu. Follow a club and its events land on your schedule.
+- **Explore Amherst**: a campus map with classes, food, study spots and trails.
+- **Progress**: weekly completion, a streak of good weeks, and exam countdowns.
+
+### Accounts
+- Sign in with your UMass Google account and stay signed in all semester.
+- A **demo account** with a realistic fake inbox, so anyone can try it without Google.
+- One-click delete of everything.
+
+---
+
+## How it works
 
 ```mermaid
 flowchart LR
-    subgraph Browser
-        UI[Next.js dashboard<br/>PWA]
+    subgraph Clients
+        Web[Web app<br/>Next.js PWA]
+        Mobile[Mobile app<br/>Expo, iOS + Android]
+    end
+    subgraph Edge
+        CF[Cloudflare Tunnel<br/>onemass.us]
     end
     subgraph Backend[FastAPI backend]
         API[/REST API/]
-        Sync[Gmail sync<br/>history API]
-        Rules[Noise rule +<br/>sender parsers]
-        LLM[Gemini extraction<br/>JSON schema]
-        Merge[Merge + rank]
-        Brief[Brief from items]
-        Sched[APScheduler]
+        Sync[Gmail sync]
+        Pipe[Rules → Gemini →<br/>merge → rank]
+        Apps[Application<br/>detection]
+        Agent[To-do agent]
+        Jobs[Job ranking]
+        Indoor[Indoor maps<br/>and routing]
+        Ask[Ask Sam]
+        Sched[Scheduler]
     end
     Gmail[(Gmail API<br/>read-only)]
-    GCal[(Google Calendar<br/>free/busy, read-only)]
-    Canvas[(Canvas .ics feed)]
-    Pages[(Res Life + CICS pages,<br/>CICS course catalog)]
+    GCal[(Google Calendar<br/>read-only)]
+    Canvas[(Canvas .ics)]
     Gemini[(Gemini API)]
-    DB[(MongoDB<br/>items, processed ids,<br/>encrypted tokens)]
+    Public[(Five College schedule,<br/>registrar rooms, syllabi,<br/>events.umass.edu, job pages)]
+    OSM[(OpenStreetMap<br/>buildings + doors)]
+    DB[(MongoDB)]
 
-    UI -- "/api/* (same origin, httpOnly cookie)" --> API
-    API --> Sync
+    Web --> CF --> API
+    Mobile -- "Bearer token" --> CF
+    API --> Sync --> Gmail
     Sched --> Sync
-    Sync --> Gmail
-    Sync --> Rules --> LLM --> Merge --> DB
-    LLM --> Gemini
-    API --> Canvas
-    API --> GCal
-    Sched --> Pages
-    API -- "syllabus PDF / screenshot" --> Gemini
-    API --> Brief --> Gemini
+    Sync --> Pipe --> DB
+    Sync --> Apps --> DB
+    Pipe --> Gemini
+    API --> Agent & Jobs & Indoor & Ask
+    Ask --> Gemini
+    API --> GCal & Canvas
+    Sched --> Public
+    Indoor --> OSM
     API --> DB
 ```
 
-Pipeline for each new email: skip your own sent mail → sender parser (if one matches) → noise rule → Gemini for anything left → merge duplicates → urgency score → save items. Email bodies only live in memory while this runs.
+**What happens to each new email:**
+
+```mermaid
+flowchart LR
+    E[New email] --> S{Sent by you?}
+    S -- yes --> X[Skip]
+    S -- no --> P{Known sender?<br/>Canvas, Piazza,<br/>Gradescope…}
+    P -- yes --> R[Rule parser]
+    P -- no --> N{Noise?}
+    N -- yes --> H[Counted, hidden]
+    N -- no --> G[Gemini<br/>structured JSON]
+    R --> M[Merge duplicates]
+    G --> M --> U[Urgency score] --> D[(Saved item)]
+    E --> A{Recruiter or<br/>job platform?}
+    A -- yes --> T[Applications tracker<br/>+ interest profile]
+```
+
+Email bodies live only in memory while this runs. Only the extracted items are saved.
+
+**Stack:**
+- **Backend:** FastAPI, MongoDB (Motor), APScheduler, Google APIs (Gmail, Calendar, OAuth), Gemini
+  (`google-genai`; Flash for extraction, Flash-Lite for the brief and Ask Sam, with fallbacks and timeouts)
+- **Web:** Next.js (App Router), React, TypeScript, Tailwind, Leaflet
+- **Mobile:** Expo (React Native), react-native-maps
+- **Hosting:** Cloudflare Tunnel on onemass.us
+
+---
+
+## Finding any classroom
+
+UMass doesn't publish classroom floor plans, so OneMass builds indoor maps from public data:
+
+| Source | What it gives |
+|---|---|
+| University Registrar's classroom list | Every general-purpose classroom: 244 rooms in 44 buildings, with seats and features |
+| OpenStreetMap | Building outlines (Morrill I–IV, Lederle and so on) and entrances, some with floor levels |
+| Posted floor plan in the ILC | ILC floor 1, traced room by room |
+| SPIRE and catalog room codes | `MOR1N375`, `LGRT0143`, `ILCS120`, `Mach W-26`: all mapped to buildings |
+
+```mermaid
+flowchart LR
+    Q["ILC S220"] --> R[Resolve building<br/>+ room code]
+    R --> F[Floor from the<br/>room number, wing<br/>from N/S/E/W]
+    F --> L[Floor layout:<br/>traced, or laid out<br/>from the room list]
+    L --> G[Hallway graph:<br/>doors, corridors,<br/>stairs, elevators]
+    G --> P["Shortest path<br/>(elevators only when<br/>step-free is on)"]
+    P --> S["Steps: enter by the east doors →<br/>elevator to floor 2 →<br/>S220 on your left"]
+```
+
+<p align="center"><img src="docs/devpost-media/09-ilc-floor-trace.png" alt="ILC floor 1 traced" width="520"></p>
+
+- ILC floor 1 is traced from its posted floor plan.
+- Other floors are laid out from the official room list (right floor and side, rooms in number order) and labeled
+  *approximate layout* in the app.
+- Students can confirm where a room really is: two matching confirmations replace the estimate.
+- A request to UMass Planning, Design & Construction for real floor plans is drafted in
+  [`docs/floorplan-request.md`](docs/floorplan-request.md).
+
+---
+
+## The to-do agent
+
+```mermaid
+flowchart TD
+    subgraph Inputs
+        I[Your items]
+        AP[Applications]
+        W[Your week:<br/>classes, events,<br/>Google Calendar]
+        OH[Office hours]
+        J[Ranked jobs]
+        C[Exam countdowns]
+    end
+    Inputs --> Mode{Study or Work?}
+    Mode -- Study --> S1[Office hours before a deadline<br/>Start work in a free 90 min<br/>Study block before an exam<br/>Reply to a professor]
+    Mode -- Work --> W1[Prep for an interview<br/>Follow up after 10 quiet days<br/>Apply before a top match closes<br/>Housing deadlines]
+    S1 & W1 --> Out[Suggestions with a reason<br/>and one action]
+    Out -- Accept --> Cal[Added to your calendar,<br/>or a follow-up note copied]
+    Out -- Dismiss --> Gone[Stays gone]
+```
+
+Suggestions are built by rules over your own data, so they're fast and predictable. Free time comes from your real
+week, with nights excluded, and two suggested blocks never take the same time.
+
+---
+
+## Mobile app
+
+`mobile/` is an Expo app: one codebase for **iOS and Android**, using the same backend.
+
+- **Home:** greeting with Sam, the brief, your next class with a **Navigate** button, progress, and where all your
+  classes are
+- **To do:** the Study/Work switch, suggestions you can accept or dismiss, and tasks to check off
+- **Map:** a calm campus map, your class buildings highlighted, room search, indoor floors, route line, numbered
+  steps, and a step-free switch
+
+```bash
+cd mobile
+npm install
+echo "EXPO_PUBLIC_API_URL=https://www.onemass.us/api" > .env
+npx expo start            # scan the QR code with Expo Go (iOS or Android)
+```
+
+Tap **Try the demo** to sign in without a Google account. The full test checklist is in
+[`docs/HANDOFF.md`](docs/HANDOFF.md#5-mobile-app-mobile).
+
+---
+
+## Repository layout
 
 ```
 backend/
-  app/          FastAPI app: auth, sync, pipeline, merge, ranking, routes
-  parsers/      one file per sender + shared date/course helpers
-  llm/          Gemini extraction and the brief
-  demo/         demo inbox (emails.json) and labels (labels.csv)
-  eval/         accuracy evaluation
-  app/catalog.py    CICS course catalog import (python -m app.catalog)
-  app/watchers.py   Res Life / CICS page watchers
-  tests/        pytest + sample emails in tests/fixtures
-frontend/       Next.js (App Router) + TypeScript + Tailwind
+  app/            FastAPI app: auth, sync, pipeline, modes, jobs, applications, agent,
+                  buildings, indoor maps and routing, week view, progress
+  app/routes/     REST endpoints (items, todo, jobs, preferences, applications, schedule,
+                  events, indoor, rooms, courses, housing, ask, …)
+  parsers/        one file per sender, plus shared date and course helpers
+  llm/            Gemini: extraction, brief, syllabi, screenshots, Ask Sam
+  seed/           registrar classrooms, OpenStreetMap buildings, ILC floor trace, syllabus sources
+  demo/           demo inbox (emails.json), labels, schedule
+  eval/           accuracy evaluation
+  tests/          pytest (182 tests)
+frontend/         Next.js web app
+mobile/           Expo app for iOS and Android
+docs/             API guide, handoff, Devpost write-up, images
 ```
+
+---
 
 ## Running it locally
 
@@ -90,123 +318,156 @@ You need Python 3.11+, Node 20+ and Docker (for MongoDB).
 # 1. database
 docker compose up -d mongo
 
-# 2. backend
+# 2. backend (http://localhost:8000)
 cd backend
 python3 -m venv .venv
 .venv/bin/pip install -r requirements.txt
-cp .env.example .env        # then fill it in, see below
+cp .env.example .env        # fill it in, see below
 .venv/bin/uvicorn app.main:app --reload --port 8000
 
-# 3. frontend (new terminal)
+# 3. web app (http://localhost:3000), new terminal
 cd frontend
 npm install
 npm run dev
 ```
 
-Load course data once (and again each semester):
+Load course and campus data once (and again each semester):
 
 ```bash
 cd backend
-.venv/bin/python -m app.catalog            # CICS descriptions + schedule (fast)
-.venv/bin/python -m app.fivecolleges       # every UMass department, ~360 listing pages at 1/second (~6 min, resumable)
+.venv/bin/python -m app.catalog            # CICS descriptions and schedule
+.venv/bin/python -m app.fivecolleges       # every UMass department (~6 min, resumable)
 .venv/bin/python -m app.syllabus_library   # public syllabi in seed/syllabus_sources.csv + PDFs in seed/syllabi/
+.venv/bin/python -m app.registrar_rooms    # the registrar's classroom list (already in seed/)
+.venv/bin/python -m app.buildings_osm      # OpenStreetMap buildings and doors (already in seed/)
 ```
 
-Open http://localhost:3000. Click **Load demo inbox** to try it without Google, or sign in with your UMass account.
-
-### Google setup
-
-UMass doesn't let student accounts create Google Cloud projects, so the project lives in a personal Gmail account:
-
-1. Create a Cloud project and enable the **Gmail API**.
-2. Google Auth Platform → Audience: **External**, publishing status **Testing**. Add each UMass address that should be able to sign in as a **test user**.
-3. Data access: add `gmail.readonly`, `openid`, `userinfo.email` and (for the optional Calendar feature) `calendar.readonly`. Enable the **Google Calendar API** too. Calendar is requested separately, from Settings → Connect Google Calendar, so people who only want email aren't asked for it.
-4. Clients → **Web application**, with redirect URI `http://localhost:8000/auth/callback` (plus your production URL later). Put the client ID and secret in `backend/.env`.
-
-In Testing mode Google expires refresh tokens after about 7 days. The app notices (`invalid_grant`) and shows a **Reconnect Gmail** banner. If Google returns `access_denied` or `admin_policy_enforced`, you get a clear message and the rest of the app keeps working.
+Open http://localhost:3000 and click **Try it with a demo inbox**, or sign in with your UMass account.
 
 ### Environment variables (`backend/.env`)
 
 | Variable | What it is |
 | --- | --- |
 | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | Web OAuth client |
-| `OAUTH_REDIRECT_URI` | `http://localhost:8000/auth/callback` locally; `https://<your-site>/api/auth/callback` in production |
-| `FRONTEND_URL` | Where to send people after sign-in (`http://localhost:3000`) |
+| `OAUTH_REDIRECT_URI` | `http://localhost:8000/auth/callback` locally; `https://www.onemass.us/api/auth/callback` live |
+| `FRONTEND_URL` | Where to send people after sign-in |
 | `MONGODB_URI`, `MONGODB_DB` | Local Docker Mongo or MongoDB Atlas |
-| `TOKEN_ENCRYPTION_KEY` | Fernet key for refresh tokens. Generate: `python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"` |
+| `TOKEN_ENCRYPTION_KEY` | Fernet key for Google tokens: `python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"` |
 | `COOKIE_SECURE` | `true` when served over HTTPS |
 | `GEMINI_API_KEY`, `GEMINI_MODEL` | Google AI Studio key; default model `gemini-3.8-flash` |
-| `GEMINI_FALLBACK_MODEL` | Used for 5 minutes whenever the main model is overloaded (default `gemini-3.5-flash-lite`) |
-| `ENABLE_SCHEDULER` | Background syncs on/off |
+| `GEMINI_FALLBACK_MODEL`, `GEMINI_BRIEF_MODEL` | Fast model for fallbacks, the brief and Ask Sam (default `gemini-3.5-flash-lite`) |
+| `ENABLE_SCHEDULER` | Background syncs on or off |
 
-The frontend needs only `BACKEND_URL` (default `http://localhost:8000`). Every `/api/*` request is proxied there, so the browser only talks to one origin.
+The web app needs only `BACKEND_URL` (default `http://localhost:8000`). Every `/api/*` request is forwarded there,
+so the browser talks to one origin. The mobile app needs `EXPO_PUBLIC_API_URL`.
+
+---
+
+## Google sign-in setup
+
+UMass doesn't let student accounts create Google Cloud projects, so the project lives in a personal Gmail account.
+
+1. Create a Cloud project and enable the **Gmail API** and **Google Calendar API**.
+2. **Google Auth Platform → Audience:** External. In **Testing**, add each @umass.edu address that should sign in as a
+   **test user** (up to 100).
+3. **Data access:** `gmail.readonly`, `openid`, `userinfo.email`, and `calendar.readonly` (asked for separately, only
+   when someone connects Calendar).
+4. **Clients → Web application.** Add the redirect URIs (`http://localhost:8000/auth/callback` and
+   `https://www.onemass.us/api/auth/callback`) and the JavaScript origin `https://www.onemass.us`.
+
+**Letting everyone sign in:**
+- Publishing the app lets any Google account in, but Gmail access is a restricted permission.
+- Until Google verifies the app, people see an "unverified app" screen and it's capped at 100 users.
+- Verification needs a privacy policy on onemass.us, a verified domain and a security assessment.
+- In Testing mode, Gmail access expires about every 7 days; the app shows a **Reconnect Gmail** banner when it does.
+
+---
+
+## Hosting
+
+**onemass.us (current):** the web app runs on a machine behind a **Cloudflare Tunnel**. No ports are opened, and
+HTTPS is automatic.
+
+```bash
+cloudflared tunnel login                         # once, pick onemass.us
+cloudflared tunnel create onemass
+cloudflared tunnel route dns onemass www.onemass.us
+cloudflared tunnel run onemass                   # ~/.cloudflared/config.yml sends traffic to localhost:3000
+```
+
+**ngrok (quick sharing):** `ngrok http 3000` on the account's free static domain. Point `OAUTH_REDIRECT_URI` and
+`FRONTEND_URL` at it.
+
+**Full deploy:** `docker compose -f docker-compose.prod.yml up -d --build` on a VM (for example Vultr) with MongoDB
+Atlas, or the web app on Vercel with `BACKEND_URL` set to the backend.
+
+---
 
 ## Tests and evaluation
 
 ```bash
 cd backend
-.venv/bin/python -m pytest              # parsers, dates, merge, ranking, LLM (mocked), ics, brief
+.venv/bin/python -m pytest              # 182 tests
 .venv/bin/python -m eval.evaluate       # rules only, on the 40 labeled demo emails
 .venv/bin/python -m eval.evaluate --llm # rules + Gemini
 ```
 
-The eval prints per-category precision, recall and F1, overall accuracy, date accuracy (same calendar day) and each miss. Labels live in `backend/demo/labels.csv` (`message_id,true_category,true_due`, where `true_due` is an ISO date or `+N` days from today, since the demo inbox is dated relative to today). Point `--labels` at your own CSV to evaluate a different set.
+The tests cover parsers, dates, merging, ranking, mode classification, preferences, application detection, job
+ranking, the to-do agent, the week view, room codes, indoor routing (every classroom reachable, step-free routes never
+use stairs), mobile sign-in and more.
 
-Results on the 40 demo emails:
+Extraction accuracy on the 40 demo emails:
 
 | | accuracy | date accuracy (same day) | emails left unhandled |
 | --- | --- | --- | --- |
 | rules only | 57% | 50% | 16 |
 | rules + Gemini | 90% | 88% | 0 |
 
-Rules alone have precision 1.00 in every category except noise, but they only cover senders they know. Gemini picks up the human-written rest. The remaining misses are judgement calls (is a CICS newsletter noise or course info? is "fill out this form before our meeting" a deadline or a reply?), and the noise rule hides a recruiting email that's actually an opportunity.
+Rules alone are precise but only cover senders they know; Gemini handles the human-written rest.
 
-## Design
-
-The UI follows the UMass Amherst brand (umass.edu/brand): the 2026 digital maroon `#840028` with black `#212721` and the brand grays, and the approved web fonts, Open Sans for UI and Lora for headings. The one strong visual element is the Today timeline on Home; everything else stays quiet so students can scan it between classes.
+---
 
 ## Data sources and etiquette
 
-- **Five College course schedule** (fivecolleges.edu): robots.txt allows general crawlers with `search=yes, ai-train=no, use=reference`. We read listing pages at about one request per second, parse them without any model, and link back. Course descriptions are fetched one at a time, only when someone opens that course.
-- **CICS catalog** and **Res Life / CICS pages**: public pages allowed by robots.txt.
-- **Syllabi**: only public syllabi (or ones you provide) from the last 12 months. We keep extracted facts and a link, never the document.
-- **Campus events** (events.umass.edu): the public Localist API, with the 1-second crawl delay its robots.txt asks for.
-- **Student jobs**: department job pages that allow crawlers, read only when they change.
-- **Sources we deliberately don't read**: the central Student Employment board (yes.umass.edu) and Campus Pulse's API both disallow bots in robots.txt, and Instagram's terms don't allow apps to read other accounts. The app links to the job board, and takes screenshots for Instagram posts instead.
+- **Five College course schedule:** read at about one request per second, as robots.txt allows, parsed without any
+  model, with links back.
+- **University Registrar classroom list** and **OpenStreetMap** (© OpenStreetMap contributors, ODbL): imported once,
+  then served from `seed/`.
+- **Syllabi:** only public syllabi (or ones students provide) from the last 12 months. We keep the extracted facts and a
+  link, never the document.
+- **events.umass.edu:** the public events API, with the crawl delay its robots.txt asks for.
+- **Department job pages:** read only when they change.
+- **Sources we deliberately don't read:**
+  - the central Student Employment board and Campus Pulse's API, which disallow bots
+  - Instagram, whose terms don't allow it
+  - Students can screenshot a club post instead, and the job board can be sent with a bookmark button.
+
+---
 
 ## Privacy design
 
-- **Read-only Gmail scope.** The app can't send, delete or modify mail.
-- **No email bodies are stored.** Bodies exist only in memory during processing. MongoDB holds the extracted items (title, dates, one evidence sentence), the ids of processed messages, the Gmail history pointer and the LLM's structured output.
-- **Tokens never reach the browser.** Refresh tokens and the Canvas feed URL are encrypted with Fernet. The browser holds only a random session id in a `Secure`, `httpOnly`, `SameSite=Lax` cookie, and sessions are stored hashed.
-- **Minimal data to the model.** Gemini gets a cleaned subject plus the first 2000 characters of the plain-text body, with quoted reply history and URLs stripped. Each email is processed once (cached by message id). The brief is generated from item fields only.
-- **Prompt-injection guard.** Email text is wrapped as untrusted data, and the model is told never to follow instructions inside it. Evidence that doesn't actually appear in the email drops the item's confidence.
-- **Syllabi and screenshots aren't kept.** They're read once. A syllabus adds course facts (office hours, grading, late policy, exam dates) to that course's shared profile, with no record of who uploaded it.
-- **Calendar is optional and read-only.** Only free/busy times are read, to check office hours. Events aren't stored.
-- **Page watchers are polite.** They only read public pages allowed by robots.txt, twice a day, and only send a page to Gemini when it changed.
-- **One-click delete.** Settings → *Delete all my data* removes the user, tokens, sessions, items, processed ids and cached model output.
+- **Read-only Gmail.** OneMass can't send, delete or change mail.
+- **No email bodies are stored.** Only extracted items (title, dates, one evidence sentence) and processed message ids.
+- **Applications keep only company, role and stage**, never the email. Students can turn email learning off.
+- **Tokens never reach the browser.**
+  - Google tokens and the Canvas feed URL are encrypted.
+  - The browser holds only a random session id in a secure, httpOnly cookie, and sessions are stored hashed.
+  - The mobile app keeps its token in the phone's secure storage.
+- **Minimal data to the model.** Cleaned subject and the start of the plain-text body, wrapped as untrusted data, and
+  each email processed once.
+- **You can see and undo what it learned**, and delete everything with one click.
+- **Calendar is optional and read-only.** Events are read live, not stored.
 
-## Sharing a live demo with ngrok
-
-The quickest way to put a running laptop copy online for judges:
-
-```bash
-cd frontend && npm run build && npm start      # production server on :3000 (dev mode doesn't work well behind a tunnel)
-ngrok http 3000                                # uses your account's free static *.ngrok-free.dev domain
-```
-
-Then in `backend/.env` set `OAUTH_REDIRECT_URI=https://<your-domain>/api/auth/callback`, `FRONTEND_URL=https://<your-domain>` and `COOKIE_SECURE=true`, restart the backend, and add that redirect URI to the Web OAuth client in Google Cloud. Everything goes through the frontend's `/api` proxy, so only port 3000 is exposed. Visitors see ngrok's one-time warning page first, and only test users can sign in with Google. Anyone can use **Load demo inbox**.
-
-## Deploying
-
-**Backend on a VM (e.g. Vultr):** `docker build -t umass-radar-backend backend` and run it with your `.env`, or use `docker compose -f docker-compose.prod.yml up -d --build` to run backend and frontend together. Put Caddy or nginx with HTTPS in front, use MongoDB Atlas for `MONGODB_URI`, and set `COOKIE_SECURE=true`.
-
-**Frontend on Vercel:** import the `frontend` folder and set `BACKEND_URL` to the backend's public URL (it's read at build time). Set `OAUTH_REDIRECT_URI=https://<your-vercel-domain>/api/auth/callback` and `FRONTEND_URL=https://<your-vercel-domain>` on the backend, and add the same redirect URI to the Google OAuth client.
+---
 
 ## Roadmap
 
-- Club leaders connect their own Instagram business account (Meta Graph API, needs Meta app review) so posts flow in automatically
-- Ask the Student Employment Office for a feed of the job board
-- Course catalogs beyond CICS (UMass has no single public catalog page to read from yet)
-- Use Calendar class times to flag plan conflicts with this semester's schedule
-- Push notifications for deadlines in the next few hours
+- Real floor plans from UMass Facilities, plus student room confirmations everywhere
+- Point the phone camera at a door sign: "you're at N362, N375 is six doors ahead"
+- Basic sign-in for everyone, with Gmail as an optional "Connect Gmail" step
+- Push notifications on mobile
+- Google verification so the app can open to all of UMass
+
+---
+
+<p align="center">Made at HackUMass XIV · <a href="https://www.onemass.us">onemass.us</a></p>
