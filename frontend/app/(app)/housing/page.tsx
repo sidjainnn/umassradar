@@ -18,6 +18,12 @@ type Match = Post & { score: number; reasons: string[] };
 type Req = { id: string; post_title: string; status: string; message: string; name: string; email: string | null };
 type Tab = "guide" | "sublets" | "swaps" | "roommates" | "mine";
 
+async function housingList<T>(path: string): Promise<T[]> {
+  const data = await api<unknown>(path);
+  if (!Array.isArray(data)) throw new Error("Housing couldn't load right now. Please try again later.");
+  return data as T[];
+}
+
 const AREAS = ["On campus", "Amherst", "Hadley", "Sunderland", "Northampton", "Belchertown", "South Hadley", "Other"];
 const KIND_LABEL: Record<Kind, string> = {
   sublet_offer: "Sublet offered", sublet_wanted: "Looking for a sublet", swap: "Room swap", roommate: "Roommate",
@@ -32,9 +38,14 @@ function dateRange(p: { start: string | null; end: string | null }): string | nu
 // ---------- guide ----------
 
 function Guide() {
-  const { setStatus } = useStore();
+  const { setStatus, setNotice } = useStore();
   const [dates, setDates] = useState<Item[] | null>(null);
-  useEffect(() => { api<Item[]>("/housing/timeline").then(setDates).catch(() => setDates([])); }, []);
+  useEffect(() => {
+    housingList<Item>("/housing/timeline").then(setDates).catch(() => {
+      setDates([]);
+      setNotice("Your housing dates couldn't load. Please try again later.");
+    });
+  }, [setNotice]);
 
   const link = (href: string, label: string) => (
     <a href={href} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-semibold text-maroon-600 hover:underline">
@@ -174,6 +185,7 @@ function PostCard({ post, onChanged, extra }: { post: Post; onChanged: () => voi
 }
 
 function PostList({ kinds, empty, onPost }: { kinds: Kind[]; empty: string; onPost: (k: Kind) => void }) {
+  const { setNotice } = useStore();
   const [posts, setPosts] = useState<Post[] | null>(null);
   const [area, setArea] = useState("");
   const [maxRent, setMaxRent] = useState("");
@@ -183,8 +195,11 @@ function PostList({ kinds, empty, onPost }: { kinds: Kind[]; empty: string; onPo
     const q = new URLSearchParams({ kind: (kind ? [kind] : kinds).join(",") });
     if (area) q.set("area", area);
     if (maxRent) q.set("max_rent", maxRent);
-    api<Post[]>(`/housing/posts?${q}`).then(setPosts).catch(() => setPosts([]));
-  }, [kinds, kind, area, maxRent]);
+    housingList<Post>(`/housing/posts?${q}`).then(setPosts).catch(() => {
+      setPosts([]);
+      setNotice("Housing posts couldn't load. Please try again later.");
+    });
+  }, [kinds, kind, area, maxRent, setNotice]);
   useEffect(() => { load(); }, [load]);
 
   const select = "rounded-lg border border-line bg-surface px-2.5 py-2 text-sm";
@@ -227,8 +242,14 @@ function PostList({ kinds, empty, onPost }: { kinds: Kind[]; empty: string; onPo
 }
 
 function Roommates({ onPost }: { onPost: (k: Kind) => void }) {
+  const { setNotice } = useStore();
   const [matches, setMatches] = useState<{ post: Post; matches: Match[] }[] | null>(null);
-  useEffect(() => { api<{ post: Post; matches: Match[] }[]>("/housing/matches").then(setMatches).catch(() => setMatches([])); }, []);
+  useEffect(() => {
+    housingList<{ post: Post; matches: Match[] }>("/housing/matches").then(setMatches).catch(() => {
+      setMatches([]);
+      setNotice("Roommate matches couldn't load. Please try again later.");
+    });
+  }, [setNotice]);
   const roommate = (matches ?? []).filter((m) => m.post.kind === "roommate");
 
   return (
@@ -266,9 +287,20 @@ function Mine() {
   const [posts, setPosts] = useState<Post[] | null>(null);
   const [reqs, setReqs] = useState<{ incoming: Req[]; outgoing: Req[] } | null>(null);
   const load = useCallback(() => {
-    api<Post[]>("/housing/mine").then(setPosts).catch(() => setPosts([]));
-    api<{ incoming: Req[]; outgoing: Req[] }>("/housing/requests").then(setReqs).catch(() => setReqs({ incoming: [], outgoing: [] }));
-  }, []);
+    housingList<Post>("/housing/mine").then(setPosts).catch(() => {
+      setPosts([]);
+      setNotice("Your housing posts couldn't load. Please try again later.");
+    });
+    api<{ incoming: Req[]; outgoing: Req[] } | null>("/housing/requests").then((data) => {
+      if (!data || !Array.isArray(data.incoming) || !Array.isArray(data.outgoing)) {
+        throw new Error("Invalid housing requests response");
+      }
+      setReqs(data);
+    }).catch(() => {
+      setReqs({ incoming: [], outgoing: [] });
+      setNotice("Your housing requests couldn't load. Please try again later.");
+    });
+  }, [setNotice]);
   useEffect(() => { load(); }, [load]);
 
   async function decide(id: string, accept: boolean) {
