@@ -24,6 +24,19 @@ export type ScheduleClass = {
 
 export type Schedule = { term: string | null; classes: ScheduleClass[]; uploaded_at: string } | null;
 
+function isSchedule(value: unknown): value is NonNullable<Schedule> {
+  if (!value || typeof value !== "object" || !("classes" in value) || !Array.isArray(value.classes)) return false;
+  return value.classes.every((entry: unknown) => {
+    if (!entry || typeof entry !== "object") return false;
+    const c = entry as Partial<ScheduleClass>;
+    const validTime = (time: unknown): time is string => typeof time === "string" && /^([01]?\d|2[0-3]):[0-5]\d$/.test(time);
+    const minutes = (time: string) => { const [h, m] = time.split(":").map(Number); return h * 60 + m; };
+    return typeof c.course === "string" && Array.isArray(c.days)
+      && c.days.every((day) => Number.isInteger(day) && day >= 0 && day <= 6)
+      && validTime(c.start) && validTime(c.end) && minutes(c.end) > minutes(c.start);
+  });
+}
+
 type Store = {
   me: Me;
   items: Item[] | null;
@@ -96,7 +109,7 @@ export function StoreProvider({
     api<OfficeHourSlot[]>("/office-hours")
       .then((slots) => setOfficeHours(Array.isArray(slots) ? slots : []))
       .catch(() => setOfficeHours([]));
-    api<Schedule>("/schedule").then(setSchedule).catch(() => setSchedule(null));
+    api<unknown>("/schedule").then((value) => setSchedule(isSchedule(value) ? value : null)).catch(() => setSchedule(null));
     loadBrief();
   }, [loadBrief]);
 
