@@ -12,8 +12,10 @@ export function TodoSuggestions({ suggestions, onChanged }: { suggestions: Sugge
   const router = useRouter();
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [gone, setGone] = useState<Set<string>>(new Set());
   async function decide(s: Suggestion, decision: "accept" | "dismiss") {
     setBusy(s.id); setError(null);
+    if (decision === "dismiss") setGone((g) => new Set(g).add(s.id)); // hide the card right away
     try {
       if (decision === "accept" && s.action.type === "copy_text") await navigator.clipboard.writeText(s.action.text);
       await decideSuggestion(s.id, decision);
@@ -24,9 +26,13 @@ export function TodoSuggestions({ suggestions, onChanged }: { suggestions: Sugge
         if (s.action.type === "open_item") router.push(`/${s.kind === "housing" ? "housing" : "todo"}?focus=${encodeURIComponent(s.action.item_id)}`);
       }
       onChanged();
-    } catch (e) { setError(e instanceof Error ? e.message : "Couldn't apply this suggestion."); }
+    } catch (e) {
+      setGone((g) => { const n = new Set(g); n.delete(s.id); return n; });
+      setError(e instanceof Error ? e.message : "Couldn't apply this suggestion.");
+    }
     finally { setBusy(null); }
   }
+  suggestions = suggestions.filter((s) => !gone.has(s.id));
   if (!suggestions.length && !error) return null;
   return <section className="mb-7 space-y-3" aria-label="Suggested next steps">
     <div><h2 className="font-display text-xl font-extrabold">A good next step</h2><p className="mt-1 text-sm text-ink-muted">Suggestions from your deadlines, applications and available time. You decide what happens.</p></div>

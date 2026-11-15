@@ -9,7 +9,8 @@ export function useResource<T>(path: string, validate: (value: unknown) => value
   const reload = useCallback(() => setVersion((v) => v + 1), []);
   useEffect(() => {
     const controller = new AbortController();
-    setState({ path, data: null, error: null });
+    // keep showing the last data while reloading the same path, so the page doesn't collapse and jump
+    setState((prev) => (prev.path === path ? { ...prev, error: null } : { path, data: null, error: null }));
     checkedApi(path, validate, controller.signal).then((data) => {
       if (!controller.signal.aborted) setState({ path, data, error: null });
     }).catch((e) => {

@@ -86,10 +86,12 @@ export default function TodoPage() {
     <div className="max-w-3xl pb-16">
       <PageHeader title="To do" subtitle="Deadlines, appointments and people waiting on a reply." />
       {agent.error && <div className="mb-5"><ResourceError message={agent.error} retry={agent.reload} /></div>}
+      {/* until the suggestions arrive, show one placeholder, so nothing below jumps when they appear */}
+      {!agent.data && !agent.error && <div className="h-64 animate-pulse rounded-[24px] bg-line-soft" aria-hidden />}
       {agent.data && <TodoSuggestions suggestions={agent.data.suggestions} onChanged={agent.reload} />}
-      <Tabs tabs={tabs} active={tab} onChange={(t) => setTab(t as Tab)} />
+      {(agent.data || agent.error) && <Tabs tabs={tabs} active={tab} onChange={(t) => setTab(t as Tab)} />}
       <div className="mt-6 space-y-8">
-        {items === null ? (
+        {items === null || (!agent.data && !agent.error) ? (
           <div className="h-40 animate-pulse rounded-xl bg-line-soft" />
         ) : tab === "done" ? (
           <ItemList items={done ?? []} onStatus={async (id, s) => { await updateStatus(id, s); setDone((d) => d?.filter((i) => i.id !== id) ?? null); }}
