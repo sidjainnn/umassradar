@@ -250,6 +250,12 @@ a {
 /* Landing: soft, focused, and distinctly UMass. */
 .landing-shell {
   isolation: isolate;
+  font-family: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
+}
+
+.landing-shell :is(h1, h2, h3) {
+  font-family: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 800;
 }
 
 .landing-hero {
@@ -382,7 +388,7 @@ a {
 }
 
 .hero-card-stage {
-  min-height: 390px;
+  min-height: 460px;
 }
 
 .hero-card-halo {
@@ -402,7 +408,7 @@ a {
   z-index: 2;
   top: -6px;
   left: 50%;
-  width: 175px;
+  width: 195px;
   height: auto;
   filter: drop-shadow(0 20px 22px rgba(94, 0, 28, 0.2));
   animation: sam-welcome-centered 4.6s ease-in-out infinite;
@@ -422,14 +428,14 @@ a {
 .hero-capability-card {
   position: relative;
   display: flex;
-  width: 154px;
-  min-width: 154px;
-  height: 190px;
+  width: 190px;
+  min-width: 190px;
+  height: 250px;
   flex-direction: column;
-  padding: 17px;
+  padding: 22px;
   overflow: hidden;
   border: 2px solid rgba(255, 255, 255, 0.72);
-  border-radius: 22px;
+  border-radius: 28px;
   background: linear-gradient(150deg, #fff 0%, #f8e9ee 100%);
   color: var(--color-ink);
   box-shadow: 0 20px 44px rgba(94, 0, 28, 0.16);
@@ -439,7 +445,7 @@ a {
 }
 
 .hero-capability-card + .hero-capability-card {
-  margin-left: -27px;
+  margin-left: -58px;
 }
 
 .hero-capability-card:nth-child(1) { transform: translateY(25px) rotate(-12deg); }
@@ -457,8 +463,26 @@ a {
   box-shadow: 0 28px 60px rgba(94, 0, 28, 0.25);
 }
 
-.hero-capability-card:nth-child(3n + 2) { background: linear-gradient(150deg, #fff 0%, #fff5d8 100%); }
-.hero-capability-card:nth-child(3n) { background: linear-gradient(150deg, #fff 0%, #e8f3f1 100%); }
+.landing-shell :is(.hero-capability-card, .workspace-card, .source-card, .opportunity-card) {
+  --card-bg: #ffe4ef;
+  --card-accent: #9e315f;
+  background: linear-gradient(145deg, #fff 0%, var(--card-bg) 100%);
+}
+.landing-shell :is(.hero-capability-card, .workspace-card, .source-card, .opportunity-card):nth-child(8n + 2) { --card-bg: #fff0b7; --card-accent: #855c00; }
+.landing-shell :is(.hero-capability-card, .workspace-card, .source-card, .opportunity-card):nth-child(8n + 3) { --card-bg: #d9edff; --card-accent: #275d99; }
+.landing-shell :is(.hero-capability-card, .workspace-card, .source-card, .opportunity-card):nth-child(8n + 4) { --card-bg: #e6ddff; --card-accent: #6e45a7; }
+.landing-shell :is(.hero-capability-card, .workspace-card, .source-card, .opportunity-card):nth-child(8n + 5) { --card-bg: #d7f3e6; --card-accent: #24765c; }
+.landing-shell :is(.hero-capability-card, .workspace-card, .source-card, .opportunity-card):nth-child(8n + 6) { --card-bg: #ffdfcc; --card-accent: #a24a27; }
+.landing-shell :is(.hero-capability-card, .workspace-card, .source-card, .opportunity-card):nth-child(8n + 7) { --card-bg: #daf4f4; --card-accent: #237078; }
+.landing-shell :is(.hero-capability-card, .workspace-card, .source-card, .opportunity-card):nth-child(8n + 8) { --card-bg: #eee0ee; --card-accent: #88528c; }
+
+.landing-shell :is(.workspace-card, .source-card, .opportunity-card) > span:first-child {
+  background: var(--card-accent);
+  color: #fff;
+  width: 52px;
+  height: 52px;
+  border-radius: 19px;
+}
 
 .hero-card-number {
   font-size: 10px;
@@ -469,18 +493,18 @@ a {
 
 .hero-card-icon {
   display: grid;
-  width: 44px;
-  height: 44px;
-  margin-top: 16px;
+  width: 56px;
+  height: 56px;
+  margin-top: 20px;
   place-items: center;
-  border-radius: 15px;
-  background: var(--color-maroon-600);
+  border-radius: 20px;
+  background: var(--card-accent);
   color: #fff;
 }
 
-.hero-capability-card strong { margin-top: 14px; font-family: var(--font-lora), Georgia, serif; font-size: 16px; }
-.hero-capability-card small { margin-top: 4px; color: var(--color-ink-muted); font-size: 10px; line-height: 1.3; }
-.hero-card-arrow { position: absolute; right: 15px; bottom: 14px; color: var(--color-maroon-600); }
+.hero-capability-card strong { margin-top: 18px; font-family: var(--font-nunito), ui-sans-serif, sans-serif; font-size: 20px; font-weight: 900; line-height: 1.15; }
+.hero-capability-card small { margin-top: 7px; color: var(--color-ink-soft); font-size: 12px; line-height: 1.4; }
+.hero-card-arrow { position: absolute; right: 18px; bottom: 16px; color: var(--card-accent); }
 
 .hero-window-home {
   transform: rotateX(1deg);
@@ -750,7 +774,9 @@ a {
 
 .feature-system-grid .workspace-card {
   position: relative;
-  min-height: 210px;
+  min-height: 250px;
+  padding: 26px;
+  border-radius: 26px;
   overflow: hidden;
 }
 
@@ -896,8 +922,8 @@ a {
   }
 
   .hero-capability-card {
-    width: 138px;
-    min-width: 138px;
+    width: 168px;
+    min-width: 168px;
   }
 
   .hero-product {
@@ -961,7 +987,7 @@ a {
   }
 
   .hero-card-stage {
-    min-height: 330px;
+    min-height: 390px;
     margin-right: -1.25rem;
     margin-left: -1.25rem;
   }
@@ -990,9 +1016,9 @@ a {
 
   .hero-capability-card,
   .hero-capability-card:nth-child(n) {
-    width: 142px;
-    min-width: 142px;
-    height: 176px;
+    width: 184px;
+    min-width: 184px;
+    height: 236px;
     margin-left: 10px;
     transform: none;
   }
