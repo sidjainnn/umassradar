@@ -29,6 +29,21 @@ async def search_courses(q: str = "", user: dict = Depends(current_user)):
     return rows
 
 
+@router.get("/textbooks")
+async def textbooks(user: dict = Depends(current_user)):
+    """What each of your courses' syllabi say you need to buy (or don't)."""
+    mine = await my_courses(user["_id"])
+    docs = await get_db().courses.find({"_id": {"$in": sorted(mine)}}).to_list(100)
+    by_code = {d["_id"]: d for d in docs}
+    out = []
+    for code in sorted(mine):
+        d = by_code.get(code, {"_id": code})
+        shared = d.get("shared", {})
+        out.append({**summary(d), "materials": shared.get("materials", []), "syllabus_term": shared.get("term"),
+                    "source_url": shared.get("source_url"), "has_syllabus": bool(shared.get("syllabus_uploads"))})
+    return out
+
+
 @router.get("/courses-count")
 async def courses_count(user: dict = Depends(current_user)):
     return {"courses": await get_db().courses.estimated_document_count()}
@@ -83,6 +98,7 @@ async def course_profile(code: str, term: str | None = None, user: dict = Depend
             "dates": upcoming_dates(shared.get("dates", [])),
             "grading": shared.get("grading"),
             "late_policy": shared.get("late_policy"),
+            "materials": shared.get("materials", []),
             "updated_at": shared.get("updated_at"),
             "term": shared.get("term"),
             "source_url": shared.get("source_url"),

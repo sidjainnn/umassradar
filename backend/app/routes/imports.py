@@ -18,7 +18,7 @@ from llm.jobboard import JobPageError, check_source, read_job_page
 from llm.jobboard import to_items as job_items
 from llm.schedule import schedule_from_ics, schedule_from_image, snap_to_catalog
 from llm.screenshot import extract_screenshot, image_type, to_items
-from llm.syllabus import SyllabusError, extract_syllabus, pdf_text, to_records, upcoming_slots
+from llm.syllabus import SyllabusError, clean_materials, extract_syllabus, pdf_text, to_records, upcoming_slots
 
 router = APIRouter()
 
@@ -62,7 +62,8 @@ async def import_syllabus(file: UploadFile = File(...), expected_course: str | N
     await save_items(user["_id"], finalize(items, user["_id"]))
     if course and not user.get("demo"):
         # share the course facts (not the file, not who uploaded it) on the course's profile
-        await add_syllabus_facts(course, office_hours, items, result.grading, result.late_policy, term=result.term)
+        await add_syllabus_facts(course, office_hours, items, result.grading, result.late_policy, term=result.term,
+                                 materials=clean_materials(result.materials))
     warning = None
     if expected_course and course and course.replace(" ", "") != expected_course.replace(" ", ""):
         warning = f"That syllabus looks like {course}, not {expected_course}. It was added to {course}."

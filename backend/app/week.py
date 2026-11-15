@@ -52,9 +52,11 @@ def item_entries(items: list[Item], begin: datetime, end: datetime) -> list[dict
         else:
             kind = "appointment" if i.category == "appointment" else "event"
         stop = i.ends_at or (None if kind == "deadline" else when + timedelta(hours=1))
+        local = when.astimezone(EASTERN)
+        all_day = bool(i.ends_at) and local.hour == 0 and local.minute == 0 and i.ends_at - when >= timedelta(hours=23)
         out.append({
             "kind": kind, "id": i.id, "title": i.title, "subtitle": i.sender if kind != "deadline" else "Due",
-            "start": _iso(when), "end": _iso(stop), "all_day": False, "location": i.location, "course": i.course,
+            "start": _iso(when), "end": _iso(stop), "all_day": all_day, "location": i.location, "course": i.course,
             "href": i.url, "editable": i.source == "manual", "series_id": i.series_id, "evidence": i.evidence,
         })
     return out

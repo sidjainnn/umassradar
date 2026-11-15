@@ -32,6 +32,13 @@ Extract:
 - term: the semester the syllabus is for, as "Spring 2026", "Summer 2026" or "Fall 2026", or null if not stated.
 - grading: one short line with the grade breakdown, e.g. "Projects 40%, Midterms 30%, Final 25%, Participation 5%", or null.
 - late_policy: one short sentence summarizing the late-work policy, or null.
+- materials: every textbook, course pack, online platform or device the syllabus mentions (e.g. Cengage/WebAssign,
+  Pearson MyLab, McGraw Connect, zyBooks, Top Hat, iClicker, a lab kit). For each: title, author, edition, isbn (or null),
+  required (true if students must get it, false if optional, recommended or explicitly not needed),
+  access_code (true if it needs a paid access code or subscription), platform (the online platform's name or null),
+  and note: one short line with anything that saves students money, e.g. "free PDF on Canvas", "older edition is fine",
+  "not needed, homework is on Gradescope", "on reserve at Du Bois". If the syllabus says no textbook is required,
+  return one entry with title "No textbook required" and required false.
 - evidence: copy the line from the syllabus word for word.
 Only include what the syllabus actually says."""
 
@@ -54,6 +61,18 @@ class DatedItem(BaseModel):
     evidence: str
 
 
+class Material(BaseModel):
+    title: str
+    author: str | None = None
+    edition: str | None = None
+    isbn: str | None = None
+    required: bool = False
+    access_code: bool = False
+    platform: str | None = None
+    note: str | None = None
+    evidence: str = ""
+
+
 class SyllabusResult(BaseModel):
     course: str | None
     office_hours: list[OfficeHour]
@@ -61,6 +80,7 @@ class SyllabusResult(BaseModel):
     grading: str | None
     late_policy: str | None
     term: str | None = None
+    materials: list[Material] = []
 
 
 class SyllabusError(ValueError):
@@ -163,3 +183,21 @@ def upcoming_slots(office_hours: list[dict], now: datetime | None = None, days: 
                           "starts_at": start, "ends_at": end})
     slots.sort(key=lambda s: s["starts_at"])
     return slots
+
+
+def clean_materials(materials: list[Material]) -> list[dict]:
+    """Materials as small dicts, deduped by title, at most 12."""
+    out, seen = [], set()
+    for m in materials:
+        title = m.title.strip()[:160]
+        if not title or _norm(title) in seen:
+            continue
+        seen.add(_norm(title))
+        isbn = re.sub(r"[^0-9Xx]", "", m.isbn or "") or None
+        out.append({
+            "title": title, "author": (m.author or "").strip()[:120] or None, "edition": (m.edition or "").strip()[:40] or None,
+            "isbn": isbn if isbn and len(isbn) in (10, 13) else None, "required": bool(m.required),
+            "access_code": bool(m.access_code), "platform": (m.platform or "").strip()[:60] or None,
+            "note": (m.note or "").strip()[:200] or None, "evidence": m.evidence.strip()[:300],
+        })
+    return out[:12]

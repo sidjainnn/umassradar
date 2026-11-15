@@ -82,7 +82,7 @@ def term_start(term: str | None):
 
 async def add_syllabus_facts(code: str, office_hours: list[dict], items: list[Item], grading: str | None,
                              late_policy: str | None, term: str | None = None, source_url: str | None = None,
-                             from_student: bool = True) -> bool:
+                             from_student: bool = True, materials: list[dict] | None = None, count: bool = True) -> bool:
     """Share what a syllabus says about a course with everyone. No uploader info, no file.
 
     An older syllabus never replaces facts from a newer one. Returns True if the profile was updated.
@@ -103,9 +103,11 @@ async def add_syllabus_facts(code: str, office_hours: list[dict], items: list[It
         shared["shared.grading"] = grading[:300]
     if late_policy:
         shared["shared.late_policy"] = late_policy[:300]
+    if materials:
+        shared["shared.materials"] = materials
     await get_db().courses.update_one(
         {"_id": code},
-        {"$set": shared, "$inc": {"shared.syllabus_uploads": 1}, "$setOnInsert": {"created_at": now_utc()}},
+        {"$set": shared, "$inc": {"shared.syllabus_uploads": 1 if count else 0}, "$setOnInsert": {"created_at": now_utc()}},
         upsert=True,
     )
     return True
