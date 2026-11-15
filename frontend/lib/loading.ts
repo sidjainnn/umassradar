@@ -1,1 +1,1 @@
-export const MIN_LOADING_MS = 1950;
+export const MIN_LOADING_MS = 1500;
