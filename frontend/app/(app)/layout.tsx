@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { AppShell } from "@/components/AppShell";
 import { Landing } from "@/components/Landing";
 import { RadarLoader } from "@/components/RadarLoader";
@@ -9,6 +10,7 @@ import { StoreProvider } from "@/lib/store";
 
 /** Signed out: the landing page. Signed in (or in the demo): the app shell around every page. */
 export default function AppLayout({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
   const [me, setMe] = useState<Me | null | undefined>(undefined);
   const [notice, setNotice] = useState<string | null>(null);
   const [demoLoading, setDemoLoading] = useState(false);
@@ -34,6 +36,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     try {
       await api("/demo/load", { method: "POST" });
       await loadMe();
+      router.replace("/");
     } catch {
       setNotice("The demo inbox didn't load. Check that the server is running and try again.");
     } finally {
@@ -41,10 +44,16 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     }
   }
 
+  const onSignedOut = useCallback(() => {
+    setMe(null);
+    router.replace("/");
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }, [router]);
+
   if (me === undefined) return <RadarLoader message="Checking your sign-in and student sources" />;
   if (me === null) return <Landing notice={notice} onDemo={loadDemo} demoLoading={demoLoading} />;
   return (
-    <StoreProvider me={me} onSignedOut={() => setMe(null)}>
+    <StoreProvider me={me} onSignedOut={onSignedOut}>
       <AppShell>{children}</AppShell>
     </StoreProvider>
   );
