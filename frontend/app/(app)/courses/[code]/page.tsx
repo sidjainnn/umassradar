@@ -180,6 +180,7 @@ export default function CoursePage({ params }: { params: Promise<{ code: string 
                 ) : `, shared by ${shared.syllabus_uploads === 1 ? "a student" : `${shared.syllabus_uploads} students`}`}
               </p>
               <dl className="mt-4 space-y-4">
+                {!!shared.materials?.length && <Fact label="Textbooks & course materials"><ul className="space-y-3">{shared.materials.map((material, index) => <li key={index} className="rounded-xl border border-line bg-paper p-3"><p className="font-semibold">{material.title}</p><p className="mt-1 text-xs text-ink-muted">{[material.author, material.edition, material.isbn && `ISBN ${material.isbn}`, material.platform].filter(Boolean).join(" · ")}</p><p className="mt-2 text-xs font-semibold text-maroon-700">{material.required ? "Required" : "Optional / recommended"}{material.access_code ? " · Paid access code or subscription" : ""}</p>{material.note && <p className="mt-1 text-xs text-ink-muted">{material.note}</p>}</li>)}</ul></Fact>}
                 {shared.grading && <Fact label="Grading">{shared.grading}</Fact>}
                 {shared.late_policy && <Fact label="Late work">{shared.late_policy}</Fact>}
                 {shared.office_hours.length > 0 && (

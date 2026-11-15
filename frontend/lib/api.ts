@@ -130,6 +130,7 @@ export type CourseProfile = CourseSummary & {
   catalog_url: string | null;
   sections: Section[];
   shared: {
+    materials?: { title: string; author?: string | null; edition?: string | null; isbn?: string | null; required: boolean; access_code: boolean; platform?: string | null; note?: string | null }[];
     syllabus_uploads: number;
     office_hours: { who: string; weekday: number; start: string; end: string; location: string | null }[];
     dates: { title: string; category: string; when: string; location: string | null }[];

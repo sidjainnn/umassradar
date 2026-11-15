@@ -5,6 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useMemo } from "react";
 import { BriefText } from "@/components/BriefText";
+import { AskSam } from "@/components/AskSam";
+import { StudentProgress } from "@/components/StudentProgress";
 import { ItemList } from "@/components/ItemRow";
 import { TodayLine, todayEntries } from "@/components/TodayLine";
 import { whenOf } from "@/lib/sections";
@@ -86,6 +88,8 @@ export default function Home() {
         </div>
 
         <aside className="space-y-6">
+          <StudentProgress />
+          <AskSam />
           <section className="dashboard-card" aria-label="At a glance">
             <div className="border-b border-line-soft px-5 py-4"><p className="section-kicker">Live overview</p><h2 className="mt-0.5 font-serif text-xl font-semibold text-ink">Your week</h2></div>
             <div className="glance-grid grid grid-cols-2 gap-px overflow-hidden rounded-b-[20px] bg-line">

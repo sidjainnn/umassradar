@@ -4,6 +4,7 @@ import { FileCheck2, Search } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ImportDialog } from "@/components/ImportDialog";
+import { CourseMaterials } from "@/components/CourseMaterials";
 import { PageHeader } from "@/components/Page";
 import { api, type CourseSummary } from "@/lib/api";
 import { useStore } from "@/lib/store";
@@ -118,6 +119,8 @@ export default function CoursesPage() {
           )}
         </>
       )}
+
+      {!q && <CourseMaterials />}
 
       {syllabusFor && (
         <ImportDialog
