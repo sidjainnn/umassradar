@@ -25,7 +25,7 @@ function Tabs() {
   const a = accent(me.mode);
   return (
     <Tab.Navigator
-      initialRouteName="Map"
+      initialRouteName="Home"
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: a.main,

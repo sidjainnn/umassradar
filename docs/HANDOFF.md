@@ -143,7 +143,7 @@ An Expo (React Native) app: one codebase for iOS and Android. It uses the same b
 - **Home:** greeting with Sam, the brief, the next class with a **Navigate** button, progress, and where all your
   classes are.
 - **To do:** the Study/Work switch, suggested next steps (accept or dismiss) and tasks you can check off.
-- **Map** (opens first): a plain campus map, your class buildings highlighted, room search, indoor floors, floor
+- **Map**: a plain campus map, your class buildings highlighted, room search, indoor floors, floor
   picker, route line, numbered steps, and a step-free switch.
 
 **Files:**
@@ -169,7 +169,7 @@ An Expo (React Native) app: one codebase for iOS and Android. It uses the same b
 - **Android emulator:** press `a`. It uses `http://10.0.2.2:8000`.
 
 ### Test checklist
-- [ ] **Try the demo** signs in and lands on Map.
+- [ ] **Try the demo** signs in and lands on Home.
 - [ ] Map: tap a class chip (e.g. "ECE 122 · 131") → it zooms to Marcus Hall with the room and steps.
 - [ ] Search `ILC S220` → floor 2 is shown with S220 highlighted. Switch floors with the picker; the route line shows
       on floor 1 (door to elevator) and floor 2.

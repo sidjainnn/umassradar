@@ -6,6 +6,7 @@ import { API, api } from "../api";
 import { useSession } from "../session";
 import { colors, font } from "../theme";
 import { Button } from "../ui";
+import { Brand } from "../Brand";
 
 export default function SignIn() {
   const { signIn } = useSession();
@@ -36,6 +37,7 @@ export default function SignIn() {
   return (
     <SafeAreaView style={s.wrap}>
       <View style={s.center}>
+        <View style={{ marginBottom: 16 }}><Brand /></View>
         <Image source={require("../../assets/sam.png")} style={s.sam} resizeMode="contain" accessibilityLabel="Sam the Minuteman" />
         <Text style={s.title}>Find every class, every room</Text>
         <Text style={s.sub}>Your schedule, to-dos and turn-by-turn directions to the right classroom, all in one place.</Text>

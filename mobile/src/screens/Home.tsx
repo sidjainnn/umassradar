@@ -6,6 +6,7 @@ import { api, type ClassWhere } from "../api";
 import { useSession } from "../session";
 import { accent, colors, font } from "../theme";
 import { Button, Card, H1, H2 } from "../ui";
+import { Brand } from "../Brand";
 
 type Brief = { sentences: { text: string }[] };
 type Progress = { done: number; total: number; streak: number; countdowns: { course: string | null; title: string; days: number }[] };
@@ -52,6 +53,7 @@ export default function Home() {
   return (
     <SafeAreaView style={s.wrap} edges={["top"]}>
       <ScrollView contentContainerStyle={s.body} refreshControl={<RefreshControl refreshing={loading} onRefresh={load} />}>
+        <View style={{ marginBottom: 12 }}><Brand color={a.main} size={28} /></View>
         <View style={s.head}>
           <View style={{ flex: 1 }}>
             <Text style={s.date}>{now.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}{me?.mode === "work" ? " · Work mode" : ""}</Text>
