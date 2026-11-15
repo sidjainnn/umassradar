@@ -6,6 +6,7 @@ import { useMemo, useState } from "react";
 import { ImportDialog } from "@/components/ImportDialog";
 import { ItemList } from "@/components/ItemRow";
 import { PageHeader } from "@/components/Page";
+import { WeekAgenda } from "@/components/WeekAgenda";
 import { api } from "@/lib/api";
 import { whenOf } from "@/lib/sections";
 import { type ScheduleClass, useStore } from "@/lib/store";
@@ -111,6 +112,8 @@ export default function SchedulePage() {
           </div>
         ) : undefined}
       />
+
+      <WeekAgenda />
 
       {schedule ? (
         <WeekGrid classes={schedule.classes} />
